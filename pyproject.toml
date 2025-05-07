@@ -5,10 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "flask>=3.1.0",
-    "flask-migrate>=4.1.0",
-    "flask-sqlalchemy>=3.1.1",
+    "pydantic>=2.11.4",
     "python-dotenv>=1.1.0",
+    "sanic[ext]>=25.3.0",
+    "tortoise-orm[asyncpg]>=0.25.0",
 ]
 
 [tool.pyright]
@@ -17,5 +17,5 @@ venv = ".venv"
 
 [dependency-groups]
 dev = [
-    "ruff>=0.11.7",
+    "ruff>=0.11.8",
 ]
