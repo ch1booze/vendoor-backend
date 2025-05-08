@@ -4,6 +4,9 @@ from sanic_ext import validate
 
 from app.users.models import Users
 
+
+
+
 users_router = Blueprint("users", url_prefix="users")
 
 

@@ -14,3 +14,12 @@ def get_env_var(env_var: str, default: str | None = None) -> str:
 
 
 DATABASE_URL = get_env_var("DATABASE_URL")
+TORTOISE_ORM_CONFIG = {
+    "connections": {"default": DATABASE_URL},
+    "apps": {
+        "models": {
+            "models": ["app.users.models", "aerich.models"],
+            "default_connection": "default",
+        },
+    },
+}
