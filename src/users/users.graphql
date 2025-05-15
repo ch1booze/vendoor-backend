@@ -1,3 +1,15 @@
+type User {
+  id: ID!
+  email: String
+  phoneNumber: String
+}
+
 type Query {
-  _placeholder: String
+  user(id: ID!): User
+}
+
+type Mutation {
+  createUser(email: String, phoneNumber: String): User!
+  updateUser(id: ID!, email: String, phoneNumber: String): User!
+  deleteUser(id: ID!): Boolean!
 }

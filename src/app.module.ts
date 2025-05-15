@@ -9,13 +9,19 @@ import { SuperTokensModule } from 'supertokens-nestjs';
 import Session from 'supertokens-node/recipe/session';
 import Passwordless from 'supertokens-node/recipe/passwordless';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
+import { join } from 'node:path';
 
 @Module({
   imports: [
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
       useFactory: () => ({
-        typePaths: ['./**/*.graphql'],
+        typePaths: ['./src/**/*.graphql'],
+        definitions: {
+          path: join(process.cwd(), 'src/graphql.ts'),
+          outputAs: 'class',
+          watch: true,
+        },
       }),
     }),
     SuperTokensModule.forRoot({
