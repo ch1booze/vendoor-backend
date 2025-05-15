@@ -37,7 +37,7 @@ import { join } from 'node:path';
       },
       recipeList: [
         Passwordless.init({
-          flowType: 'MAGIC_LINK',
+          flowType: 'USER_INPUT_CODE',
           contactMethod: 'EMAIL_OR_PHONE',
         }),
         Session.init(),

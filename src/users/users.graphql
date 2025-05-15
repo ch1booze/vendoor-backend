@@ -9,7 +9,11 @@ type Query {
 }
 
 type Mutation {
-  createUser(id: ID!, firstName: String, lastName: String): User!
-  updateUser(id: ID!, firstName: String, lastName: String): User!
-  deleteUser(id: ID!): Boolean!
+  authenticateUser(email: String, phoneNumber: String): Boolean!
+  verifyUser(
+    preAuthSessionId: String!
+    deviceId: String!
+    userInputCode: String!
+  ): User!
+  upsertUserProfile(id: ID!, firstName: String, lastName: String): User!
 }
