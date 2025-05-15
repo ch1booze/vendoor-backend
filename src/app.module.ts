@@ -8,6 +8,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { SuperTokensModule } from 'supertokens-nestjs';
 import Session from 'supertokens-node/recipe/session';
 import Passwordless from 'supertokens-node/recipe/passwordless';
+import { FastifyAdapter } from '@nestjs/platform-fastify';
 
 @Module({
   imports: [
@@ -19,11 +20,14 @@ import Passwordless from 'supertokens-node/recipe/passwordless';
     }),
     SuperTokensModule.forRoot({
       framework: 'fastify',
+      fastifyAdapter: new FastifyAdapter(),
       supertokens: { connectionURI: 'http://0.0.0.0:3567' },
       appInfo: {
         appName: 'kiosk',
         apiDomain: 'http://localhost:3000',
         apiBasePath: '/auth',
+        websiteDomain: 'http://localhost:3000',
+        websiteBasePath: '/auth',
       },
       recipeList: [
         Passwordless.init({
