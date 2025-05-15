@@ -1,7 +1,7 @@
 type User {
   id: ID!
-  email: String
-  phoneNumber: String
+  firstName: String
+  lastName: String
 }
 
 type Query {
@@ -9,7 +9,7 @@ type Query {
 }
 
 type Mutation {
-  createUser(email: String, phoneNumber: String): User!
-  updateUser(id: ID!, email: String, phoneNumber: String): User!
+  createUser(id: ID!, firstName: String, lastName: String): User!
+  updateUser(id: ID!, firstName: String, lastName: String): User!
   deleteUser(id: ID!): Boolean!
 }
