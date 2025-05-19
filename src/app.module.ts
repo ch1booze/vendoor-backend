@@ -9,6 +9,8 @@ import { SuperTokensModule } from 'supertokens-nestjs';
 import Session from 'supertokens-node/recipe/session';
 import Passwordless from 'supertokens-node/recipe/passwordless';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
+import { ModelModule } from './model/model.module';
+import { BusinessModule } from './business/business.module';
 
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import { FastifyAdapter } from '@nestjs/platform-fastify';
       fastifyAdapter: new FastifyAdapter(),
       supertokens: { connectionURI: 'http://0.0.0.0:3567' },
       appInfo: {
-        appName: 'kiosk',
+        appName: 'vendoor',
         apiDomain: 'http://localhost:3000',
         apiBasePath: '/auth',
         websiteDomain: 'http://localhost:3000',
@@ -39,6 +41,8 @@ import { FastifyAdapter } from '@nestjs/platform-fastify';
     }),
     UsersModule,
     PrismaModule,
+    ModelModule,
+    BusinessModule,
   ],
   controllers: [AppController],
   providers: [AppService],
