@@ -2,6 +2,7 @@ type User {
   id: ID!
   firstName: String
   lastName: String
+  business: Business
 }
 
 type Query {

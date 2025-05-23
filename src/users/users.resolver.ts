@@ -20,7 +20,6 @@ export class UsersResolver {
       ...(email ? { email } : { phoneNumber }),
       tenantId: 'public',
     });
-    console.log(JSON.stringify(result));
     return result.status === 'OK';
   }
 

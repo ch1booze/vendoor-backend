@@ -11,6 +11,7 @@ import Passwordless from 'supertokens-node/recipe/passwordless';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { ModelModule } from './model/model.module';
 import { BusinessModule } from './business/business.module';
+import { JSONScalar } from 'graphql/json.scalar';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { BusinessModule } from './business/business.module';
       driver: ApolloDriver,
       useFactory: () => ({
         typePaths: ['./src/**/*.graphql'],
+        resolvers: { JSON: new JSONScalar() },
       }),
     }),
     SuperTokensModule.forRoot({

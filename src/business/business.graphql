@@ -1,0 +1,32 @@
+scalar JSON
+
+type Business {
+  id: ID!
+  name: String!
+  type: String!
+  description: String
+  workingHours: JSON
+  owner: User!
+}
+
+type Query {
+  business(id: ID!): Business
+}
+
+type Mutation {
+  registerBusiness(
+    userID: ID!
+    name: String!
+    type: String!
+    description: String
+    workingHours: JSON
+  ): Business!
+  updateBusiness(
+    userID: ID!
+    name: String
+    type: String
+    description: String
+    workingHours: JSON
+  ): Business!
+  getBusiness(id: ID!): Business!
+}
