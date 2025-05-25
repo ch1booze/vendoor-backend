@@ -8,25 +8,42 @@ datasource db {
 }
 
 model User {
-    id        String  @id @db.Uuid
+    id        String    @id @db.Uuid
     firstName String?
     lastName  String?
     business  Business?
 }
 
 model Business {
-    id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+    id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     name         String
     type         String
     description  String?
     workingHours Json?
 
-    user         User   @relation(fields: [userId], references: [id])
-    userId       String @unique @db.Uuid
-    channels     CommunicationChannel[]
+    user     User                   @relation(fields: [userId], references: [id])
+    userId   String                 @unique @db.Uuid
+    channels CommunicationChannel[]
+    products Product[]
+}
+
+model Product {
+    id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name        String
+    description String?
+    price       String
+    unit        String
+    type        String
+    isActive    Boolean @default(true)
+
+    business   Business @relation(fields: [businessId], references: [id])
+    businessId String   @db.Uuid
 }
 
 model CommunicationChannel {

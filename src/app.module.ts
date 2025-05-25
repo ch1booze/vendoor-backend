@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { UsersModule } from './users/users.module';
+import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { SuperTokensModule } from 'supertokens-nestjs';
 import Session from 'supertokens-node/recipe/session';
@@ -12,6 +12,7 @@ import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { ModelModule } from './model/model.module';
 import { BusinessModule } from './business/business.module';
 import { JSONScalar } from 'graphql/json.scalar';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -41,10 +42,11 @@ import { JSONScalar } from 'graphql/json.scalar';
         Session.init(),
       ],
     }),
-    UsersModule,
+    UserModule,
     PrismaModule,
     ModelModule,
     BusinessModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],

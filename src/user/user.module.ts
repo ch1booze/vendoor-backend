@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { UsersResolver } from './users.resolver';
+import { UserResolver } from './users.resolver';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [HttpModule],
-  providers: [UsersResolver],
+  providers: [UserResolver],
 })
-export class UsersModule {}
+export class UserModule {}

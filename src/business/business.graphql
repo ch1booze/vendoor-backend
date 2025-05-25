@@ -6,7 +6,7 @@ type Business {
   type: String!
   description: String
   workingHours: JSON
-  owner: User!
+  user: User!
 }
 
 type Query {

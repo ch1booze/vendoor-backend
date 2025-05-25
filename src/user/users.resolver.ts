@@ -4,7 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { User } from 'graphql/schema';
 
 @Resolver()
-export class UsersResolver {
+export class UserResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @Mutation(() => Boolean)
