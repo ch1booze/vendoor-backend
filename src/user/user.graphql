@@ -6,11 +6,11 @@ type User {
 }
 
 type Query {
-  user(id: ID!): User
+  getUser(id: ID!): User
 }
 
 type Mutation {
-  authenticateUser(email: String, phoneNumber: String): Boolean!
+  signinupUser(email: String, phoneNumber: String): Boolean!
   verifyUser(
     preAuthSessionId: String!
     deviceId: String!

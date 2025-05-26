@@ -1,5 +1,5 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { Business } from 'graphql/schema';
+import { Business } from 'graphql/definitions';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Resolver()

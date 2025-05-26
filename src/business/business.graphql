@@ -10,23 +10,22 @@ type Business {
 }
 
 type Query {
-  business(id: ID!): Business
+  getBusiness(id: ID!): Business!
 }
 
 type Mutation {
   registerBusiness(
-    userID: ID!
+    userId: ID!
     name: String!
     type: String!
     description: String
     workingHours: JSON
   ): Business!
   updateBusiness(
-    userID: ID!
+    userId: ID!
     name: String
     type: String
     description: String
     workingHours: JSON
   ): Business!
-  getBusiness(id: ID!): Business!
 }

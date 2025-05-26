@@ -9,7 +9,6 @@ import { SuperTokensModule } from 'supertokens-nestjs';
 import Session from 'supertokens-node/recipe/session';
 import Passwordless from 'supertokens-node/recipe/passwordless';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
-import { ModelModule } from './model/model.module';
 import { BusinessModule } from './business/business.module';
 import { JSONScalar } from 'graphql/json.scalar';
 import { ProductModule } from './product/product.module';
@@ -44,7 +43,6 @@ import { ProductModule } from './product/product.module';
     }),
     UserModule,
     PrismaModule,
-    ModelModule,
     BusinessModule,
     ProductModule,
   ],
