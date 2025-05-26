@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import Passwordless from 'supertokens-node/recipe/passwordless';
 import { PrismaService } from '../prisma/prisma.service';
-import { User } from 'graphql/schema';
+import { User } from 'graphql/definitions';
 
 @Resolver()
 export class UserResolver {

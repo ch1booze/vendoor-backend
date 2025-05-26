@@ -39,7 +39,7 @@ export abstract class IQuery {
 
 export abstract class IMutation {
   abstract registerBusiness(
-    userID: string,
+    userId: string,
     name: string,
     type: string,
     description?: Nullable<string>,
@@ -47,7 +47,7 @@ export abstract class IMutation {
   ): Business | Promise<Business>;
 
   abstract updateBusiness(
-    userID: string,
+    userId: string,
     name?: Nullable<string>,
     type?: Nullable<string>,
     description?: Nullable<string>,

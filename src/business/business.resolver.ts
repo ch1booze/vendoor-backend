@@ -8,7 +8,7 @@ export class BusinessResolver {
 
   @Mutation(() => Business)
   async registerBusiness(
-    @Args('userID') userId: string,
+    @Args('userId') userId: string,
     @Args('name') name: string,
     @Args('type') type: string,
     @Args('description') description?: string,
