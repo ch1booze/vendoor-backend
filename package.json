@@ -36,7 +36,8 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "supertokens-nestjs": "^0.0.3",
-    "supertokens-node": "^22.1.0"
+    "supertokens-node": "^22.1.0",
+    "zod": "^3.25.30"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
