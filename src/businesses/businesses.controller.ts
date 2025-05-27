@@ -1,4 +1,18 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
+import { CreateBusinessDto } from './businesses.dto';
+import { Session, VerifySession } from 'supertokens-nestjs';
+import { BusinessesService } from './businesses.service';
 
-@Controller('business')
-export class BusinessesController {}
+@Controller('businesses')
+export class BusinessesController {
+  constructor(private readonly businessesService: BusinessesService) {}
+
+  @Post()
+  @VerifySession()
+  async createBusiness(
+    @Session('userId') userId: string,
+    @Body() dto: CreateBusinessDto,
+  ) {
+    return await this.businessesService.createBusiness(userId, dto);
+  }
+}
