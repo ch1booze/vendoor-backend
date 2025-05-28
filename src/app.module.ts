@@ -10,6 +10,9 @@ import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { BusinessesModule } from './businesses/businesses.module';
 import { ProductsModule } from './products/products.module';
 import { supertokenAppInfo } from './config';
+import { ModelModule } from './model/model.module';
+import { InvoicesModule } from './invoices/invoices.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -34,6 +37,9 @@ import { supertokenAppInfo } from './config';
     PrismaModule,
     BusinessesModule,
     ProductsModule,
+    ModelModule,
+    InvoicesModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

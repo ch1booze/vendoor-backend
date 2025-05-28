@@ -42,7 +42,57 @@ model Product {
     unit        String
     category    String
     data        Json?
+    isActive    Boolean @default(true)
+    isPurchased Boolean @default(false)
 
-    business   Business @relation(fields: [businessId], references: [id])
-    businessId String   @db.Uuid
+    business     Business      @relation(fields: [businessId], references: [id])
+    businessId   String        @db.Uuid
+    invoiceItems InvoiceItem[]
+}
+
+enum InvoiceStatus {
+    DRAFTED
+    ISSUED
+    RECONCILED
+}
+
+model Invoice {
+    id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    status InvoiceStatus
+
+    items   InvoiceItem[]
+    payment Payment?
+}
+
+model InvoiceItem {
+    id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    quantity Int
+
+    invoice   Invoice @relation(fields: [invoiceId], references: [id])
+    invoiceId String  @db.Uuid
+
+    product   Product @relation(fields: [productId], references: [id])
+    productId String  @db.Uuid
+}
+
+model Payment {
+    id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    amount    String
+    date      DateTime
+    method    String
+    narration String
+    receipt   Bytes
+    sender    Json
+
+    invoice   Invoice @relation(fields: [invoiceId], references: [id])
+    invoiceId String  @unique @db.Uuid
 }

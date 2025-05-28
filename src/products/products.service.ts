@@ -20,4 +20,14 @@ export class ProductsService {
 
     return true;
   }
+
+  async getProducts(userId: string) {
+    return await this.prisma.product.findMany({
+      where: { business: { userId } },
+    });
+  }
+
+  async getProduct(id: string) {
+    return this.prisma.product.findUnique({ where: { id } });
+  }
 }

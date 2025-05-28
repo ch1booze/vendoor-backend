@@ -18,4 +18,8 @@ export class BusinessesService {
 
     return true;
   }
+
+  async getBusiness(userId: string) {
+    return await this.prisma.business.findUnique({ where: { userId } });
+  }
 }
