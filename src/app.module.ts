@@ -6,20 +6,19 @@ import { PrismaModule } from './prisma/prisma.module';
 import { SuperTokensModule } from 'supertokens-nestjs';
 import Session from 'supertokens-node/recipe/session';
 import Passwordless from 'supertokens-node/recipe/passwordless';
-import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { BusinessesModule } from './businesses/businesses.module';
 import { ProductsModule } from './products/products.module';
 import { supertokenAppInfo } from './config';
 import { InvoicesModule } from './invoices/invoices.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ChatsModule } from './chats/chats.module';
+import { ModelModule } from './model/model.module';
 
 @Module({
   imports: [
     SuperTokensModule.forRootAsync({
       useFactory: () => ({
-        framework: 'fastify',
-        fastifyAdapter: new FastifyAdapter(),
+        framework: 'express',
         supertokens: {
           connectionURI: 'http://0.0.0.0:3567',
         },
@@ -40,6 +39,7 @@ import { ChatsModule } from './chats/chats.module';
     InvoicesModule,
     PaymentsModule,
     ChatsModule,
+    ModelModule,
   ],
   controllers: [AppController],
   providers: [AppService],

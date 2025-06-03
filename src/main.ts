@@ -1,19 +1,12 @@
 import supertokens from 'supertokens-node';
 import { NestFactory } from '@nestjs/core';
-import {
-  FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { SuperTokensExceptionFilter } from 'supertokens-nestjs';
 import { supertokenAppInfo } from './config';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    new FastifyAdapter(),
-  );
+  const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
     .setTitle('Vendoor API Specification')
