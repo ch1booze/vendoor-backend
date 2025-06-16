@@ -1,11 +1,16 @@
-import { Injectable, ForbiddenException, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  ForbiddenException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { InvoiceStatus } from '@prisma/client';
-import { 
-  CreateInvoiceDto, 
-  UpdateInvoiceDto, 
-  AddInvoiceItemDto, 
-  UpdateInvoiceItemDto 
+import {
+  CreateInvoiceDto,
+  UpdateInvoiceDto,
+  AddInvoiceItemDto,
+  UpdateInvoiceItemDto,
 } from './invoices.dto';
 
 @Injectable()
@@ -20,23 +25,23 @@ export class InvoicesService {
           some: {
             product: {
               business: {
-                userId
-              }
-            }
-          }
-        }
+                userId,
+              },
+            },
+          },
+        },
       },
       include: {
         items: {
           include: {
             product: {
               include: {
-                business: true
-              }
-            }
-          }
-        }
-      }
+                business: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!invoice) {
@@ -48,81 +53,49 @@ export class InvoicesService {
 
   private async verifyBusinessOwnership(businessId: string, userId: string) {
     const business = await this.prisma.business.findFirst({
-      where: { id: businessId, userId }
+      where: { id: businessId, userId },
     });
-    
+
     if (!business) {
       throw new ForbiddenException('You do not have access to this business');
     }
-    
+
     return business;
   }
 
-  async createInvoice(dto: CreateInvoiceDto, userId: string) {
-    // Verify user owns the business
-    await this.verifyBusinessOwnership(dto.businessId, userId);
-
-    // Verify all products exist and belong to the business
+  async createInvoice(businessId: string, dto: CreateInvoiceDto) {
     const products = await this.prisma.product.findMany({
       where: {
-        id: { in: dto.items.map(item => item.productId) },
-        businessId: dto.businessId,
-        isActive: true
-      }
+        id: { in: dto.items.map((item) => item.productId) },
+        businessId,
+        isActive: true,
+      },
     });
 
     if (products.length !== dto.items.length) {
-      throw new BadRequestException('One or more products not found or inactive');
+      throw new BadRequestException(
+        'One or more products not found or inactive',
+      );
     }
 
-    // Create invoice with items in a transaction
-    const invoice = await this.prisma.$transaction(async (tx) => {
-      const newInvoice = await tx.invoice.create({
-        data: {
-          status: dto.status,
-        }
-      });
+    await this.prisma.$transaction(async (tx) => {
+      const newInvoice = await tx.invoice.create({ data: { businessId } });
 
       await tx.invoiceItem.createMany({
-        data: dto.items.map(item => ({
+        data: dto.items.map((item) => ({
           invoiceId: newInvoice.id,
           productId: item.productId,
-          quantity: item.quantity
-        }))
+          quantity: item.quantity,
+        })),
       });
-
-      // Mark products as purchased if invoice is not drafted
-      if (dto.status !== InvoiceStatus.DRAFTED) {
-        await tx.product.updateMany({
-          where: {
-            id: { in: dto.items.map(item => item.productId) }
-          },
-          data: {
-            isPurchased: true
-          }
-        });
-      }
 
       return newInvoice;
     });
-
-    // Return invoice with items
-    return await this.getInvoice(invoice.id, userId);
   }
 
-  async getInvoices(userId: string) {
+  async getInvoices(businessId: string) {
     return await this.prisma.invoice.findMany({
-      where: {
-        items: {
-          some: {
-            product: {
-              business: {
-                userId
-              }
-            }
-          }
-        }
-      },
+      where: { businessId },
       include: {
         items: {
           include: {
@@ -132,20 +105,18 @@ export class InvoicesService {
                 name: true,
                 price: true,
                 unit: true,
-                category: true
-              }
-            }
-          }
+                category: true,
+              },
+            },
+          },
         },
-        payment: true
+        payment: true,
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
-  async getInvoice(id: string, userId: string) {
-    const invoice = await this.verifyInvoiceAccess(id, userId);
-    
+  async getInvoice(id: string) {
     return await this.prisma.invoice.findUnique({
       where: { id },
       include: {
@@ -162,86 +133,87 @@ export class InvoicesService {
                 business: {
                   select: {
                     id: true,
-                    name: true
-                  }
-                }
-              }
-            }
-          }
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
         },
-        payment: true
-      }
+        payment: true,
+      },
     });
   }
 
-  async updateInvoice(id: string, dto: UpdateInvoiceDto, userId: string) {
+  async updateInvoice(id: string, userId: string, dto: UpdateInvoiceDto) {
     const invoice = await this.verifyInvoiceAccess(id, userId);
 
-    // Prevent updates to reconciled invoices
     if (invoice.status === InvoiceStatus.RECONCILED) {
       throw new BadRequestException('Cannot update reconciled invoice');
     }
 
-    const updatedInvoice = await this.prisma.$transaction(async (tx) => {
-      // If updating items, handle the replacements
+    await this.prisma.$transaction(async (tx) => {
       if (dto.items) {
-        // Verify all new products exist and belong to user's businesses
-        const productIds = dto.items.map(item => item.productId);
+        const productIds = dto.items.map((item) => item.productId);
         const products = await tx.product.findMany({
           where: {
             id: { in: productIds },
             business: { userId },
-            isActive: true
-          }
+            isActive: true,
+          },
         });
 
         if (products.length !== productIds.length) {
-          throw new BadRequestException('One or more products not found or not accessible');
+          throw new BadRequestException(
+            'One or more products not found or not accessible',
+          );
         }
 
-        // Remove existing items
         await tx.invoiceItem.deleteMany({
-          where: { invoiceId: id }
+          where: { invoiceId: id },
         });
 
-        // Add new items
         await tx.invoiceItem.createMany({
-          data: dto.items.map(item => ({
+          data: dto.items.map((item) => ({
             invoiceId: id,
             productId: item.productId,
-            quantity: item.quantity
-          }))
+            quantity: item.quantity,
+          })),
         });
       }
 
-      // Update invoice status and mark products as purchased if needed
       const updated = await tx.invoice.update({
         where: { id },
         data: {
-          status: dto.status ?? invoice.status
-        }
+          status: dto.status ?? invoice.status,
+        },
       });
 
-      // Mark products as purchased if status changed from DRAFTED
-      if (dto.status && dto.status !== InvoiceStatus.DRAFTED && invoice.status === InvoiceStatus.DRAFTED) {
+      if (
+        dto.status &&
+        dto.status !== InvoiceStatus.DRAFTED &&
+        invoice.status === InvoiceStatus.DRAFTED
+      ) {
         const itemsToUpdate = dto.items || invoice.items;
         await tx.product.updateMany({
           where: {
-            id: { in: itemsToUpdate.map(item => item.productId || item.product.id) }
+            id: {
+              in: itemsToUpdate.map((item) => item.productId),
+            },
           },
           data: {
-            isPurchased: true
-          }
+            isPurchased: true,
+          },
         });
       }
 
       return updated;
     });
 
-    return await this.getInvoice(id, userId);
+    return await this.getInvoice(id);
   }
 
-  async deleteInvoice(id: string, userId: string) {
+  async deleteInvoice(userId: string, id: string) {
     const invoice = await this.verifyInvoiceAccess(id, userId);
 
     // Prevent deletion of reconciled invoices
@@ -250,14 +222,18 @@ export class InvoicesService {
     }
 
     await this.prisma.invoice.delete({
-      where: { id }
+      where: { id },
     });
 
     return { message: 'Invoice deleted successfully' };
   }
 
   // Invoice Items methods
-  async addInvoiceItem(invoiceId: string, dto: AddInvoiceItemDto, userId: string) {
+  async addInvoiceItem(
+    invoiceId: string,
+    userId: string,
+    dto: AddInvoiceItemDto,
+  ) {
     const invoice = await this.verifyInvoiceAccess(invoiceId, userId);
 
     if (invoice.status === InvoiceStatus.RECONCILED) {
@@ -269,8 +245,8 @@ export class InvoicesService {
       where: {
         id: dto.productId,
         business: { userId },
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     if (!product) {
@@ -281,7 +257,7 @@ export class InvoicesService {
       data: {
         invoiceId,
         productId: dto.productId,
-        quantity: dto.quantity
+        quantity: dto.quantity,
       },
       include: {
         product: {
@@ -290,16 +266,16 @@ export class InvoicesService {
             name: true,
             price: true,
             unit: true,
-            category: true
-          }
-        }
-      }
+            category: true,
+          },
+        },
+      },
     });
 
     return invoiceItem;
   }
 
-  async getInvoiceItems(invoiceId: string, userId: string) {
+  async getInvoiceItems(userId: string, invoiceId: string) {
     await this.verifyInvoiceAccess(invoiceId, userId);
 
     return await this.prisma.invoiceItem.findMany({
@@ -312,14 +288,19 @@ export class InvoicesService {
             description: true,
             price: true,
             unit: true,
-            category: true
-          }
-        }
-      }
+            category: true,
+          },
+        },
+      },
     });
   }
 
-  async updateInvoiceItem(invoiceId: string, itemId: string, dto: UpdateInvoiceItemDto, userId: string) {
+  async updateInvoiceItem(
+    invoiceId: string,
+    itemId: string,
+    userId: string,
+    dto: UpdateInvoiceItemDto,
+  ) {
     const invoice = await this.verifyInvoiceAccess(invoiceId, userId);
 
     if (invoice.status === InvoiceStatus.RECONCILED) {
@@ -329,8 +310,8 @@ export class InvoicesService {
     const invoiceItem = await this.prisma.invoiceItem.findFirst({
       where: {
         id: itemId,
-        invoiceId
-      }
+        invoiceId,
+      },
     });
 
     if (!invoiceItem) {
@@ -347,10 +328,10 @@ export class InvoicesService {
             name: true,
             price: true,
             unit: true,
-            category: true
-          }
-        }
-      }
+            category: true,
+          },
+        },
+      },
     });
 
     return updatedItem;
@@ -366,8 +347,8 @@ export class InvoicesService {
     const invoiceItem = await this.prisma.invoiceItem.findFirst({
       where: {
         id: itemId,
-        invoiceId
-      }
+        invoiceId,
+      },
     });
 
     if (!invoiceItem) {
@@ -375,7 +356,7 @@ export class InvoicesService {
     }
 
     await this.prisma.invoiceItem.delete({
-      where: { id: itemId }
+      where: { id: itemId },
     });
 
     return { message: 'Invoice item removed successfully' };

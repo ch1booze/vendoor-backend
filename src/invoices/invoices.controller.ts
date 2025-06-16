@@ -14,48 +14,41 @@ import {
   UpdateInvoiceDto,
   AddInvoiceItemDto,
   UpdateInvoiceItemDto,
-  CreateInvoiceSchema,
-  UpdateInvoiceSchema,
-  AddInvoiceItemSchema,
-  UpdateInvoiceItemSchema,
 } from './invoices.dto';
 
-@Controller('invoices')
+@Controller('businesses/:businessId/invoices')
+@VerifySession()
 export class InvoicesController {
   constructor(private readonly invoicesService: InvoicesService) {}
 
   @Post()
-  @VerifySession()
-  async createInvoice(@Body() body: any, @Session('userId') userId: string) {
-    const dto = CreateInvoiceSchema.parse(body);
-    return await this.invoicesService.createInvoice(dto, userId);
+  async createInvoice(
+    @Param('businessId') businessId: string,
+    @Body() dto: CreateInvoiceDto,
+  ) {
+    return await this.invoicesService.createInvoice(businessId, dto);
   }
 
   @Get()
-  @VerifySession()
-  async getInvoices(@Session('userId') userId: string) {
-    return await this.invoicesService.getInvoices(userId);
+  async getInvoices(@Param('businessId') businessId: string) {
+    return await this.invoicesService.getInvoices(businessId);
   }
 
   @Get(':id')
-  @VerifySession()
-  async getInvoice(@Param('id') id: string, @Session('userId') userId: string) {
-    return await this.invoicesService.getInvoice(id, userId);
+  async getInvoice(@Param('id') id: string) {
+    return await this.invoicesService.getInvoice(id);
   }
 
   @Put(':id')
-  @VerifySession()
   async updateInvoice(
     @Param('id') id: string,
-    @Body() body: any,
     @Session('userId') userId: string,
+    @Body() dto: UpdateInvoiceDto,
   ) {
-    const dto = UpdateInvoiceSchema.parse(body);
-    return await this.invoicesService.updateInvoice(id, dto, userId);
+    return await this.invoicesService.updateInvoice(id, userId, dto);
   }
 
   @Delete(':id')
-  @VerifySession()
   async deleteInvoice(
     @Param('id') id: string,
     @Session('userId') userId: string,
@@ -63,16 +56,13 @@ export class InvoicesController {
     return await this.invoicesService.deleteInvoice(id, userId);
   }
 
-  // Invoice Items endpoints
   @Post(':invoiceId/items')
-  @VerifySession()
   async addInvoiceItem(
     @Param('invoiceId') invoiceId: string,
-    @Body() body: any,
     @Session('userId') userId: string,
+    @Body() dto: AddInvoiceItemDto,
   ) {
-    const dto = AddInvoiceItemSchema.parse(body);
-    return await this.invoicesService.addInvoiceItem(invoiceId, dto, userId);
+    return await this.invoicesService.addInvoiceItem(invoiceId, userId, dto);
   }
 
   @Get(':invoiceId/items')
@@ -85,24 +75,21 @@ export class InvoicesController {
   }
 
   @Put(':invoiceId/items/:itemId')
-  @VerifySession()
   async updateInvoiceItem(
     @Param('invoiceId') invoiceId: string,
     @Param('itemId') itemId: string,
-    @Body() body: any,
     @Session('userId') userId: string,
+    @Body() dto: UpdateInvoiceItemDto,
   ) {
-    const dto = UpdateInvoiceItemSchema.parse(body);
     return await this.invoicesService.updateInvoiceItem(
       invoiceId,
       itemId,
-      dto,
       userId,
+      dto,
     );
   }
 
   @Delete(':invoiceId/items/:itemId')
-  @VerifySession()
   async removeInvoiceItem(
     @Param('invoiceId') invoiceId: string,
     @Param('itemId') itemId: string,

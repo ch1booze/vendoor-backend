@@ -11,10 +11,10 @@ export class ProductsController {
   @VerifySession()
   async createProduct(
     @Param('businessId') businessId: string,
-    @Body() dto: CreateProductDto,
     @Session('userId') userId: string,
+    @Body() dto: CreateProductDto,
   ) {
-    return await this.productsService.createProduct(businessId, dto, userId);
+    return await this.productsService.createProduct(businessId, userId, dto);
   }
 
   @Get()

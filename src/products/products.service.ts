@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto, UpdateProductDto } from './products.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
@@ -24,10 +25,9 @@ export class ProductsService {
 
   async createProduct(
     businessId: string,
-    dto: CreateProductDto,
     userId: string,
+    dto: CreateProductDto,
   ) {
-    // Verify user owns the business
     await this.verifyBusinessOwnership(businessId, userId);
 
     const product = await this.prisma.product.create({
@@ -37,7 +37,7 @@ export class ProductsService {
         price: dto.price,
         unit: dto.unit,
         category: dto.category,
-        data: dto.data,
+        data: dto.data as Prisma.JsonObject,
         business: { connect: { id: businessId } },
       },
     });
@@ -46,7 +46,6 @@ export class ProductsService {
   }
 
   async getProducts(businessId: string, userId: string) {
-    // Verify user owns the business
     await this.verifyBusinessOwnership(businessId, userId);
 
     return await this.prisma.product.findMany({
@@ -59,7 +58,6 @@ export class ProductsService {
   }
 
   async getProduct(businessId: string, id: string, userId: string) {
-    // Verify user owns the business
     await this.verifyBusinessOwnership(businessId, userId);
 
     const product = await this.prisma.product.findFirst({
@@ -83,7 +81,6 @@ export class ProductsService {
     dto: UpdateProductDto,
     userId: string,
   ) {
-    // Verify user owns the business
     await this.verifyBusinessOwnership(businessId, userId);
 
     // Get the existing product
@@ -115,7 +112,7 @@ export class ProductsService {
           price: dto.price ?? existingProduct.price,
           unit: dto.unit ?? existingProduct.unit,
           category: dto.category ?? existingProduct.category,
-          data: dto.data ?? existingProduct.data,
+          data: (dto.data ?? existingProduct.data) as Prisma.JsonObject,
         },
       });
 
@@ -135,7 +132,7 @@ export class ProductsService {
             price: dto.price ?? existingProduct.price,
             unit: dto.unit ?? existingProduct.unit,
             category: dto.category ?? existingProduct.category,
-            data: dto.data ?? existingProduct.data,
+            data: (dto.data ?? existingProduct.data) as Prisma.JsonObject,
             business: { connect: { id: businessId } },
           },
         }),

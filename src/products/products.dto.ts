@@ -1,22 +1,58 @@
-import { z } from 'zod';
+import { IsString, IsOptional, MinLength } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export const createProductSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  description: z.string().optional(),
-  price: z.string().min(1, 'Price is required'),
-  unit: z.string().min(1, 'Unit is required'),
-  category: z.string().min(1, 'Category is required'),
-  data: z.any().optional(),
-});
+export class CreateProductDto {
+  @IsString()
+  @MinLength(1, { message: 'Name is required' })
+  name: string;
 
-export const updateProductSchema = z.object({
-  name: z.string().min(1).optional(),
-  description: z.string().optional(),
-  price: z.string().min(1).optional(),
-  unit: z.string().min(1).optional(),
-  category: z.string().min(1).optional(),
-  data: z.any().optional(),
-});
+  @IsString()
+  @IsOptional()
+  description?: string;
 
-export type CreateProductDto = z.infer<typeof createProductSchema>;
-export type UpdateProductDto = z.infer<typeof updateProductSchema>;
+  @IsString()
+  @MinLength(1, { message: 'Price is required' })
+  price: string;
+
+  @IsString()
+  @MinLength(1, { message: 'Unit is required' })
+  unit: string;
+
+  @IsString()
+  @MinLength(1, { message: 'Category is required' })
+  category: string;
+
+  @IsOptional()
+  @Type(() => Object)
+  data?: Record<string, unknown> | null;
+}
+
+export class UpdateProductDto {
+  @IsString()
+  @MinLength(1)
+  @IsOptional()
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsString()
+  @MinLength(1)
+  @IsOptional()
+  price?: string;
+
+  @IsString()
+  @MinLength(1)
+  @IsOptional()
+  unit?: string;
+
+  @IsString()
+  @MinLength(1)
+  @IsOptional()
+  category?: string;
+
+  @IsOptional()
+  @Type(() => Object)
+  data?: Record<string, unknown> | null;
+}

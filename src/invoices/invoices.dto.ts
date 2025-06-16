@@ -1,32 +1,57 @@
-import { z } from 'zod';
+import {
+  IsString,
+  IsNumber,
+  IsUUID,
+  Min,
+  IsArray,
+  ValidateNested,
+  IsOptional,
+  IsEnum,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 import { InvoiceStatus } from '@prisma/client';
 
-export const InvoiceItemSchema = z.object({
-  productId: z.string().uuid('Invalid product ID'),
-  quantity: z.number().min(1, 'Quantity must be at least 1'),
-});
+export class InvoiceItemDto {
+  @IsString()
+  @IsUUID('4', { message: 'Invalid product ID' })
+  productId: string;
 
-export const CreateInvoiceSchema = z.object({
-  businessId: z.string().uuid('Invalid business ID'),
-  items: z.array(InvoiceItemSchema).min(1, 'At least one item is required'),
-  status: z.nativeEnum(InvoiceStatus).optional().default(InvoiceStatus.DRAFTED),
-});
+  @IsNumber()
+  @Min(1, { message: 'Quantity must be at least 1' })
+  quantity: number;
+}
 
-export const UpdateInvoiceSchema = z.object({
-  status: z.nativeEnum(InvoiceStatus).optional(),
-  items: z.array(InvoiceItemSchema).optional(),
-});
+export class CreateInvoiceDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => InvoiceItemDto)
+  items: InvoiceItemDto[];
+}
 
-export const AddInvoiceItemSchema = z.object({
-  productId: z.string().uuid('Invalid product ID'),
-  quantity: z.number().min(1, 'Quantity must be at least 1'),
-});
+export class UpdateInvoiceDto {
+  @IsOptional()
+  @IsEnum(InvoiceStatus, { message: 'Invalid invoice status' })
+  status?: InvoiceStatus;
 
-export const UpdateInvoiceItemSchema = z.object({
-  quantity: z.number().min(1, 'Quantity must be at least 1'),
-});
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => InvoiceItemDto)
+  items?: InvoiceItemDto[];
+}
 
-export type CreateInvoiceDto = z.infer<typeof CreateInvoiceSchema>;
-export type UpdateInvoiceDto = z.infer<typeof UpdateInvoiceSchema>;
-export type AddInvoiceItemDto = z.infer<typeof AddInvoiceItemSchema>;
-export type UpdateInvoiceItemDto = z.infer<typeof UpdateInvoiceItemSchema>;
+export class AddInvoiceItemDto {
+  @IsString()
+  @IsUUID('4', { message: 'Invalid product ID' })
+  productId: string;
+
+  @IsNumber()
+  @Min(1, { message: 'Quantity must be at least 1' })
+  quantity: number;
+}
+
+export class UpdateInvoiceItemDto {
+  @IsNumber()
+  @Min(1, { message: 'Quantity must be at least 1' })
+  quantity: number;
+}

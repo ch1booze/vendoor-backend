@@ -29,6 +29,7 @@ model Business {
     user     User      @relation(fields: [userId], references: [id])
     userId   String    @unique @db.Uuid
     products Product[]
+    invoices Invoice[]
 }
 
 model Product {
@@ -62,9 +63,11 @@ model Invoice {
     updatedAt DateTime @updatedAt
 
     status InvoiceStatus @default(DRAFTED)
+    items  InvoiceItem[]
 
-    items   InvoiceItem[]
-    payment Payment?
+    business   Business @relation(fields: [businessId], references: [id])
+    businessId String   @db.Uuid
+    payment    Payment?
 }
 
 model InvoiceItem {
@@ -76,7 +79,6 @@ model InvoiceItem {
 
     invoice   Invoice @relation(fields: [invoiceId], references: [id])
     invoiceId String  @db.Uuid
-
     product   Product @relation(fields: [productId], references: [id])
     productId String  @db.Uuid
 }

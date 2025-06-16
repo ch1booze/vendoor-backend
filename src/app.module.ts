@@ -8,11 +8,12 @@ import Session from 'supertokens-node/recipe/session';
 import Passwordless from 'supertokens-node/recipe/passwordless';
 import { BusinessesModule } from './businesses/businesses.module';
 import { ProductsModule } from './products/products.module';
-import { supertokenAppInfo } from './config';
+import { envSchema, supertokenAppInfo } from './config';
 import { InvoicesModule } from './invoices/invoices.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ChatsModule } from './chats/chats.module';
 import { ModelModule } from './model/model.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ModelModule } from './model/model.module';
         ],
       }),
     }),
+    ConfigModule.forRoot({ isGlobal: true, validationSchema: envSchema }),
     UserModule,
     PrismaModule,
     BusinessesModule,
