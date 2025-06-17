@@ -15,6 +15,8 @@ export class UsersService {
       tenantId: 'public',
     });
 
+    console.log(JSON.stringify(result));
+
     return result.status === 'OK';
   }
 

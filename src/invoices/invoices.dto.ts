@@ -9,23 +9,28 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { InvoiceStatus } from '@prisma/client';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class InvoiceItemDto {
+  @ApiProperty()
   @IsString()
   @IsUUID('4', { message: 'Invalid product ID' })
   productId: string;
 
+  @ApiProperty()
   @IsNumber()
   @Min(1, { message: 'Quantity must be at least 1' })
   quantity: number;
 }
 
 export class UpdateInvoiceDto {
+  @ApiProperty()
   @IsEnum(InvoiceStatus, { message: 'Invalid invoice status' })
   status: InvoiceStatus;
 }
 
 export class AddInvoiceItemsDto {
+  @ApiProperty()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => InvoiceItemDto)
@@ -33,6 +38,7 @@ export class AddInvoiceItemsDto {
 }
 
 export class UpdateInvoiceItemDto {
+  @ApiProperty()
   @IsNumber()
   @Min(1, { message: 'Quantity must be at least 1' })
   quantity: number;

@@ -10,12 +10,17 @@ import {
 import { CreateProductDto, UpdateProductDto } from './products.dto';
 import { Session, VerifySession } from 'supertokens-nestjs';
 import { ProductsService } from './products.service';
+import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Products')
+@ApiParam({ name: 'businessId', description: 'The ID of the business' })
 @Controller('businesses/:businessId/products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create a new product for a business' })
+  @ApiBody({ type: CreateProductDto })
   @VerifySession()
   async createProduct(
     @Param('businessId') businessId: string,
@@ -26,6 +31,7 @@ export class ProductsController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get all products for a business' })
   @VerifySession()
   async getProducts(
     @Param('businessId') businessId: string,
@@ -35,6 +41,8 @@ export class ProductsController {
   }
 
   @Get(':productId')
+  @ApiOperation({ summary: 'Get a specific product by its ID' })
+  @ApiParam({ name: 'productId', description: 'The ID of the product' })
   @VerifySession()
   async getProduct(
     @Param('businessId') businessId: string,
@@ -45,6 +53,9 @@ export class ProductsController {
   }
 
   @Put(':productId')
+  @ApiOperation({ summary: 'Update a specific product' })
+  @ApiParam({ name: 'productId', description: 'The ID of the product' })
+  @ApiBody({ type: UpdateProductDto })
   @VerifySession()
   async updateProduct(
     @Param('businessId') businessId: string,
@@ -61,6 +72,8 @@ export class ProductsController {
   }
 
   @Delete(':productId')
+  @ApiOperation({ summary: 'Delete a specific product' })
+  @ApiParam({ name: 'productId', description: 'The ID of the product' })
   @VerifySession()
   async deleteProduct(
     @Param('businessId') businessId: string,

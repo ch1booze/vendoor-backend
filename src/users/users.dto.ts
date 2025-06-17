@@ -1,43 +1,48 @@
-import { z } from 'zod';
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsEmail,
+  IsNumberString,
+  IsOptional,
+  IsPhoneNumber,
+  IsString,
+} from 'class-validator';
 
-export const signinupUserSchema = z
-  .object({
-    email: z
-      .string({
-        invalid_type_error: 'Email must be a string.',
-      })
-      .email({ message: 'Invalid email address.' })
-      .optional(),
-    phoneNumber: z
-      .string({
-        invalid_type_error: 'Phone number must be a string.',
-      })
-      .regex(/^\d+$/, { message: 'Phone number must contain only numbers.' })
-      .optional(),
-  })
-  .refine((data) => !!data.email || !!data.phoneNumber, {
-    message: 'Either email or phone number must be provided.',
-  });
+export class SigninupUserDto {
+  @ApiProperty()
+  @IsOptional()
+  @IsEmail({}, { message: 'Invalid email address.' })
+  @IsString({ message: 'Email must be a string.' })
+  email?: string;
 
-export type SigninupUserDto = z.infer<typeof signinupUserSchema>;
+  @ApiProperty()
+  @IsOptional()
+  @IsPhoneNumber()
+  @IsString({ message: 'Phone number must be a string.' })
+  phoneNumber?: string;
+}
 
-export const verifyUserSchema = z.object({
-  preAuthSessionId: z.string(),
-  deviceId: z.string(),
-  userInputCode: z
-    .string()
-    .regex(/^\d+$/, { message: 'OTP code must contain only numbers' }),
-});
+export class VerifyUserDto {
+  @ApiProperty()
+  @IsString()
+  preAuthSessionId: string;
 
-export type VerifyUserDto = z.infer<typeof verifyUserSchema>;
+  @ApiProperty()
+  @IsString()
+  deviceId: string;
 
-export const updateUserSchema = z
-  .object({
-    firstName: z.string(),
-    lastName: z.string(),
-  })
-  .refine((data) => !!data.firstName || !!data.lastName, {
-    message: 'Either firstName or lastName must be provided.',
-  });
+  @ApiProperty()
+  @IsNumberString()
+  userInputCode: string;
+}
 
-export type UpdateUserDto = z.infer<typeof updateUserSchema>;
+export class UpdateUserDto {
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  firstName?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  lastName?: string;
+}

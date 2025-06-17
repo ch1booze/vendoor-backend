@@ -1,11 +1,23 @@
-import { z } from 'zod';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsObject, IsString } from 'class-validator';
 
-export const createBusinessSchema = z.object({
-  userId: z.string().uuid(),
-  name: z.string(),
-  type: z.string(),
-  description: z.string().optional(),
-  workingHours: z.record(z.unknown()).optional(),
-});
+export class CreateBusinessDto {
+  @ApiProperty()
+  @IsString()
+  userId: string;
 
-export type CreateBusinessDto = z.infer<typeof createBusinessSchema>;
+  @ApiProperty()
+  @IsString()
+  name: string;
+
+  @ApiProperty()
+  @IsString()
+  type: string;
+
+  @ApiProperty()
+  @IsString()
+  description?: string;
+
+  @IsObject()
+  workingHours?: Record<string, unknown>;
+}
