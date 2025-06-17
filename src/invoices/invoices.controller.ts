@@ -10,9 +10,8 @@ import {
 import { Session, VerifySession } from 'supertokens-nestjs';
 import { InvoicesService } from './invoices.service';
 import {
-  CreateInvoiceDto,
+  AddInvoiceItemsDto,
   UpdateInvoiceDto,
-  AddInvoiceItemDto,
   UpdateInvoiceItemDto,
 } from './invoices.dto';
 
@@ -22,11 +21,17 @@ export class InvoicesController {
   constructor(private readonly invoicesService: InvoicesService) {}
 
   @Post()
-  async createInvoice(
-    @Param('businessId') businessId: string,
-    @Body() dto: CreateInvoiceDto,
+  async createInvoice(@Param('businessId') businessId: string) {
+    return await this.invoicesService.createInvoice(businessId);
+  }
+
+  @Post(':invoiceId')
+  async updateInvoice(
+    @Param('invoiceId') invoiceId: string,
+    @Session('userId') userId: string,
+    @Body() dto: UpdateInvoiceDto,
   ) {
-    return await this.invoicesService.createInvoice(businessId, dto);
+    return await this.invoicesService.updateInvoice(invoiceId, userId, dto);
   }
 
   @Get()
@@ -34,35 +39,26 @@ export class InvoicesController {
     return await this.invoicesService.getInvoices(businessId);
   }
 
-  @Get(':id')
-  async getInvoice(@Param('id') id: string) {
-    return await this.invoicesService.getInvoice(id);
+  @Get(':invoiceId')
+  async getInvoice(@Param('invoiceId') invoiceId: string) {
+    return await this.invoicesService.getInvoice(invoiceId);
   }
 
-  @Put(':id')
-  async updateInvoice(
-    @Param('id') id: string,
-    @Session('userId') userId: string,
-    @Body() dto: UpdateInvoiceDto,
-  ) {
-    return await this.invoicesService.updateInvoice(id, userId, dto);
-  }
-
-  @Delete(':id')
+  @Delete(':invoiceId')
   async deleteInvoice(
-    @Param('id') id: string,
+    @Param('invoiceId') invoiceId: string,
     @Session('userId') userId: string,
   ) {
-    return await this.invoicesService.deleteInvoice(id, userId);
+    return await this.invoicesService.deleteInvoice(invoiceId, userId);
   }
 
   @Post(':invoiceId/items')
-  async addInvoiceItem(
+  async addInvoiceItems(
     @Param('invoiceId') invoiceId: string,
     @Session('userId') userId: string,
-    @Body() dto: AddInvoiceItemDto,
+    @Body() dto: AddInvoiceItemsDto,
   ) {
-    return await this.invoicesService.addInvoiceItem(invoiceId, userId, dto);
+    return await this.invoicesService.addInvoiceItems(invoiceId, userId, dto);
   }
 
   @Get(':invoiceId/items')
