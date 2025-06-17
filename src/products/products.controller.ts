@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { CreateProductDto, UpdateProductDto } from './products.dto';
 import { Session, VerifySession } from 'supertokens-nestjs';
 import { ProductsService } from './products.service';
@@ -26,28 +34,42 @@ export class ProductsController {
     return await this.productsService.getProducts(businessId, userId);
   }
 
-  @Get(':id')
+  @Get(':productId')
   @VerifySession()
   async getProduct(
     @Param('businessId') businessId: string,
-    @Param('id') id: string,
+    @Param('productId') productId: string,
     @Session('userId') userId: string,
   ) {
-    return await this.productsService.getProduct(businessId, id, userId);
+    return await this.productsService.getProduct(businessId, productId, userId);
   }
 
-  @Put(':id')
+  @Put(':productId')
   @VerifySession()
   async updateProduct(
     @Param('businessId') businessId: string,
-    @Param('id') id: string,
+    @Param('productId') productId: string,
     @Body() dto: UpdateProductDto,
     @Session('userId') userId: string,
   ) {
     return await this.productsService.updateProduct(
       businessId,
-      id,
+      productId,
       dto,
+      userId,
+    );
+  }
+
+  @Delete(':productId')
+  @VerifySession()
+  async deleteProduct(
+    @Param('businessId') businessId: string,
+    @Param('productId') productId: string,
+    @Session('userId') userId: string,
+  ) {
+    return await this.productsService.deleteProduct(
+      businessId,
+      productId,
       userId,
     );
   }

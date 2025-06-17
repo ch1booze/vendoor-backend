@@ -57,12 +57,12 @@ export class ProductsService {
     });
   }
 
-  async getProduct(businessId: string, id: string, userId: string) {
+  async getProduct(businessId: string, productId: string, userId: string) {
     await this.verifyBusinessOwnership(businessId, userId);
 
     const product = await this.prisma.product.findFirst({
       where: {
-        id,
+        id: productId,
         businessId,
         isActive: true,
       },
@@ -77,16 +77,15 @@ export class ProductsService {
 
   async updateProduct(
     businessId: string,
-    id: string,
+    productId: string,
     dto: UpdateProductDto,
     userId: string,
   ) {
     await this.verifyBusinessOwnership(businessId, userId);
 
-    // Get the existing product
     const existingProduct = await this.prisma.product.findFirst({
       where: {
-        id,
+        id: productId,
         businessId,
         isActive: true,
       },
@@ -101,11 +100,10 @@ export class ProductsService {
 
     // Check if product has been purchased (has invoice items)
     const hasInvoiceItems = existingProduct.invoiceItems.length > 0;
-
-    if (!hasInvoiceItems && !existingProduct.isPurchased) {
+    if (!hasInvoiceItems) {
       // Product hasn't been used in invoices, safe to update directly
       const updatedProduct = await this.prisma.product.update({
-        where: { id },
+        where: { id: productId },
         data: {
           name: dto.name ?? existingProduct.name,
           description: dto.description ?? existingProduct.description,
@@ -124,7 +122,6 @@ export class ProductsService {
     } else {
       // Product has been used, create a new version and deactivate the old one
       const [newProduct] = await this.prisma.$transaction([
-        // Create new product with updated data
         this.prisma.product.create({
           data: {
             name: dto.name ?? existingProduct.name,
@@ -136,9 +133,10 @@ export class ProductsService {
             business: { connect: { id: businessId } },
           },
         }),
+
         // Deactivate the old product (don't delete to preserve invoice history)
         this.prisma.product.update({
-          where: { id },
+          where: { id: productId },
           data: { isActive: false },
         }),
       ]);
@@ -150,5 +148,33 @@ export class ProductsService {
           'Product has been used in invoices. A new version has been created.',
       };
     }
+  }
+
+  async deleteProduct(businessId: string, productId: string, userId: string) {
+    await this.verifyBusinessOwnership(businessId, userId);
+
+    await this.prisma.$transaction(async (tx) => {
+      const existingProduct = await tx.product.findUnique({
+        where: { id: productId },
+        include: {
+          invoiceItems: true,
+        },
+      });
+
+      if (!existingProduct) {
+        throw new NotFoundException('Product not found');
+      }
+
+      if (existingProduct.invoiceItems.length > 0) {
+        await tx.product.update({
+          where: { id: productId },
+          data: { isActive: false },
+        });
+      } else {
+        await tx.product.delete({
+          where: { id: productId },
+        });
+      }
+    });
   }
 }

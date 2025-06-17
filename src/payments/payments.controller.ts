@@ -10,7 +10,7 @@ import {
 import { PaymentsService } from './payments.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@Controller('payments')
+@Controller('businesses/:businessId/payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 

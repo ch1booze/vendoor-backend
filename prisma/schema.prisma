@@ -44,7 +44,6 @@ model Product {
     category    String
     data        Json?
     isActive    Boolean @default(true)
-    isPurchased Boolean @default(false)
 
     business     Business      @relation(fields: [businessId], references: [id])
     businessId   String        @db.Uuid
