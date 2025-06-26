@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsString, IsUUID } from 'class-validator';
+import { CustomerIntent } from './customers.intents';
 
 export enum Platform {
   INSTAGRAM = 'Instagram',
@@ -27,18 +28,9 @@ export class CreateCustomerChatDto {
   query: string;
 }
 
-export enum Intent {
-  INVOICE_CREATE = 'INVOICE_CREATE',
-  INVOICE_PAY = 'INVOICE_PAY',
-  INVOICE_CANCEL = 'INVOICE_CANCEL',
-}
-
 export class InputEvent {
-  intent?: Intent;
+  intent?: CustomerIntent;
 }
-
-export const INTENT_EXTRACTION_PROMPT =
-  'Extract the intent from the following text: ';
 
 export const REPLY_GENERATION_PROMPT =
   'Generate a reply to the following query: ';

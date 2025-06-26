@@ -3,14 +3,17 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import {
   CreateCustomerChatDto,
   CreateCustomerDto,
-  Intent,
-  INTENT_EXTRACTION_PROMPT,
   REPLY_GENERATION_PROMPT,
 } from './customers.dto';
 import { Groq as LlamaIndexGroq } from '@llamaindex/groq';
 import { ConfigService } from '@nestjs/config';
 import { createWorkflow, Workflow, workflowEvent } from '@llamaindex/workflow';
 import { HttpService } from '@nestjs/axios';
+import {
+  CustomerIntent,
+  intentExtractionPrompt,
+  intentPrompts,
+} from './customers.intents';
 
 @Injectable()
 export class CustomersService {
@@ -45,24 +48,27 @@ export class CustomersService {
 
   private async runWorkflow(query: string) {
     const inputEvent = workflowEvent<{ query: string }>();
-    const generateEvent = workflowEvent<{ query: string; intent: Intent }>();
+    const generateEvent = workflowEvent<{
+      query: string;
+      intent: CustomerIntent;
+    }>();
     const outputEvent = workflowEvent<{
       query: string;
-      intent: Intent;
+      intent: CustomerIntent;
       reply: string;
     }>();
 
     this.workflow.handle([inputEvent], async (event) => {
       const response = await this.llm.chat({
         messages: [
-          { role: 'system', content: INTENT_EXTRACTION_PROMPT },
+          { role: 'system', content: intentExtractionPrompt },
           { role: 'user', content: event.data.query },
         ],
         responseFormat: { type: 'json_object' },
       });
 
       const responseJson = JSON.parse(response.message.content as string) as {
-        intent: Intent;
+        intent: CustomerIntent;
       };
 
       return generateEvent.with({
@@ -74,7 +80,7 @@ export class CustomersService {
     this.workflow.handle([generateEvent], async (event) => {
       const response = await this.llm.chat({
         messages: [
-          { role: 'system', content: REPLY_GENERATION_PROMPT },
+          { role: 'system', content: intentPrompts[event.data.intent] },
           { role: 'user', content: event.data.query },
         ],
         responseFormat: { type: 'json_object' },
@@ -100,7 +106,15 @@ export class CustomersService {
 
     const { sendEvent, stream } = this.workflow.createContext();
     sendEvent(inputEvent.with({ query }));
-    
-    for await (cons evnet t)
+    let result:
+      | { query: string; intent: CustomerIntent; reply: string }
+      | undefined;
+
+    for await (const event of stream) {
+      if (outputEvent.include(event)) {
+        result = event.data;
+        return result;
+      }
+    }
   }
 }
