@@ -5,11 +5,11 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { InvoiceStatus } from '@prisma/client';
 import {
   UpdateInvoiceDto,
   AddInvoiceItemsDto,
   UpdateInvoiceItemDto,
+  InvoiceStatus,
 } from './invoices.dto';
 
 @Injectable()
@@ -52,7 +52,7 @@ export class InvoicesService {
 
   async createInvoice(businessId: string) {
     const newInvoice = await this.prisma.invoice.create({
-      data: { businessId },
+      data: { businessId, status: InvoiceStatus.DRAFTED },
     });
     return newInvoice;
   }

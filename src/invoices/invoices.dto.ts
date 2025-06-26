@@ -8,8 +8,13 @@ import {
   IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { InvoiceStatus } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
+
+export enum InvoiceStatus {
+  DRAFTED = 'drafted',
+  ISSUED = 'issued',
+  RECONCILED = 'reconciled',
+}
 
 export class InvoiceItemDto {
   @ApiProperty()

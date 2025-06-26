@@ -11,7 +11,6 @@ import { ProductsModule } from './products/products.module';
 import { supertokenAppInfo } from './config';
 import { InvoicesModule } from './invoices/invoices.module';
 import { PaymentsModule } from './payments/payments.module';
-import { ModelModule } from './model/model.module';
 import { ConfigModule } from '@nestjs/config';
 import { CustomersModule } from './customers/customers.module';
 
@@ -40,7 +39,6 @@ import { CustomersModule } from './customers/customers.module';
     ProductsModule,
     InvoicesModule,
     PaymentsModule,
-    ModelModule,
     CustomersModule,
   ],
   controllers: [AppController],
