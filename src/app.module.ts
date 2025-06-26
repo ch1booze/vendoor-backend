@@ -11,9 +11,9 @@ import { ProductsModule } from './products/products.module';
 import { supertokenAppInfo } from './config';
 import { InvoicesModule } from './invoices/invoices.module';
 import { PaymentsModule } from './payments/payments.module';
-import { ChatsModule } from './chats/chats.module';
 import { ModelModule } from './model/model.module';
 import { ConfigModule } from '@nestjs/config';
+import { CustomersModule } from './customers/customers.module';
 
 @Module({
   imports: [
@@ -40,8 +40,8 @@ import { ConfigModule } from '@nestjs/config';
     ProductsModule,
     InvoicesModule,
     PaymentsModule,
-    ChatsModule,
     ModelModule,
+    CustomersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

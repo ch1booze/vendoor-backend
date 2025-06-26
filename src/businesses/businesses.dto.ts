@@ -21,3 +21,9 @@ export class CreateBusinessDto {
   @IsObject()
   workingHours?: Record<string, unknown>;
 }
+
+export class CreateBusinessChatDto {
+  @ApiProperty()
+  @IsString()
+  query: string;
+}

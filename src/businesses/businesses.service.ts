@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateBusinessDto } from './businesses.dto';
+import { CreateBusinessChatDto, CreateBusinessDto } from './businesses.dto';
 
 @Injectable()
 export class BusinessesService {
@@ -21,5 +21,12 @@ export class BusinessesService {
 
   async getBusiness(userId: string) {
     return await this.prisma.business.findUnique({ where: { userId } });
+  }
+
+  async createBusinessChat(businessId: string, dto: CreateBusinessChatDto) {
+    const reply = 'REPLY GOES HERE';
+    return await this.prisma.businessChat.create({
+      data: { businessId, query: dto.query, reply },
+    });
   }
 }

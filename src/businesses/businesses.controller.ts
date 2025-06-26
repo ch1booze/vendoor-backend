@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { CreateBusinessDto } from './businesses.dto';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { CreateBusinessChatDto, CreateBusinessDto } from './businesses.dto';
 import { Session, VerifySession } from 'supertokens-nestjs';
 import { BusinessesService } from './businesses.service';
 import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
@@ -27,5 +27,14 @@ export class BusinessesController {
   @VerifySession()
   async getBusiness(@Session('userId') userId: string) {
     return await this.businessesService.getBusiness(userId);
+  }
+
+  @Post(':businessId/chats')
+  @VerifySession()
+  async createBusinessChat(
+    @Param('businessId') businessId: string,
+    @Body() dto: CreateBusinessChatDto,
+  ) {
+    return await this.businessesService.createBusinessChat(businessId, dto);
   }
 }

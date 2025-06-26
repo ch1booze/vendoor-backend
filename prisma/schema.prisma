@@ -26,10 +26,12 @@ model Business {
     description  String?
     workingHours Json?
 
-    user     User      @relation(fields: [userId], references: [id])
-    userId   String    @unique @db.Uuid
-    products Product[]
-    invoices Invoice[]
+    user          User           @relation(fields: [userId], references: [id])
+    userId        String         @unique @db.Uuid
+    products      Product[]
+    invoices      Invoice[]
+    businessChats BusinessChat[]
+    customerChats CustomerChat[]
 }
 
 model Product {
@@ -96,4 +98,37 @@ model Payment {
 
     invoice   Invoice @relation(fields: [invoiceId], references: [id])
     invoiceId String  @unique @db.Uuid
+}
+
+model Customer {
+    id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    contact  String
+    platform String
+
+    customerChats CustomerChat[]
+}
+
+model CustomerChat {
+    id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    createdAt DateTime @default(now())
+
+    query String
+    reply String
+
+    customer   Customer @relation(fields: [customerId], references: [id])
+    customerId String   @db.Uuid
+
+    business   Business @relation(fields: [businessId], references: [id])
+    businessId String   @db.Uuid
+}
+
+model BusinessChat {
+    id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    createdAt DateTime @default(now())
+
+    query String
+    reply String
+
+    business   Business @relation(fields: [businessId], references: [id])
+    businessId String   @db.Uuid
 }
