@@ -1,19 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import {
-  CreateCustomerChatDto,
-  CreateCustomerDto,
-  REPLY_GENERATION_PROMPT,
-} from './customers.dto';
+import { CreateCustomerChatDto, CreateCustomerDto } from './customers.dto';
 import { Groq as LlamaIndexGroq } from '@llamaindex/groq';
 import { ConfigService } from '@nestjs/config';
 import { createWorkflow, Workflow, workflowEvent } from '@llamaindex/workflow';
 import { HttpService } from '@nestjs/axios';
 import {
+  ContextEvent,
   CustomerIntent,
-  intentExtractionPrompt,
-  intentPrompts,
-} from './customers.intents';
+  InputEvent,
+  OutputEvent,
+  ReplyEvent,
+} from './model/intents';
+import { intentExtractionPrompt } from './model/intent-explanations';
+import { intentPrompts } from './model/intent-prompts';
+import { outputHandlers } from './model/output-handlers';
 
 @Injectable()
 export class CustomersService {
@@ -36,27 +37,35 @@ export class CustomersService {
   }
 
   async createCustomerChat(customerId: string, dto: CreateCustomerChatDto) {
-    const reply = 'REPLY GOES HERE';
-    return await this.prisma.customerChat.create({
-      data: { customerId, businessId: dto.businessId, query: dto.query, reply },
+    const { businessId, query } = dto;
+    const reply = await this.runWorkflow(customerId, businessId, query);
+    if (reply) {
+      return await this.prisma.customerChat.create({
+        data: {
+          customerId,
+          businessId: dto.businessId,
+          query: dto.query,
+          reply,
+        },
+      });
+    }
+  }
+
+  async getCustomerChats(customerId: string, businessId: string) {
+    return await this.prisma.customerChat.findMany({
+      where: { customerId, businessId },
     });
   }
 
-  async getCustomerChats(customerId: string) {
-    return await this.prisma.customerChat.findMany({ where: { customerId } });
-  }
-
-  private async runWorkflow(query: string) {
-    const inputEvent = workflowEvent<{ query: string }>();
-    const generateEvent = workflowEvent<{
-      query: string;
-      intent: CustomerIntent;
-    }>();
-    const outputEvent = workflowEvent<{
-      query: string;
-      intent: CustomerIntent;
-      reply: string;
-    }>();
+  private async runWorkflow(
+    customerId: string,
+    businessId: string,
+    query: string,
+  ) {
+    const inputEvent = workflowEvent<InputEvent>();
+    const contextEvent = workflowEvent<ContextEvent>();
+    const outputEvent = workflowEvent<OutputEvent>();
+    const replyEvent = workflowEvent<ReplyEvent>();
 
     this.workflow.handle([inputEvent], async (event) => {
       const response = await this.llm.chat({
@@ -71,13 +80,13 @@ export class CustomersService {
         intent: CustomerIntent;
       };
 
-      return generateEvent.with({
+      return contextEvent.with({
         query: event.data.query,
         intent: responseJson.intent,
       });
     });
 
-    this.workflow.handle([generateEvent], async (event) => {
+    this.workflow.handle([contextEvent], async (event) => {
       const response = await this.llm.chat({
         messages: [
           { role: 'system', content: intentPrompts[event.data.intent] },
@@ -86,34 +95,34 @@ export class CustomersService {
         responseFormat: { type: 'json_object' },
       });
 
-      const responseJson = JSON.parse(response.message.content as string) as {
-        reply: string;
-      };
+      const responseJson = JSON.parse(
+        response.message.content as string,
+      ) as object;
 
       return outputEvent.with({
         query: event.data.query,
         intent: event.data.intent,
-        reply: responseJson.reply,
+        context: responseJson,
       });
     });
 
     this.workflow.handle([outputEvent], async (event) => {
-      await this.createCustomerChat(event.data.customerId, {
-        query: event.data.query,
-        reply: event.data.reply,
+      const reply = await outputHandlers[event.data.intent]({
+        businessId,
+        axios: this.httpService.axiosRef,
+        llm: this.llm,
+        event,
       });
+
+      return replyEvent.with({ reply });
     });
 
     const { sendEvent, stream } = this.workflow.createContext();
     sendEvent(inputEvent.with({ query }));
-    let result:
-      | { query: string; intent: CustomerIntent; reply: string }
-      | undefined;
 
     for await (const event of stream) {
-      if (outputEvent.include(event)) {
-        result = event.data;
-        return result;
+      if (replyEvent.include(event)) {
+        return event.data.reply;
       }
     }
   }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { CustomersService } from './customers.service';
 import { CreateCustomerChatDto, CreateCustomerDto } from './customers.dto';
 
@@ -20,7 +20,10 @@ export class CustomersController {
   }
 
   @Get(':customerId/chats')
-  async getCustomerChats(@Param('customerId') customerId: string) {
-    return await this.customersService.getCustomerChats(customerId);
+  async getCustomerChats(
+    @Param('customerId') customerId: string,
+    @Query('businessId') businessId: string,
+  ) {
+    return await this.customersService.getCustomerChats(customerId, businessId);
   }
 }

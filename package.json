@@ -35,6 +35,7 @@
     "class-validator": "^0.14.2",
     "currency.js": "^2.0.4",
     "groq-sdk": "^0.23.0",
+    "joi": "^17.13.3",
     "llamaindex": "^0.10.6",
     "pdf2pic": "^3.2.0",
     "reflect-metadata": "^0.2.2",

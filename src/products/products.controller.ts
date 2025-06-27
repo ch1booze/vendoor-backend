@@ -32,24 +32,18 @@ export class ProductsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all products for a business' })
-  @VerifySession()
-  async getProducts(
-    @Param('businessId') businessId: string,
-    @Session('userId') userId: string,
-  ) {
-    return await this.productsService.getProducts(businessId, userId);
+  async getProducts(@Param('businessId') businessId: string) {
+    return await this.productsService.getProducts(businessId);
   }
 
   @Get(':productId')
   @ApiOperation({ summary: 'Get a specific product by its ID' })
   @ApiParam({ name: 'productId', description: 'The ID of the product' })
-  @VerifySession()
   async getProduct(
     @Param('businessId') businessId: string,
     @Param('productId') productId: string,
-    @Session('userId') userId: string,
   ) {
-    return await this.productsService.getProduct(businessId, productId, userId);
+    return await this.productsService.getProduct(businessId, productId);
   }
 
   @Put(':productId')

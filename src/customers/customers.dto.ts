@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsString, IsUUID } from 'class-validator';
-import { CustomerIntent } from './customers.intents';
+import { CustomerIntent } from './model/intents';
 
 export enum Platform {
   INSTAGRAM = 'Instagram',
@@ -32,5 +32,4 @@ export class InputEvent {
   intent?: CustomerIntent;
 }
 
-export const REPLY_GENERATION_PROMPT =
-  'Generate a reply to the following query: ';
+export type Prompts = Record<CustomerIntent, string>;

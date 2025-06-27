@@ -45,9 +45,7 @@ export class ProductsService {
     return product;
   }
 
-  async getProducts(businessId: string, userId: string) {
-    await this.verifyBusinessOwnership(businessId, userId);
-
+  async getProducts(businessId: string) {
     return await this.prisma.product.findMany({
       where: {
         businessId,
@@ -57,9 +55,7 @@ export class ProductsService {
     });
   }
 
-  async getProduct(businessId: string, productId: string, userId: string) {
-    await this.verifyBusinessOwnership(businessId, userId);
-
+  async getProduct(businessId: string, productId: string) {
     const product = await this.prisma.product.findFirst({
       where: {
         id: productId,
