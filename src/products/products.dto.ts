@@ -63,9 +63,4 @@ export class UpdateProductDto {
   @MinLength(1)
   @IsOptional()
   category?: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @Type(() => Object)
-  data?: Record<string, unknown> | null;
 }

@@ -120,12 +120,10 @@ export class InvoicesService {
       throw new BadRequestException('Cannot update reconciled invoice');
     }
 
-    await this.prisma.invoice.update({
+    return await this.prisma.invoice.update({
       where: { id: invoiceId },
       data: { status: dto.status },
     });
-
-    return { message: 'Invoice updated successfully' };
   }
 
   async deleteInvoice(userId: string, invoiceId: string) {
@@ -152,7 +150,8 @@ export class InvoicesService {
     if (invoice.status === InvoiceStatus.RECONCILED) {
       throw new BadRequestException('Cannot modify reconciled invoice');
     }
-    await this.prisma.$transaction(async (tx) => {
+
+    return await this.prisma.$transaction(async (tx) => {
       const products = await tx.product.findMany({
         where: {
           id: { in: dto.items.map((item) => item.productId) },
@@ -165,7 +164,7 @@ export class InvoicesService {
       }
 
       await tx.invoiceItem.deleteMany({ where: { invoiceId } });
-      await tx.invoiceItem.createMany({
+      return await tx.invoiceItem.createMany({
         data: dto.items.map((item) => ({
           invoiceId,
           productId: item.productId,
@@ -255,10 +254,8 @@ export class InvoicesService {
       throw new NotFoundException('Invoice item not found');
     }
 
-    await this.prisma.invoiceItem.delete({
+    return await this.prisma.invoiceItem.delete({
       where: { id: itemId },
     });
-
-    return { message: 'Invoice item removed successfully' };
   }
 }

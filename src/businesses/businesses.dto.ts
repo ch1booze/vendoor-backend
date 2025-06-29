@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsObject, IsString } from 'class-validator';
+import { IsArray, IsObject, IsOptional, IsString } from 'class-validator';
 
 export class CreateBusinessDto {
   @ApiProperty()
@@ -16,10 +16,12 @@ export class CreateBusinessDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   description?: string;
 
   @ApiProperty()
   @IsObject()
+  @IsOptional()
   data?: Record<string, unknown>;
 }
 

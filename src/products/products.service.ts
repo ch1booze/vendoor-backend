@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto, UpdateProductDto } from './products.dto';
-import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
@@ -30,7 +29,7 @@ export class ProductsService {
   ) {
     await this.verifyBusinessOwnership(businessId, userId);
 
-    const product = await this.prisma.product.create({
+    return await this.prisma.product.create({
       data: {
         name: dto.name,
         description: dto.description,
@@ -40,8 +39,6 @@ export class ProductsService {
         business: { connect: { id: businessId } },
       },
     });
-
-    return product;
   }
 
   async getProducts(businessId: string) {
@@ -105,7 +102,6 @@ export class ProductsService {
           price: dto.price ?? existingProduct.price,
           unit: dto.unit ?? existingProduct.unit,
           category: dto.category ?? existingProduct.category,
-          data: (dto.data ?? existingProduct.data) as Prisma.JsonObject,
         },
       });
 
@@ -124,7 +120,6 @@ export class ProductsService {
             price: dto.price ?? existingProduct.price,
             unit: dto.unit ?? existingProduct.unit,
             category: dto.category ?? existingProduct.category,
-            data: (dto.data ?? existingProduct.data) as Prisma.JsonObject,
             business: { connect: { id: businessId } },
           },
         }),
@@ -148,7 +143,7 @@ export class ProductsService {
   async deleteProduct(businessId: string, productId: string, userId: string) {
     await this.verifyBusinessOwnership(businessId, userId);
 
-    await this.prisma.$transaction(async (tx) => {
+    return await this.prisma.$transaction(async (tx) => {
       const existingProduct = await tx.product.findUnique({
         where: { id: productId },
         include: {
@@ -161,12 +156,12 @@ export class ProductsService {
       }
 
       if (existingProduct.invoiceItems.length > 0) {
-        await tx.product.update({
+        return await tx.product.update({
           where: { id: productId },
           data: { isActive: false },
         });
       } else {
-        await tx.product.delete({
+        return await tx.product.delete({
           where: { id: productId },
         });
       }
