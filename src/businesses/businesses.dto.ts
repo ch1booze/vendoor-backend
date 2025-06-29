@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsObject, IsString } from 'class-validator';
+import { IsArray, IsObject, IsString } from 'class-validator';
 
 export class CreateBusinessDto {
   @ApiProperty()
@@ -11,19 +11,51 @@ export class CreateBusinessDto {
   name: string;
 
   @ApiProperty()
-  @IsString()
-  type: string;
+  @IsArray()
+  tags: BusinessTag[];
 
   @ApiProperty()
   @IsString()
   description?: string;
 
+  @ApiProperty()
   @IsObject()
-  workingHours?: Record<string, unknown>;
+  data?: Record<string, unknown>;
 }
 
 export class CreateBusinessChatDto {
   @ApiProperty()
   @IsString()
   query: string;
+}
+
+export enum BusinessTag {
+  BAKERY = 'bakery',
+  BARBERSHOP = 'barbershop',
+  BOOKSTORE = 'bookstore',
+  BOUTIQUE = 'boutique',
+  CAFE = 'cafe',
+  CATERING = 'catering',
+  CLEANING = 'cleaning',
+  CLOTHING = 'clothing',
+  CONSULTING = 'consulting',
+  E_COMMERCE = 'e_commerce',
+  EVENT_PLANNING = 'event_planning',
+  FITNESS = 'fitness',
+  FLORIST = 'florist',
+  FOOD_TRUCK = 'food_truck',
+  GROCERY = 'grocery',
+  GYM = 'gym',
+  HOME_IMPROVEMENT = 'home_improvement',
+  LAUNDRY = 'laundry',
+  PET_SERVICES = 'pet_services',
+  PHARMACY = 'pharmacy',
+  PHOTOGRAPHY = 'photography',
+  REPAIR = 'repair',
+  RESTAURANT = 'restaurant',
+  RETAIL = 'retail',
+  SALON = 'salon',
+  SPA = 'spa',
+  TAILORING = 'tailoring',
+  TUTORING = 'tutoring',
 }

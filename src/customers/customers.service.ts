@@ -14,7 +14,7 @@ import {
 } from './model/intents';
 import { intentExtractionPrompt } from './model/intent-explanations';
 import { intentPrompts } from './model/intent-prompts';
-import { outputHandlers } from './model/output-handlers';
+import { DataEvents } from './model/data-handlers';
 
 @Injectable()
 export class CustomersService {
@@ -64,7 +64,7 @@ export class CustomersService {
   ) {
     const inputEvent = workflowEvent<InputEvent>();
     const contextEvent = workflowEvent<ContextEvent>();
-    const outputEvent = workflowEvent<OutputEvent>();
+    const dataEvent = workflowEvent<OutputEvent>();
     const replyEvent = workflowEvent<ReplyEvent>();
 
     this.workflow.handle([inputEvent], async (event) => {
@@ -99,15 +99,15 @@ export class CustomersService {
         response.message.content as string,
       ) as object;
 
-      return outputEvent.with({
+      return dataEvent.with({
         query: event.data.query,
         intent: event.data.intent,
         context: responseJson,
       });
     });
 
-    this.workflow.handle([outputEvent], async (event) => {
-      const reply = await outputHandlers[event.data.intent]({
+    this.workflow.handle([dataEvent], async (event) => {
+      const reply = await DataEvents[event.data.intent]({
         businessId,
         axios: this.httpService.axiosRef,
         llm: this.llm,

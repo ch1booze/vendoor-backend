@@ -25,8 +25,20 @@ export class BusinessesController {
     summary: 'Get the business associated with the authenticated user',
   })
   @VerifySession()
-  async getBusiness(@Session('userId') userId: string) {
-    return await this.businessesService.getBusiness(userId);
+  async getBusinesses(@Session('userId') userId: string) {
+    return await this.businessesService.getBusinesses(userId);
+  }
+
+  @Get(':businessId')
+  @ApiOperation({
+    summary: 'Get the business associated with the authenticated user',
+  })
+  @VerifySession()
+  async getBusiness(
+    @Param('businessId') businessId: string,
+    @Session('userId') userId: string,
+  ) {
+    return await this.businessesService.getBusiness(businessId, userId);
   }
 
   @Post(':businessId/chats')
@@ -36,5 +48,11 @@ export class BusinessesController {
     @Body() dto: CreateBusinessChatDto,
   ) {
     return await this.businessesService.createBusinessChat(businessId, dto);
+  }
+
+  @Get(':businessId/chats')
+  @VerifySession()
+  async getBusinessChats(@Param('businessId') businessId: string) {
+    return await this.businessesService.getBusinessChats(businessId);
   }
 }

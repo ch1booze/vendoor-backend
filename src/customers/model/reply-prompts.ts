@@ -5,18 +5,6 @@ export const replyPrompts: Prompts = {
   [CustomerIntent.BROWSE_PRODUCTS]: `You are a helpful shopping assistant for a business.
   The input is a JSON object containing a list of products or services offered by the business that the user can browse.
   Generate a friendly, clear message listing these products so the user can choose what interests them. Output ONLY a plain text message.`,
-  [CustomerIntent.SEARCH_PRODUCT]: `You are a product search assistant. The input is a JSON object containing search results for a product query:
-{
-  "results": [
-    {
-      "name": "string",
-      "description": "string",
-      "price": "string",
-      "category": "string"
-    }
-  ]
-}
-Generate a clear, helpful reply summarizing the products found, including names, descriptions, and prices. Output ONLY a plain text message.`,
 
   [CustomerIntent.ADD_TO_ORDER]: `You are an order management assistant. The input is a JSON object confirming the addition of items to an order:
 {

@@ -13,6 +13,7 @@ import { InvoicesModule } from './invoices/invoices.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ConfigModule } from '@nestjs/config';
 import { CustomersModule } from './customers/customers.module';
+import { InventoriesModule } from './inventories/inventories.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { CustomersModule } from './customers/customers.module';
     InvoicesModule,
     PaymentsModule,
     CustomersModule,
+    InventoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

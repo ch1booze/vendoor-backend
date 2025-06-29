@@ -37,7 +37,6 @@ export class ProductsService {
         price: dto.price,
         unit: dto.unit,
         category: dto.category,
-        data: dto.data as Prisma.JsonObject,
         business: { connect: { id: businessId } },
       },
     });
