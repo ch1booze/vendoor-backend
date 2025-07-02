@@ -10,10 +10,10 @@ import {
 import { Session, VerifySession } from 'supertokens-nestjs';
 import { InvoicesService } from './invoices.service';
 import {
-  AddInvoiceItemsDto,
-  UpdateInvoiceDto,
-  UpdateInvoiceItemDto,
-} from './invoices.dto';
+  AddInvoiceItemsBody,
+  UpdateInvoiceBody,
+  UpdateInvoiceItemBody,
+} from './invoices.types';
 import { ApiTags, ApiOperation, ApiParam, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('Invoices')
@@ -32,13 +32,13 @@ export class InvoicesController {
   @Post(':invoiceId')
   @ApiOperation({ summary: "Update an invoice's details" })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
-  @ApiBody({ type: UpdateInvoiceDto })
+  @ApiBody({ type: UpdateInvoiceBody })
   async updateInvoice(
     @Param('invoiceId') invoiceId: string,
     @Session('userId') userId: string,
-    @Body() dto: UpdateInvoiceDto,
+    @Body() body: UpdateInvoiceBody,
   ) {
-    return await this.invoicesService.updateInvoice(invoiceId, userId, dto);
+    return await this.invoicesService.updateInvoice(invoiceId, userId, body);
   }
 
   @Get()
@@ -67,13 +67,13 @@ export class InvoicesController {
   @Post(':invoiceId/items')
   @ApiOperation({ summary: 'Add one or more items to an invoice' })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
-  @ApiBody({ type: AddInvoiceItemsDto })
+  @ApiBody({ type: AddInvoiceItemsBody })
   async addInvoiceItems(
     @Param('invoiceId') invoiceId: string,
     @Session('userId') userId: string,
-    @Body() dto: AddInvoiceItemsDto,
+    @Body() body: AddInvoiceItemsBody,
   ) {
-    return await this.invoicesService.addInvoiceItems(invoiceId, userId, dto);
+    return await this.invoicesService.addInvoiceItems(invoiceId, userId, body);
   }
 
   @Get(':invoiceId/items')
@@ -91,18 +91,18 @@ export class InvoicesController {
   @ApiOperation({ summary: 'Update a specific item on an invoice' })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
   @ApiParam({ name: 'itemId', description: 'The ID of the invoice item' })
-  @ApiBody({ type: UpdateInvoiceItemDto })
+  @ApiBody({ type: UpdateInvoiceItemBody })
   async updateInvoiceItem(
     @Param('invoiceId') invoiceId: string,
     @Param('itemId') itemId: string,
     @Session('userId') userId: string,
-    @Body() dto: UpdateInvoiceItemDto,
+    @Body() body: UpdateInvoiceItemBody,
   ) {
     return await this.invoicesService.updateInvoiceItem(
       invoiceId,
       itemId,
       userId,
-      dto,
+      body,
     );
   }
 

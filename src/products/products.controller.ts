@@ -6,8 +6,13 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
-import { CreateProductDto, UpdateProductDto } from './products.dto';
+import {
+  CreateProductBody,
+  GetProductsQuery,
+  UpdateProductBody,
+} from './products.types';
 import { Session, VerifySession } from 'supertokens-nestjs';
 import { ProductsService } from './products.service';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
@@ -20,20 +25,23 @@ export class ProductsController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new product for a business' })
-  @ApiBody({ type: CreateProductDto })
+  @ApiBody({ type: CreateProductBody })
   @VerifySession()
   async createProduct(
     @Param('businessId') businessId: string,
     @Session('userId') userId: string,
-    @Body() dto: CreateProductDto,
+    @Body() body: CreateProductBody,
   ) {
-    return await this.productsService.createProduct(businessId, userId, dto);
+    return await this.productsService.createProduct(businessId, userId, body);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all products for a business' })
-  async getProducts(@Param('businessId') businessId: string) {
-    return await this.productsService.getProducts(businessId);
+  async getProducts(
+    @Param('businessId') businessId: string,
+    @Query() query: GetProductsQuery,
+  ) {
+    return await this.productsService.getProducts(businessId, query);
   }
 
   @Get(':productId')
@@ -49,18 +57,18 @@ export class ProductsController {
   @Put(':productId')
   @ApiOperation({ summary: 'Update a specific product' })
   @ApiParam({ name: 'productId', description: 'The ID of the product' })
-  @ApiBody({ type: UpdateProductDto })
+  @ApiBody({ type: UpdateProductBody })
   @VerifySession()
   async updateProduct(
     @Param('businessId') businessId: string,
     @Param('productId') productId: string,
-    @Body() dto: UpdateProductDto,
+    @Body() body: UpdateProductBody,
     @Session('userId') userId: string,
   ) {
     return await this.productsService.updateProduct(
       businessId,
       productId,
-      dto,
+      body,
       userId,
     );
   }

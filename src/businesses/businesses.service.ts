@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateBusinessChatDto, CreateBusinessDto } from './businesses.dto';
+import { CreateBusinessChatBody, CreateBusinessBody } from './businesses.types';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class BusinessesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createBusiness(userId: string, dto: CreateBusinessDto) {
+  async createBusiness(userId: string, body: CreateBusinessBody) {
     return await this.prisma.business.create({
       data: {
         userId,
-        name: dto.name,
-        tags: dto.tags,
-        description: dto.description,
-        data: dto.data as Prisma.JsonObject,
+        name: body.name,
+        tags: body.tags,
+        description: body.description,
+        data: body.data as Prisma.JsonObject,
       },
     });
   }
@@ -29,10 +29,10 @@ export class BusinessesService {
     });
   }
 
-  async createBusinessChat(businessId: string, dto: CreateBusinessChatDto) {
+  async createBusinessChat(businessId: string, body: CreateBusinessChatBody) {
     const reply = 'REPLY GOES HERE';
     return await this.prisma.businessChat.create({
-      data: { businessId, query: dto.query, reply },
+      data: { businessId, query: body.query, reply },
     });
   }
 

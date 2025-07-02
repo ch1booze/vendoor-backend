@@ -4,7 +4,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateProductDto, UpdateProductDto } from './products.dto';
+import {
+  CreateProductBody,
+  GetProductsQuery,
+  UpdateProductBody,
+} from './products.types';
 
 @Injectable()
 export class ProductsService {
@@ -25,27 +29,30 @@ export class ProductsService {
   async createProduct(
     businessId: string,
     userId: string,
-    dto: CreateProductDto,
+    body: CreateProductBody,
   ) {
     await this.verifyBusinessOwnership(businessId, userId);
 
     return await this.prisma.product.create({
       data: {
-        name: dto.name,
-        description: dto.description,
-        price: dto.price,
-        unit: dto.unit,
-        category: dto.category,
+        name: body.name,
+        description: body.description,
+        price: body.price,
+        unit: body.unit,
+        category: body.category,
         business: { connect: { id: businessId } },
       },
     });
   }
 
-  async getProducts(businessId: string) {
+  async getProducts(businessId: string, query: GetProductsQuery) {
     return await this.prisma.product.findMany({
       where: {
         businessId,
         isActive: true,
+        name: { contains: query.name },
+        category: { contains: query.category },
+        price: { gte: String(query.priceMin), lte: String(query.priceMax) },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -70,7 +77,7 @@ export class ProductsService {
   async updateProduct(
     businessId: string,
     productId: string,
-    dto: UpdateProductDto,
+    body: UpdateProductBody,
     userId: string,
   ) {
     await this.verifyBusinessOwnership(businessId, userId);
@@ -97,11 +104,11 @@ export class ProductsService {
       const updatedProduct = await this.prisma.product.update({
         where: { id: productId },
         data: {
-          name: dto.name ?? existingProduct.name,
-          description: dto.description ?? existingProduct.description,
-          price: dto.price ?? existingProduct.price,
-          unit: dto.unit ?? existingProduct.unit,
-          category: dto.category ?? existingProduct.category,
+          name: body.name ?? existingProduct.name,
+          description: body.description ?? existingProduct.description,
+          price: body.price ?? existingProduct.price,
+          unit: body.unit ?? existingProduct.unit,
+          category: body.category ?? existingProduct.category,
         },
       });
 
@@ -115,11 +122,11 @@ export class ProductsService {
       const [newProduct] = await this.prisma.$transaction([
         this.prisma.product.create({
           data: {
-            name: dto.name ?? existingProduct.name,
-            description: dto.description ?? existingProduct.description,
-            price: dto.price ?? existingProduct.price,
-            unit: dto.unit ?? existingProduct.unit,
-            category: dto.category ?? existingProduct.category,
+            name: body.name ?? existingProduct.name,
+            description: body.description ?? existingProduct.description,
+            price: body.price ?? existingProduct.price,
+            unit: body.unit ?? existingProduct.unit,
+            category: body.category ?? existingProduct.category,
             business: { connect: { id: businessId } },
           },
         }),

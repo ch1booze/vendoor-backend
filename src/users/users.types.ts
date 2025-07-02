@@ -7,7 +7,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class SigninupUserDto {
+export class SigninupUserBody {
   @ApiProperty()
   @IsOptional()
   @IsEmail({}, { message: 'Invalid email address.' })
@@ -21,7 +21,7 @@ export class SigninupUserDto {
   phoneNumber?: string;
 }
 
-export class VerifyUserDto {
+export class VerifyUserBody {
   @ApiProperty()
   @IsString()
   preAuthSessionId: string;
@@ -35,7 +35,7 @@ export class VerifyUserDto {
   userInputCode: string;
 }
 
-export class UpdateUserDto {
+export class UpdateUserBody {
   @ApiProperty()
   @IsOptional()
   @IsString()

@@ -16,7 +16,7 @@ export enum InvoiceStatus {
   RECONCILED = 'reconciled',
 }
 
-export class InvoiceItemDto {
+export class InvoiceItemBody {
   @ApiProperty()
   @IsString()
   @IsUUID('4', { message: 'Invalid product ID' })
@@ -28,21 +28,21 @@ export class InvoiceItemDto {
   quantity: number;
 }
 
-export class UpdateInvoiceDto {
+export class UpdateInvoiceBody {
   @ApiProperty()
   @IsEnum(InvoiceStatus, { message: 'Invalid invoice status' })
   status: InvoiceStatus;
 }
 
-export class AddInvoiceItemsDto {
+export class AddInvoiceItemsBody {
   @ApiProperty()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => InvoiceItemDto)
-  items: InvoiceItemDto[];
+  @Type(() => InvoiceItemBody)
+  items: InvoiceItemBody[];
 }
 
-export class UpdateInvoiceItemDto {
+export class UpdateInvoiceItemBody {
   @ApiProperty()
   @IsNumber()
   @Min(1, { message: 'Quantity must be at least 1' })

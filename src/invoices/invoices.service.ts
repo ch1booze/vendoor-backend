@@ -6,11 +6,11 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
-  UpdateInvoiceDto,
-  AddInvoiceItemsDto,
-  UpdateInvoiceItemDto,
+  UpdateInvoiceBody,
+  AddInvoiceItemsBody,
+  UpdateInvoiceItemBody,
   InvoiceStatus,
-} from './invoices.dto';
+} from './invoices.types';
 
 @Injectable()
 export class InvoicesService {
@@ -112,7 +112,7 @@ export class InvoicesService {
   async updateInvoice(
     invoiceId: string,
     userId: string,
-    dto: UpdateInvoiceDto,
+    body: UpdateInvoiceBody,
   ) {
     const invoice = await this.verifyInvoiceAccess(invoiceId, userId);
 
@@ -122,7 +122,7 @@ export class InvoicesService {
 
     return await this.prisma.invoice.update({
       where: { id: invoiceId },
-      data: { status: dto.status },
+      data: { status: body.status },
     });
   }
 
@@ -143,7 +143,7 @@ export class InvoicesService {
   async addInvoiceItems(
     invoiceId: string,
     userId: string,
-    dto: AddInvoiceItemsDto,
+    body: AddInvoiceItemsBody,
   ) {
     const invoice = await this.verifyInvoiceAccess(invoiceId, userId);
 
@@ -154,18 +154,18 @@ export class InvoicesService {
     return await this.prisma.$transaction(async (tx) => {
       const products = await tx.product.findMany({
         where: {
-          id: { in: dto.items.map((item) => item.productId) },
+          id: { in: body.items.map((item) => item.productId) },
           isActive: true,
         },
       });
 
-      if (products.length !== dto.items.length) {
+      if (products.length !== body.items.length) {
         throw new BadRequestException('One or more products are invalid');
       }
 
       await tx.invoiceItem.deleteMany({ where: { invoiceId } });
       return await tx.invoiceItem.createMany({
-        data: dto.items.map((item) => ({
+        data: body.items.map((item) => ({
           invoiceId,
           productId: item.productId,
           quantity: item.quantity,
@@ -198,7 +198,7 @@ export class InvoicesService {
     invoiceId: string,
     itemId: string,
     userId: string,
-    dto: UpdateInvoiceItemDto,
+    body: UpdateInvoiceItemBody,
   ) {
     const invoice = await this.verifyInvoiceAccess(invoiceId, userId);
 
@@ -219,7 +219,7 @@ export class InvoicesService {
 
     const updatedItem = await this.prisma.invoiceItem.update({
       where: { id: itemId },
-      data: { quantity: dto.quantity },
+      data: { quantity: body.quantity },
       include: {
         product: {
           select: {

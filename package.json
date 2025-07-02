@@ -25,6 +25,7 @@
   "dependencies": {
     "@llamaindex/groq": "^0.0.73",
     "@llamaindex/workflow": "^1.1.5",
+    "@modelcontextprotocol/sdk": "^1.13.3",
     "@nestjs/axios": "^4.0.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",

@@ -1,19 +1,19 @@
 import { Groq as LlamaIndexGroq } from '@llamaindex/groq';
-import { WorkflowEventData } from '@llamaindex/workflow';
 import { AxiosInstance } from 'axios';
-import { ContextEvent, CustomerIntent } from '../intents';
+import { CustomerIntent } from '../intents';
 import { replyPrompts } from '../reply-prompts';
 
 export const browseProductsHandler = async (params: {
   businessId: string;
-  event: WorkflowEventData<ContextEvent>;
+  payload: Record<string, any>;
   axios: AxiosInstance;
   llm: LlamaIndexGroq;
 }) => {
-  const { businessId, event, axios, llm } = params;
+  const { businessId, payload, axios, llm } = params;
   const httpResponse = await axios({
     method: 'GET',
     url: `/businesses/${businessId}/products`,
+    params: payload.query as object,
   });
 
   const llmResponse = await llm.chat({

@@ -1,14 +1,18 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { SigninupUserDto, UpdateUserDto, VerifyUserDto } from './users.dto';
+import {
+  SigninupUserBody,
+  UpdateUserBody,
+  VerifyUserBody,
+} from './users.types';
 import Passwordless from 'supertokens-node/recipe/passwordless';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async signinupUser(dto: SigninupUserDto) {
-    const { email, phoneNumber } = dto;
+  async signinupUser(body: SigninupUserBody) {
+    const { email, phoneNumber } = body;
 
     const result = await Passwordless.createCode({
       ...(email ? { email } : { phoneNumber: phoneNumber! }),
@@ -20,8 +24,8 @@ export class UsersService {
     return result.status === 'OK';
   }
 
-  async verifyUser(dto: VerifyUserDto) {
-    const { preAuthSessionId, deviceId, userInputCode } = dto;
+  async verifyUser(body: VerifyUserBody) {
+    const { preAuthSessionId, deviceId, userInputCode } = body;
     const result = await Passwordless.consumeCode({
       preAuthSessionId,
       deviceId,
@@ -42,8 +46,8 @@ export class UsersService {
     return true;
   }
 
-  async updateUser(userId: string, dto: UpdateUserDto) {
-    const { firstName, lastName } = dto;
+  async updateUser(userId: string, body: UpdateUserBody) {
+    const { firstName, lastName } = body;
     await this.prisma.user.update({
       where: { id: userId },
       data: { firstName, lastName },

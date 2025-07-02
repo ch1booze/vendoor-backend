@@ -1,8 +1,8 @@
-import { IsString, IsOptional, MinLength } from 'class-validator';
+import { IsString, IsOptional, MinLength, IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateProductDto {
+export class CreateProductBody {
   @ApiProperty()
   @IsString()
   @MinLength(1, { message: 'Name is required' })
@@ -34,7 +34,7 @@ export class CreateProductDto {
   data?: Record<string, unknown> | null;
 }
 
-export class UpdateProductDto {
+export class UpdateProductBody {
   @ApiProperty()
   @IsString()
   @MinLength(1)
@@ -61,6 +61,28 @@ export class UpdateProductDto {
   @ApiProperty()
   @IsString()
   @MinLength(1)
+  @IsOptional()
+  category?: string;
+}
+
+export class GetProductsQuery {
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  priceMin?: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  priceMax?: number;
+
+  @ApiProperty()
+  @IsString()
   @IsOptional()
   category?: string;
 }

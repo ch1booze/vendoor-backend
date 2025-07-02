@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { BusinessTag } from '../src/businesses/businesses.dto';
+import { BusinessTag } from '../src/businesses/businesses.types';
 
 const demoUserId = '00000000-0000-0000-0000-000000000000';
 const demoBusinesses = [

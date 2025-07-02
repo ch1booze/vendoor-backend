@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsObject, IsOptional, IsString } from 'class-validator';
 
-export class CreateBusinessDto {
+export class CreateBusinessBody {
   @ApiProperty()
   @IsString()
   userId: string;
@@ -25,7 +25,7 @@ export class CreateBusinessDto {
   data?: Record<string, unknown>;
 }
 
-export class CreateBusinessChatDto {
+export class CreateBusinessChatBody {
   @ApiProperty()
   @IsString()
   query: string;

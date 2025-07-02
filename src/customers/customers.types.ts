@@ -8,7 +8,7 @@ export enum Platform {
   EMAIL = 'Email',
 }
 
-export class CreateCustomerDto {
+export class CreateCustomerBody {
   @ApiProperty()
   @IsString()
   contact: string;
@@ -18,7 +18,7 @@ export class CreateCustomerDto {
   platform: Platform;
 }
 
-export class CreateCustomerChatDto {
+export class CreateCustomerChatBody {
   @ApiProperty()
   @IsUUID()
   businessId: string;
@@ -28,7 +28,7 @@ export class CreateCustomerChatDto {
   query: string;
 }
 
-export class InputEvent {
+export class RequestEventPayload {
   intent?: CustomerIntent;
 }
 

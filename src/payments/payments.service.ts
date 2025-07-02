@@ -3,7 +3,7 @@ import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { createWorker } from 'tesseract.js';
-import { EXTRACT_PAYMENT_DETAILS_PROMPT } from './payments.dto';
+import { EXTRACT_PAYMENT_DETAILS_PROMPT } from './payments.types';
 
 @Injectable()
 export class PaymentsService implements OnModuleInit {
