@@ -28,8 +28,6 @@ export class CreateCustomerChatBody {
   query: string;
 }
 
-export class RequestEventPayload {
-  intent?: CustomerIntent;
-}
+
 
 export type Prompts = Record<CustomerIntent, string>;

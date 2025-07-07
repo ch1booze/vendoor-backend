@@ -58,7 +58,7 @@ const generateIntentExplanations = (): string => {
     .join('\n');
 };
 
-export const intentExtractionPrompt: string = `You are an intent classification assistant. Your task is to analyze the user's query and determine the intent behind it. You have been given a query, and you need to extract the intent based on the predefined list of possible intents.
+export const intentClassificationPrompt: string = `You are an intent classification assistant. Your task is to analyze the user's query and determine the intent behind it. You have been given a query, and you need to extract the intent based on the predefined list of possible intents.
 
 Here is the list of possible intents with simple explanations:
 
@@ -69,22 +69,3 @@ Analyze the query and return ONLY a JSON object with the following structure. Do
 {
   "intent": "string"
 }`;
-
-export class RequestEventPayload {
-  query: string;
-}
-
-export class ContextEventPayload {
-  query: string;
-  intent: CustomerIntent;
-}
-
-export class OutputEventPayload {
-  query: string;
-  intent: CustomerIntent;
-  context: object;
-}
-
-export class ReplyEventPayload {
-  reply: string;
-}
