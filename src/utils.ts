@@ -1,6 +1,6 @@
 import { ValidationMetadata } from 'class-validator/types/metadata/ValidationMetadata';
 import { getMetadataStorage } from 'class-validator';
-import { Prisma, Product } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 export function getClassProps<T extends new (...args: any[]) => any>(cls: T) {
   const metadatas: ValidationMetadata[] =

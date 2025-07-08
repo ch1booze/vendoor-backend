@@ -38,6 +38,8 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "currency.js": "^2.0.4",
+    "graphology": "^0.26.0",
+    "graphology-types": "^0.24.8",
     "groq-sdk": "^0.23.0",
     "joi": "^17.13.3",
     "llamaindex": "^0.10.6",

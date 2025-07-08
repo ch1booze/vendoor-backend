@@ -1,18 +1,17 @@
 import { groq } from '@llamaindex/groq';
 import {
-  ApiCallEventPayload,
+  CustomerIntent,
   IntentEventPayload,
   LlmCallEventPayload,
   ReplyEventPayload,
 } from './types';
 import { createWorkflow, workflowEvent } from '@llamaindex/workflow';
-import { CustomerIntent, intentClassificationPrompt } from './intents';
+import { intentClassificationPrompt } from './intents';
 
 const llm = groq();
 
 export const intentEvent = workflowEvent<IntentEventPayload>();
 export const llmCallEvent = workflowEvent<LlmCallEventPayload>();
-export const apiCallEvent = workflowEvent<ApiCallEventPayload>();
 export const replyEvent = workflowEvent<ReplyEventPayload>();
 
 const workflow = createWorkflow();
@@ -35,5 +34,3 @@ workflow.handle([intentEvent], async (event) => {
 });
 
 workflow.handle([llmCallEvent], async (event) => {});
-
-workflow.handle([apiCallEvent], async (event) => {});
