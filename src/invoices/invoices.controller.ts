@@ -7,7 +7,6 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import { Session, VerifySession } from 'supertokens-nestjs';
 import { InvoicesService } from './invoices.service';
 import {
   AddInvoiceItemsBody,
@@ -19,7 +18,6 @@ import { ApiTags, ApiOperation, ApiParam, ApiBody } from '@nestjs/swagger';
 @ApiTags('Invoices')
 @ApiParam({ name: 'businessId', description: 'The ID of the business' })
 @Controller('businesses/:businessId/invoices')
-@VerifySession()
 export class InvoicesController {
   constructor(private readonly invoicesService: InvoicesService) {}
 
@@ -35,7 +33,6 @@ export class InvoicesController {
   @ApiBody({ type: UpdateInvoiceBody })
   async updateInvoice(
     @Param('invoiceId') invoiceId: string,
-    @Session('userId') userId: string,
     @Body() body: UpdateInvoiceBody,
   ) {
     return await this.invoicesService.updateInvoice(invoiceId, userId, body);
@@ -57,10 +54,7 @@ export class InvoicesController {
   @Delete(':invoiceId')
   @ApiOperation({ summary: 'Delete a specific invoice' })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
-  async deleteInvoice(
-    @Param('invoiceId') invoiceId: string,
-    @Session('userId') userId: string,
-  ) {
+  async deleteInvoice(@Param('invoiceId') invoiceId: string) {
     return await this.invoicesService.deleteInvoice(invoiceId, userId);
   }
 
@@ -70,7 +64,6 @@ export class InvoicesController {
   @ApiBody({ type: AddInvoiceItemsBody })
   async addInvoiceItems(
     @Param('invoiceId') invoiceId: string,
-    @Session('userId') userId: string,
     @Body() body: AddInvoiceItemsBody,
   ) {
     return await this.invoicesService.addInvoiceItems(invoiceId, userId, body);
@@ -79,11 +72,7 @@ export class InvoicesController {
   @Get(':invoiceId/items')
   @ApiOperation({ summary: 'Get all items for a specific invoice' })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
-  @VerifySession()
-  async getInvoiceItems(
-    @Param('invoiceId') invoiceId: string,
-    @Session('userId') userId: string,
-  ) {
+  async getInvoiceItems(@Param('invoiceId') invoiceId: string) {
     return await this.invoicesService.getInvoiceItems(invoiceId, userId);
   }
 
@@ -95,7 +84,6 @@ export class InvoicesController {
   async updateInvoiceItem(
     @Param('invoiceId') invoiceId: string,
     @Param('itemId') itemId: string,
-    @Session('userId') userId: string,
     @Body() body: UpdateInvoiceItemBody,
   ) {
     return await this.invoicesService.updateInvoiceItem(
@@ -113,7 +101,6 @@ export class InvoicesController {
   async removeInvoiceItem(
     @Param('invoiceId') invoiceId: string,
     @Param('itemId') itemId: string,
-    @Session('userId') userId: string,
   ) {
     return await this.invoicesService.removeInvoiceItem(
       invoiceId,

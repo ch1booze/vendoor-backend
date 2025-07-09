@@ -1,62 +1,57 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import {
-  SigninupUserBody,
-  UpdateUserBody,
-  VerifyUserBody,
-} from './users.types';
-import Passwordless from 'supertokens-node/recipe/passwordless';
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as argon2 from 'argon2';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { LoginUserDto, SignupUserDto } from './users.types';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
-  async signinupUser(body: SigninupUserBody) {
-    const { email, phoneNumber } = body;
+  async signup(dto: SignupUserDto) {
+    const { email, password, firstName, lastName } = dto;
 
-    const result = await Passwordless.createCode({
-      ...(email ? { email } : { phoneNumber: phoneNumber! }),
-      tenantId: 'public',
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email },
     });
-
-    console.log(JSON.stringify(result));
-
-    return result.status === 'OK';
-  }
-
-  async verifyUser(body: VerifyUserBody) {
-    const { preAuthSessionId, deviceId, userInputCode } = body;
-    const result = await Passwordless.consumeCode({
-      preAuthSessionId,
-      deviceId,
-      userInputCode,
-      tenantId: 'public',
-    });
-
-    if (result.status !== 'OK') {
-      throw new UnauthorizedException('Invalid or expired code');
+    if (existingUser) {
+      throw new ConflictException('Email is already in use.');
     }
 
-    await this.prisma.user.upsert({
-      where: { id: result.user.id },
-      create: { id: result.user.id },
-      update: {},
+    const hashedPassword = await argon2.hash(password);
+    await this.prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        firstName,
+        lastName,
+      },
     });
-
-    return true;
   }
 
-  async updateUser(userId: string, body: UpdateUserBody) {
-    const { firstName, lastName } = body;
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { firstName, lastName },
-    });
+  async login(dto: LoginUserDto) {
+    const { email, password } = dto;
 
-    return true;
-  }
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials.');
+    }
 
-  async getUser(userId: string) {
-    return await this.prisma.user.findUnique({ where: { id: userId } });
+    const isPasswordMatch = await argon2.verify(user.password, password);
+    if (!isPasswordMatch) {
+      throw new UnauthorizedException('Invalid credentials.');
+    }
+
+    const payload = { sub: user.id, email: user.email };
+    const accessToken = await this.jwtService.signAsync(payload);
+
+    return { accessToken };
   }
 }

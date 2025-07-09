@@ -13,7 +13,6 @@ import {
   GetProductsQuery,
   UpdateProductBody,
 } from './products.types';
-import { Session, VerifySession } from 'supertokens-nestjs';
 import { ProductsService } from './products.service';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 
@@ -26,10 +25,8 @@ export class ProductsController {
   @Post()
   @ApiOperation({ summary: 'Create a new product for a business' })
   @ApiBody({ type: CreateProductBody })
-  @VerifySession()
   async createProduct(
     @Param('businessId') businessId: string,
-    @Session('userId') userId: string,
     @Body() body: CreateProductBody,
   ) {
     return await this.productsService.createProduct(businessId, userId, body);
@@ -58,12 +55,10 @@ export class ProductsController {
   @ApiOperation({ summary: 'Update a specific product' })
   @ApiParam({ name: 'productId', description: 'The ID of the product' })
   @ApiBody({ type: UpdateProductBody })
-  @VerifySession()
   async updateProduct(
     @Param('businessId') businessId: string,
     @Param('productId') productId: string,
     @Body() body: UpdateProductBody,
-    @Session('userId') userId: string,
   ) {
     return await this.productsService.updateProduct(
       businessId,
@@ -76,11 +71,9 @@ export class ProductsController {
   @Delete(':productId')
   @ApiOperation({ summary: 'Delete a specific product' })
   @ApiParam({ name: 'productId', description: 'The ID of the product' })
-  @VerifySession()
   async deleteProduct(
     @Param('businessId') businessId: string,
     @Param('productId') productId: string,
-    @Session('userId') userId: string,
   ) {
     return await this.productsService.deleteProduct(
       businessId,
