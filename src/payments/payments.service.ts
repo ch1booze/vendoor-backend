@@ -1,23 +1,18 @@
-import { Groq as LlamaIndexGroq } from '@llamaindex/groq';
 import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { createWorker } from 'tesseract.js';
 import { EXTRACT_PAYMENT_DETAILS_PROMPT } from './payments.types';
+import Groq from 'groq-sdk';
+import { env } from 'src/environment';
 
 @Injectable()
 export class PaymentsService implements OnModuleInit {
-  private readonly llamaIndexGroq: LlamaIndexGroq;
+  private readonly groq: Groq;
   private tesseractWorker: Tesseract.Worker;
 
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly prisma: PrismaService,
-  ) {
-    this.llamaIndexGroq = new LlamaIndexGroq({
-      apiKey: this.configService.get<string>('GROQ_API_KEY')!,
-      model: this.configService.get<string>('GROQ_LLAMAINDEX_MODEL')!,
-    });
+  constructor(private readonly prisma: PrismaService) {
+    this.groq = new Groq({ apiKey: env.GROQ_API_KEY });
   }
 
   async onModuleInit() {
@@ -31,12 +26,12 @@ export class PaymentsService implements OnModuleInit {
       } = await this.tesseractWorker.recognize(file.buffer);
       await this.tesseractWorker.terminate();
 
-      const paymentDetails = await this.llamaIndexGroq.chat({
+      const paymentDetails = await this.groq.chat.completions.create({
         messages: [
           { role: 'system', content: EXTRACT_PAYMENT_DETAILS_PROMPT },
           { role: 'user', content: text },
         ],
-        responseFormat: { type: 'json_object' },
+        model: 'groq-llama-3-70b',
       });
       return paymentDetails;
     } else {

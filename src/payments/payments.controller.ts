@@ -24,7 +24,6 @@ import {
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
-  @Post('extract')
   @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'Extract payment details from a receipt file' })
   @ApiConsumes('multipart/form-data')
@@ -40,6 +39,7 @@ export class PaymentsController {
       },
     },
   })
+  @Post('extract')
   async extractPaymentDetails(
     @Param('businessId') businessId: string,
     @UploadedFile(

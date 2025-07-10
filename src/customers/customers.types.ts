@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsString, IsUUID } from 'class-validator';
-import { CustomerIntent } from './model/intents';
 
 export enum Platform {
   INSTAGRAM = 'Instagram',
@@ -27,7 +26,3 @@ export class CreateCustomerChatBody {
   @IsString()
   query: string;
 }
-
-
-
-export type Prompts = Record<CustomerIntent, string>;

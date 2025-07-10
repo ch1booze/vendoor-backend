@@ -9,7 +9,9 @@ datasource db {
 }
 
 model User {
-    id String @id @db.Uuid
+    id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     firstName String
     lastName  String

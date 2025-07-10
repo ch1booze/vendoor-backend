@@ -39,8 +39,14 @@ async function main() {
   await prisma.$transaction(async (tx) => {
     await tx.user.upsert({
       where: { id: demoUserId },
-      create: { id: demoUserId, firstName: 'Demo', lastName: 'User' },
-      update: { firstName: 'Demo', lastName: 'User' },
+      create: {
+        id: demoUserId,
+        firstName: 'Demo',
+        lastName: 'User',
+        password: 'demo123',
+        email: 'demo@email.com',
+      },
+      update: {},
     });
 
     await Promise.all(

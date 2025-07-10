@@ -1,36 +1,47 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CreateBusinessChatBody, CreateBusinessBody } from './businesses.types';
 import { BusinessesService } from './businesses.service';
 import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
+import { User } from 'src/auth/user.decorator';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @ApiTags('Businesses')
 @Controller('businesses')
 export class BusinessesController {
   constructor(private readonly businessesService: BusinessesService) {}
 
-  @Post()
   @ApiOperation({ summary: 'Create a new business for the authenticated user' })
   @ApiBody({ type: CreateBusinessBody })
-  async createBusiness(@Body() body: CreateBusinessBody) {
+  @Post()
+  async createBusiness(
+    @User('sub') userId: string,
+    @Body() body: CreateBusinessBody,
+  ) {
     return await this.businessesService.createBusiness(userId, body);
   }
 
-  @Get()
   @ApiOperation({
     summary: 'Get the business associated with the authenticated user',
   })
-  async getBusinesses() {
+  @UseGuards(AuthGuard)
+  @Get()
+  async getBusinesses(@User('sub') userId: string) {
     return await this.businessesService.getBusinesses(userId);
   }
 
-  @Get(':businessId')
   @ApiOperation({
     summary: 'Get the business associated with the authenticated user',
   })
-  async getBusiness(@Param('businessId') businessId: string) {
+  @UseGuards(AuthGuard)
+  @Get(':businessId')
+  async getBusiness(
+    @User('sub') userId: string,
+    @Param('businessId') businessId: string,
+  ) {
     return await this.businessesService.getBusiness(businessId, userId);
   }
 
+  @UseGuards(AuthGuard)
   @Post(':businessId/chats')
   async createBusinessChat(
     @Param('businessId') businessId: string,
@@ -39,6 +50,7 @@ export class BusinessesController {
     return await this.businessesService.createBusinessChat(businessId, body);
   }
 
+  @UseGuards(AuthGuard)
   @Get(':businessId/chats')
   async getBusinessChats(@Param('businessId') businessId: string) {
     return await this.businessesService.getBusinessChats(businessId);

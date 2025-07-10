@@ -15,6 +15,7 @@ import {
 } from './products.types';
 import { ProductsService } from './products.service';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { User } from 'src/auth/user.decorator';
 
 @ApiTags('Products')
 @ApiParam({ name: 'businessId', description: 'The ID of the business' })
@@ -22,10 +23,11 @@ import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Post()
   @ApiOperation({ summary: 'Create a new product for a business' })
   @ApiBody({ type: CreateProductBody })
+  @Post()
   async createProduct(
+    @User('sub') userId: string,
     @Param('businessId') businessId: string,
     @Body() body: CreateProductBody,
   ) {
@@ -51,11 +53,12 @@ export class ProductsController {
     return await this.productsService.getProduct(businessId, productId);
   }
 
-  @Put(':productId')
   @ApiOperation({ summary: 'Update a specific product' })
   @ApiParam({ name: 'productId', description: 'The ID of the product' })
   @ApiBody({ type: UpdateProductBody })
+  @Put(':productId')
   async updateProduct(
+    @User('sub') userId: string,
     @Param('businessId') businessId: string,
     @Param('productId') productId: string,
     @Body() body: UpdateProductBody,
@@ -68,10 +71,11 @@ export class ProductsController {
     );
   }
 
-  @Delete(':productId')
   @ApiOperation({ summary: 'Delete a specific product' })
   @ApiParam({ name: 'productId', description: 'The ID of the product' })
+  @Delete(':productId')
   async deleteProduct(
+    @User('sub') userId: string,
     @Param('businessId') businessId: string,
     @Param('productId') productId: string,
   ) {
