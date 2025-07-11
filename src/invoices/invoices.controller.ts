@@ -14,9 +14,16 @@ import {
   UpdateInvoiceBody,
   UpdateInvoiceItemBody,
 } from './invoices.types';
-import { ApiTags, ApiOperation, ApiParam, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiParam,
+  ApiBody,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { User } from 'src/auth/user.decorator';
+import { Invoice } from 'src/entities/invoice.entity';
 
 @ApiTags('Invoices')
 @ApiParam({ name: 'businessId', description: 'The ID of the business' })
@@ -25,6 +32,17 @@ import { User } from 'src/auth/user.decorator';
 export class InvoicesController {
   constructor(private readonly invoicesService: InvoicesService) {}
 
+  @ApiOperation({ summary: 'Create a new blank invoice' })
+  @ApiParam({
+    name: 'businessId',
+    description: 'The ID of the business to create the invoice for',
+    type: String,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Invoice successfully created',
+    type: Invoice,
+  })
   @Post()
   @ApiOperation({ summary: 'Create a new blank invoice' })
   async createInvoice(@Param('businessId') businessId: string) {
