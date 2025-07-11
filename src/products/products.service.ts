@@ -3,20 +3,37 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import {
   CreateProductBody,
   GetProductsQuery,
   UpdateProductBody,
 } from './products.types';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Product } from '../entities/product.entity';
+import { Business } from '../entities/business.entity';
+import {
+  Repository,
+  DataSource,
+  FindManyOptions,
+  ILike,
+  MoreThanOrEqual,
+  LessThanOrEqual,
+} from 'typeorm';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
+    @InjectRepository(Business)
+    private readonly businessRepository: Repository<Business>,
+    private readonly dataSource: DataSource,
+  ) {}
 
   private async verifyBusinessOwnership(businessId: string, userId: string) {
-    const business = await this.prisma.business.findFirst({
-      where: { id: businessId, userId },
+    const business = await this.businessRepository.findOneBy({
+      id: businessId,
+      userId,
     });
 
     if (!business) {
@@ -33,38 +50,44 @@ export class ProductsService {
   ) {
     await this.verifyBusinessOwnership(businessId, userId);
 
-    return await this.prisma.product.create({
-      data: {
-        name: body.name,
-        description: body.description,
-        price: body.price,
-        unit: body.unit,
-        category: body.category,
-        business: { connect: { id: businessId } },
-      },
+    const newProduct = this.productRepository.create({
+      ...body,
+      businessId,
     });
+
+    return this.productRepository.save(newProduct);
   }
 
   async getProducts(businessId: string, query: GetProductsQuery) {
-    return await this.prisma.product.findMany({
-      where: {
-        businessId,
-        isActive: true,
-        name: { contains: query.name },
-        category: { contains: query.category },
-        price: { gte: String(query.priceMin), lte: String(query.priceMax) },
-      },
-      orderBy: { createdAt: 'desc' },
+    const where: FindManyOptions<Product>['where'] = {
+      businessId,
+      isActive: true,
+    };
+
+    if (query.name) {
+      where.name = ILike(`%${query.name}%`);
+    }
+    if (query.category) {
+      where.category = ILike(`%${query.category}%`);
+    }
+    if (query.priceMin) {
+      where.price = MoreThanOrEqual(String(query.priceMin));
+    }
+    if (query.priceMax) {
+      where.price = LessThanOrEqual(String(query.priceMax));
+    }
+
+    return this.productRepository.find({
+      where,
+      order: { createdAt: 'DESC' },
     });
   }
 
   async getProduct(businessId: string, productId: string) {
-    const product = await this.prisma.product.findFirst({
-      where: {
-        id: productId,
-        businessId,
-        isActive: true,
-      },
+    const product = await this.productRepository.findOneBy({
+      id: productId,
+      businessId,
+      isActive: true,
     });
 
     if (!product) {
@@ -82,95 +105,84 @@ export class ProductsService {
   ) {
     await this.verifyBusinessOwnership(businessId, userId);
 
-    const existingProduct = await this.prisma.product.findFirst({
+    const existingProduct = await this.productRepository.findOne({
       where: {
         id: productId,
         businessId,
         isActive: true,
       },
-      include: {
-        invoiceItems: true,
-      },
+      relations: ['invoiceItems'],
     });
 
     if (!existingProduct) {
       throw new NotFoundException('Product not found');
     }
 
-    // Check if product has been purchased (has invoice items)
     const hasInvoiceItems = existingProduct.invoiceItems.length > 0;
     if (!hasInvoiceItems) {
-      // Product hasn't been used in invoices, safe to update directly
-      const updatedProduct = await this.prisma.product.update({
-        where: { id: productId },
-        data: {
-          name: body.name ?? existingProduct.name,
-          description: body.description ?? existingProduct.description,
-          price: body.price ?? existingProduct.price,
-          unit: body.unit ?? existingProduct.unit,
-          category: body.category ?? existingProduct.category,
-        },
-      });
-
+      const updatedProduct = this.productRepository.merge(
+        existingProduct,
+        body,
+      );
+      await this.productRepository.save(updatedProduct);
       return {
         product: updatedProduct,
         wasCloned: false,
         message: 'Product updated successfully',
       };
     } else {
-      // Product has been used, create a new version and deactivate the old one
-      const [newProduct] = await this.prisma.$transaction([
-        this.prisma.product.create({
-          data: {
-            name: body.name ?? existingProduct.name,
-            description: body.description ?? existingProduct.description,
-            price: body.price ?? existingProduct.price,
-            unit: body.unit ?? existingProduct.unit,
-            category: body.category ?? existingProduct.category,
-            business: { connect: { id: businessId } },
-          },
-        }),
+      return this.dataSource.transaction(async (transactionalEntityManager) => {
+        const newProductEntity = transactionalEntityManager.create(Product, {
+          name: body.name ?? existingProduct.name,
+          description: body.description ?? existingProduct.description,
+          price: body.price ?? existingProduct.price,
+          unit: body.unit ?? existingProduct.unit,
+          category: body.category ?? existingProduct.category,
+          businessId: businessId,
+        });
+        const newProduct =
+          await transactionalEntityManager.save(newProductEntity);
 
-        // Deactivate the old product (don't delete to preserve invoice history)
-        this.prisma.product.update({
-          where: { id: productId },
-          data: { isActive: false },
-        }),
-      ]);
+        await transactionalEntityManager.update(Product, productId, {
+          isActive: false,
+        });
 
-      return {
-        product: newProduct,
-        wasCloned: true,
-        message:
-          'Product has been used in invoices. A new version has been created.',
-      };
+        return {
+          product: newProduct,
+          wasCloned: true,
+          message:
+            'Product has been used in invoices. A new version has been created.',
+        };
+      });
     }
   }
 
   async deleteProduct(businessId: string, productId: string, userId: string) {
     await this.verifyBusinessOwnership(businessId, userId);
 
-    return await this.prisma.$transaction(async (tx) => {
-      const existingProduct = await tx.product.findUnique({
-        where: { id: productId },
-        include: {
-          invoiceItems: true,
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const existingProduct = await transactionalEntityManager.findOne(
+        Product,
+        {
+          where: { id: productId, businessId },
+          relations: ['invoiceItems'],
         },
-      });
+      );
 
       if (!existingProduct) {
         throw new NotFoundException('Product not found');
       }
 
       if (existingProduct.invoiceItems.length > 0) {
-        return await tx.product.update({
-          where: { id: productId },
-          data: { isActive: false },
+        await transactionalEntityManager.update(Product, productId, {
+          isActive: false,
         });
+        return {
+          message: 'Product has been deactivated due to usage in invoices.',
+        };
       } else {
-        return await tx.product.delete({
-          where: { id: productId },
-        });
+        await transactionalEntityManager.delete(Product, { id: productId });
+        return { message: 'Product deleted successfully.' };
       }
     });
   }

@@ -4,44 +4,37 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import {
   UpdateInvoiceBody,
   AddInvoiceItemsBody,
   UpdateInvoiceItemBody,
   InvoiceStatus,
 } from './invoices.types';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Invoice } from '../entities/invoice.entity';
+import { InvoiceItem } from '../entities/invoice-item.entity';
+import { Product } from '../entities/product.entity';
+import { Repository, In, DataSource } from 'typeorm';
 
 @Injectable()
 export class InvoicesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @InjectRepository(Invoice)
+    private readonly invoiceRepository: Repository<Invoice>,
+    @InjectRepository(InvoiceItem)
+    private readonly invoiceItemRepository: Repository<InvoiceItem>,
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
+    private readonly dataSource: DataSource,
+  ) {}
 
   private async verifyInvoiceAccess(invoiceId: string, userId: string) {
-    const invoice = await this.prisma.invoice.findFirst({
-      where: {
-        id: invoiceId,
-        items: {
-          some: {
-            product: {
-              business: {
-                userId,
-              },
-            },
-          },
-        },
-      },
-      include: {
-        items: {
-          include: {
-            product: {
-              include: {
-                business: true,
-              },
-            },
-          },
-        },
-      },
-    });
+    const invoice = await this.invoiceRepository
+      .createQueryBuilder('invoice')
+      .innerJoin('invoice.business', 'business')
+      .where('invoice.id = :invoiceId', { invoiceId })
+      .andWhere('business.userId = :userId', { userId })
+      .getOne();
 
     if (!invoice) {
       throw new ForbiddenException('You do not have access to this invoice');
@@ -51,60 +44,35 @@ export class InvoicesService {
   }
 
   async createInvoice(businessId: string) {
-    const newInvoice = await this.prisma.invoice.create({
-      data: { businessId, status: InvoiceStatus.DRAFTED },
+    const newInvoiceEntity = this.invoiceRepository.create({
+      businessId,
+      status: InvoiceStatus.DRAFTED,
     });
-    return newInvoice;
+    return this.invoiceRepository.save(newInvoiceEntity);
   }
 
   async getInvoices(businessId: string) {
-    return await this.prisma.invoice.findMany({
+    return this.invoiceRepository.find({
       where: { businessId },
-      include: {
+      relations: {
         items: {
-          include: {
-            product: {
-              select: {
-                id: true,
-                name: true,
-                price: true,
-                unit: true,
-                category: true,
-              },
-            },
-          },
+          product: true,
         },
         payment: true,
       },
-      orderBy: { createdAt: 'desc' },
+      order: { createdAt: 'DESC' },
     });
   }
 
   async getInvoice(invoiceId: string) {
-    return await this.prisma.invoice.findUnique({
+    return this.invoiceRepository.findOne({
       where: { id: invoiceId },
-      include: {
+      relations: {
         items: {
-          include: {
-            product: {
-              select: {
-                id: true,
-                name: true,
-                description: true,
-                price: true,
-                unit: true,
-                category: true,
-                business: {
-                  select: {
-                    id: true,
-                    name: true,
-                  },
-                },
-              },
-            },
-          },
+          product: true,
         },
         payment: true,
+        business: true,
       },
     });
   }
@@ -120,10 +88,8 @@ export class InvoicesService {
       throw new BadRequestException('Cannot update reconciled invoice');
     }
 
-    return await this.prisma.invoice.update({
-      where: { id: invoiceId },
-      data: { status: body.status },
-    });
+    invoice.status = body.status;
+    return this.invoiceRepository.save(invoice);
   }
 
   async deleteInvoice(userId: string, invoiceId: string) {
@@ -133,10 +99,7 @@ export class InvoicesService {
       throw new BadRequestException('Cannot delete reconciled invoice');
     }
 
-    await this.prisma.invoice.delete({
-      where: { id: invoiceId },
-    });
-
+    await this.invoiceRepository.delete(invoiceId);
     return { message: 'Invoice deleted successfully' };
   }
 
@@ -151,45 +114,38 @@ export class InvoicesService {
       throw new BadRequestException('Cannot modify reconciled invoice');
     }
 
-    return await this.prisma.$transaction(async (tx) => {
-      const products = await tx.product.findMany({
-        where: {
-          id: { in: body.items.map((item) => item.productId) },
-          isActive: true,
-        },
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const productIds = body.items.map((item) => item.productId);
+      const products = await transactionalEntityManager.find(Product, {
+        where: { id: In(productIds), isActive: true },
       });
 
       if (products.length !== body.items.length) {
-        throw new BadRequestException('One or more products are invalid');
+        throw new BadRequestException(
+          'One or more products are invalid or inactive',
+        );
       }
 
-      await tx.invoiceItem.deleteMany({ where: { invoiceId } });
-      return await tx.invoiceItem.createMany({
-        data: body.items.map((item) => ({
+      await transactionalEntityManager.delete(InvoiceItem, { invoiceId });
+
+      const newItems = body.items.map((item) =>
+        transactionalEntityManager.create(InvoiceItem, {
           invoiceId,
           productId: item.productId,
           quantity: item.quantity,
-        })),
-      });
+        }),
+      );
+      return transactionalEntityManager.save(newItems);
     });
   }
 
   async getInvoiceItems(userId: string, invoiceId: string) {
     await this.verifyInvoiceAccess(invoiceId, userId);
 
-    return await this.prisma.invoiceItem.findMany({
+    return this.invoiceItemRepository.find({
       where: { invoiceId },
-      include: {
-        product: {
-          select: {
-            id: true,
-            name: true,
-            description: true,
-            price: true,
-            unit: true,
-            category: true,
-          },
-        },
+      relations: {
+        product: true,
       },
     });
   }
@@ -206,34 +162,17 @@ export class InvoicesService {
       throw new BadRequestException('Cannot modify reconciled invoice');
     }
 
-    const invoiceItem = await this.prisma.invoiceItem.findFirst({
-      where: {
-        id: itemId,
-        invoiceId,
-      },
+    const invoiceItem = await this.invoiceItemRepository.findOneBy({
+      id: itemId,
+      invoiceId,
     });
 
     if (!invoiceItem) {
       throw new NotFoundException('Invoice item not found');
     }
 
-    const updatedItem = await this.prisma.invoiceItem.update({
-      where: { id: itemId },
-      data: { quantity: body.quantity },
-      include: {
-        product: {
-          select: {
-            id: true,
-            name: true,
-            price: true,
-            unit: true,
-            category: true,
-          },
-        },
-      },
-    });
-
-    return updatedItem;
+    invoiceItem.quantity = body.quantity;
+    return this.invoiceItemRepository.save(invoiceItem);
   }
 
   async removeInvoiceItem(invoiceId: string, itemId: string, userId: string) {
@@ -243,19 +182,15 @@ export class InvoicesService {
       throw new BadRequestException('Cannot modify reconciled invoice');
     }
 
-    const invoiceItem = await this.prisma.invoiceItem.findFirst({
-      where: {
-        id: itemId,
-        invoiceId,
-      },
+    const result = await this.invoiceItemRepository.delete({
+      id: itemId,
+      invoiceId,
     });
 
-    if (!invoiceItem) {
+    if (result.affected === 0) {
       throw new NotFoundException('Invoice item not found');
     }
 
-    return await this.prisma.invoiceItem.delete({
-      where: { id: itemId },
-    });
+    return { message: 'Invoice item removed successfully' };
   }
 }

@@ -3,43 +3,47 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import * as argon2 from 'argon2';
-import { LoginUserDto } from './auth.types';
+import { LoginUserBody, SignupUserBody } from './auth.types';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly prisma: PrismaService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
   ) {}
 
-  async signup(dto: any) {
-    const { email, password, firstName, lastName } = dto;
+  async signup(body: SignupUserBody) {
+    const { email, password, firstName, lastName } = body;
 
-    const existingUser = await this.prisma.user.findUnique({
-      where: { email: dto.email },
-    });
+    const existingUser = await this.userRepository.findOneBy({ email });
     if (existingUser) {
-      throw new ConflictException('User already exists');
+      throw new ConflictException('User with this email already exists');
     }
 
     const hashedPassword = await argon2.hash(password);
-    await this.prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        firstName,
-        lastName,
-      },
+    const newUser = this.userRepository.create({
+      email,
+      password: hashedPassword,
+      firstName,
+      lastName,
     });
+
+    const savedUser = await this.userRepository.save(newUser);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...result } = savedUser;
+    return result;
   }
 
-  async login(dto: LoginUserDto) {
-    const { email, password } = dto;
+  async login(body: LoginUserBody) {
+    const { email, password } = body;
 
-    const user = await this.prisma.user.findUnique({ where: { email } });
+    const user = await this.userRepository.findOneBy({ email });
     if (!user) {
       throw new UnauthorizedException('Invalid credentials.');
     }

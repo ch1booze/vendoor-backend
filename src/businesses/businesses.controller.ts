@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CreateBusinessChatBody, CreateBusinessBody } from './businesses.types';
 import { BusinessesService } from './businesses.service';
-import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { User } from 'src/auth/user.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
 
@@ -12,6 +12,10 @@ export class BusinessesController {
 
   @ApiOperation({ summary: 'Create a new business for the authenticated user' })
   @ApiBody({ type: CreateBusinessBody })
+  @ApiResponse({
+    status: 201,
+    description: 'Business successfully created',
+  })
   @Post()
   async createBusiness(
     @User('sub') userId: string,
