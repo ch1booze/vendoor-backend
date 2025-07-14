@@ -34,8 +34,9 @@ export class ProductsController {
     return await this.productsService.createProduct(businessId, userId, body);
   }
 
-  @Get()
+  @ApiTags('Customer-Agent')
   @ApiOperation({ summary: 'Get all products for a business' })
+  @Get()
   async getProducts(
     @Param('businessId') businessId: string,
     @Query() query: GetProductsQuery,
@@ -43,9 +44,10 @@ export class ProductsController {
     return await this.productsService.getProducts(businessId, query);
   }
 
-  @Get(':productId')
+  @ApiTags('Customer-Agent')
   @ApiOperation({ summary: 'Get a specific product by its ID' })
   @ApiParam({ name: 'productId', description: 'The ID of the product' })
+  @Get(':productId')
   async getProduct(
     @Param('businessId') businessId: string,
     @Param('productId') productId: string,

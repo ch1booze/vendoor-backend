@@ -32,6 +32,7 @@ import { Invoice } from 'src/entities/invoice.entity';
 export class InvoicesController {
   constructor(private readonly invoicesService: InvoicesService) {}
 
+  @ApiTags("Customer-Agent")
   @ApiOperation({ summary: 'Create a new blank invoice' })
   @ApiParam({
     name: 'businessId',
@@ -49,6 +50,7 @@ export class InvoicesController {
     return await this.invoicesService.createInvoice(businessId);
   }
 
+  @ApiTags("Customer-Agent")
   @ApiOperation({ summary: "Update an invoice's details" })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
   @ApiBody({ type: UpdateInvoiceBody })

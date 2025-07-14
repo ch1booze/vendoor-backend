@@ -18,7 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-@ApiTags('Payments')
+@ApiTags('Payments', 'Customer-Agent')
 @ApiParam({ name: 'businessId', description: 'The ID of the business' })
 @Controller('businesses/:businessId/payments')
 export class PaymentsController {
