@@ -32,8 +32,11 @@ import { Invoice } from 'src/entities/invoice.entity';
 export class InvoicesController {
   constructor(private readonly invoicesService: InvoicesService) {}
 
-  @ApiTags("Customer-Agent")
-  @ApiOperation({ summary: 'Create a new blank invoice' })
+  @ApiTags('Customer-Agent')
+  @ApiOperation({
+    operationId: 'createInvoice',
+    summary: 'Create a new blank invoice',
+  })
   @ApiParam({
     name: 'businessId',
     description: 'The ID of the business to create the invoice for',
@@ -50,8 +53,11 @@ export class InvoicesController {
     return await this.invoicesService.createInvoice(businessId);
   }
 
-  @ApiTags("Customer-Agent")
-  @ApiOperation({ summary: "Update an invoice's details" })
+  @ApiTags('Customer-Agent')
+  @ApiOperation({
+    operationId: 'updateInvoice',
+    summary: "Update an invoice's details",
+  })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
   @ApiBody({ type: UpdateInvoiceBody })
   @Post(':invoiceId')
@@ -63,20 +69,29 @@ export class InvoicesController {
     return await this.invoicesService.updateInvoice(invoiceId, userId, body);
   }
 
-  @ApiOperation({ summary: 'Get all invoices for a business' })
+  @ApiOperation({
+    operationId: 'getInvoices',
+    summary: 'Get all invoices for a business',
+  })
   @Get()
   async getInvoices(@Param('businessId') businessId: string) {
     return await this.invoicesService.getInvoices(businessId);
   }
 
-  @Get(':invoiceId')
-  @ApiOperation({ summary: 'Get a specific invoice by its ID' })
+  @ApiOperation({
+    operationId: 'getInvoice',
+    summary: 'Get a specific invoice by its ID',
+  })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
+  @Get(':invoiceId')
   async getInvoice(@Param('invoiceId') invoiceId: string) {
     return await this.invoicesService.getInvoice(invoiceId);
   }
 
-  @ApiOperation({ summary: 'Delete a specific invoice' })
+  @ApiOperation({
+    operationId: 'deleteInvoice',
+    summary: 'Delete a specific invoice',
+  })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
   @Delete(':invoiceId')
   async deleteInvoice(
@@ -86,7 +101,10 @@ export class InvoicesController {
     return await this.invoicesService.deleteInvoice(invoiceId, userId);
   }
 
-  @ApiOperation({ summary: 'Add one or more items to an invoice' })
+  @ApiOperation({
+    operationId: 'addInvoiceItems',
+    summary: 'Add one or more items to an invoice',
+  })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
   @ApiBody({ type: AddInvoiceItemsBody })
   @Post(':invoiceId/items')
@@ -98,7 +116,10 @@ export class InvoicesController {
     return await this.invoicesService.addInvoiceItems(invoiceId, userId, body);
   }
 
-  @ApiOperation({ summary: 'Get all items for a specific invoice' })
+  @ApiOperation({
+    operationId: 'getInvoiceItems',
+    summary: 'Get all items for a specific invoice',
+  })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
   @Get(':invoiceId/items')
   async getInvoiceItems(
@@ -108,7 +129,10 @@ export class InvoicesController {
     return await this.invoicesService.getInvoiceItems(invoiceId, userId);
   }
 
-  @ApiOperation({ summary: 'Update a specific item on an invoice' })
+  @ApiOperation({
+    operationId: 'updateInvoiceItem',
+    summary: 'Update a specific item on an invoice',
+  })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
   @ApiParam({ name: 'itemId', description: 'The ID of the invoice item' })
   @ApiBody({ type: UpdateInvoiceItemBody })
@@ -127,7 +151,10 @@ export class InvoicesController {
     );
   }
 
-  @ApiOperation({ summary: 'Remove a specific item from an invoice' })
+  @ApiOperation({
+    operationId: 'removeInvoiceItem',
+    summary: 'Remove a specific item from an invoice',
+  })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
   @ApiParam({ name: 'itemId', description: 'The ID of the invoice item' })
   @Delete(':invoiceId/items/:itemId')

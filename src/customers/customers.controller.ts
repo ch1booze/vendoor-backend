@@ -20,6 +20,7 @@ export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 
   @ApiOperation({
+    operationId: 'createCustomer',
     summary: 'Create a new customer for the authenticated user',
   })
   @ApiBody({ type: CreateCustomerBody })
@@ -33,7 +34,10 @@ export class CustomersController {
     return this.customersService.createCustomer(createCustomerBody);
   }
 
-  @ApiOperation({ summary: 'Create a new chat for a customer' })
+  @ApiOperation({
+    operationId: 'createCustomerChat',
+    summary: 'Create a new chat for a customer',
+  })
   @ApiBody({ type: CreateCustomerChatBody })
   @ApiResponse({
     status: 201,
@@ -49,6 +53,7 @@ export class CustomersController {
   }
 
   @ApiOperation({
+    operationId: 'getCustomerChats',
     summary: 'Get all chats for a specific customer and business',
   })
   @ApiParam({

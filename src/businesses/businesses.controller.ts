@@ -18,7 +18,10 @@ import { BusinessChat } from 'src/entities/business-chat.entity';
 export class BusinessesController {
   constructor(private readonly businessesService: BusinessesService) {}
 
-  @ApiOperation({ summary: 'Create a new business for the authenticated user' })
+  @ApiOperation({
+    operationId: 'createBusiness',
+    summary: 'Create a new business for the authenticated user',
+  })
   @ApiBody({ type: CreateBusinessBody })
   @ApiResponse({
     status: 201,
@@ -34,6 +37,7 @@ export class BusinessesController {
   }
 
   @ApiOperation({
+    operationId: 'getBusinesses',
     summary: 'Get the business associated with the authenticated user',
   })
   @ApiResponse({
@@ -48,6 +52,7 @@ export class BusinessesController {
   }
 
   @ApiOperation({
+    operationId: 'getBusiness',
     summary: 'Get the business associated with the authenticated user',
   })
   @ApiParam({
@@ -71,6 +76,7 @@ export class BusinessesController {
   }
 
   @ApiOperation({
+    operationId: 'createBusinessChat',
     summary: 'Create a new business chat for a specific business',
   })
   @ApiParam({
@@ -94,6 +100,7 @@ export class BusinessesController {
   }
 
   @ApiOperation({
+    operationId: 'getBusinessChats',
     summary: 'Get all business chats for a specific business',
   })
   @ApiParam({

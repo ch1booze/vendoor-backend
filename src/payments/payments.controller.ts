@@ -25,7 +25,10 @@ export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @UseInterceptors(FileInterceptor('file'))
-  @ApiOperation({ summary: 'Extract payment details from a receipt file' })
+  @ApiOperation({
+    operationId: 'extractPaymentDetails',
+    summary: 'Extract payment details from a receipt file',
+  })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'A receipt file (PDF, JPEG, PNG, etc.) up to 5MB',

@@ -9,7 +9,10 @@ import { User } from 'src/entities/user.entity';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @ApiOperation({ summary: 'Register a new user' })
+  @ApiOperation({
+    operationId: 'signup',
+    summary: 'Register a new user',
+  })
   @ApiBody({ type: SignupUserBody })
   @ApiResponse({
     status: 201,
@@ -22,7 +25,10 @@ export class AuthController {
     return await this.authService.signup(body);
   }
 
-  @ApiOperation({ summary: 'Authenticate a user and return tokens' })
+  @ApiOperation({
+    operationId: 'login',
+    summary: 'Authenticate a user and return tokens',
+  })
   @ApiBody({ type: LoginUserBody })
   @ApiResponse({
     status: 200,

@@ -23,7 +23,10 @@ import { User } from 'src/auth/user.decorator';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @ApiOperation({ summary: 'Create a new product for a business' })
+  @ApiOperation({
+    operationId: 'createProduct',
+    summary: 'Create a new product for a business',
+  })
   @ApiBody({ type: CreateProductBody })
   @Post()
   async createProduct(
@@ -35,7 +38,10 @@ export class ProductsController {
   }
 
   @ApiTags('Customer-Agent')
-  @ApiOperation({ summary: 'Get all products for a business' })
+  @ApiOperation({
+    operationId: 'getProducts',
+    summary: 'Get all products for a business',
+  })
   @Get()
   async getProducts(
     @Param('businessId') businessId: string,
@@ -45,7 +51,10 @@ export class ProductsController {
   }
 
   @ApiTags('Customer-Agent')
-  @ApiOperation({ summary: 'Get a specific product by its ID' })
+  @ApiOperation({
+    operationId: 'getProduct',
+    summary: 'Get a specific product by its ID',
+  })
   @ApiParam({ name: 'productId', description: 'The ID of the product' })
   @Get(':productId')
   async getProduct(
@@ -55,7 +64,10 @@ export class ProductsController {
     return await this.productsService.getProduct(businessId, productId);
   }
 
-  @ApiOperation({ summary: 'Update a specific product' })
+  @ApiOperation({
+    operationId: 'updateProduct',
+    summary: 'Update a specific product',
+  })
   @ApiParam({ name: 'productId', description: 'The ID of the product' })
   @ApiBody({ type: UpdateProductBody })
   @Put(':productId')
@@ -73,7 +85,10 @@ export class ProductsController {
     );
   }
 
-  @ApiOperation({ summary: 'Delete a specific product' })
+  @ApiOperation({
+    operationId: 'deleteProduct',
+    summary: 'Delete a specific product',
+  })
   @ApiParam({ name: 'productId', description: 'The ID of the product' })
   @Delete(':productId')
   async deleteProduct(
