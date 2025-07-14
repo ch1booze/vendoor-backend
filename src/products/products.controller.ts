@@ -14,8 +14,15 @@ import {
   UpdateProductBody,
 } from './products.types';
 import { ProductsService } from './products.service';
-import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { User } from 'src/auth/user.decorator';
+import { Product } from 'src/entities/product.entity';
 
 @ApiTags('Products')
 @ApiParam({ name: 'businessId', description: 'The ID of the business' })
@@ -28,6 +35,11 @@ export class ProductsController {
     summary: 'Create a new product for a business',
   })
   @ApiBody({ type: CreateProductBody })
+  @ApiResponse({
+    status: 201,
+    description: 'Product successfully created',
+    type: Product,
+  })
   @Post()
   async createProduct(
     @User('sub') userId: string,
@@ -41,6 +53,11 @@ export class ProductsController {
   @ApiOperation({
     operationId: 'getProducts',
     summary: 'Get all products for a business',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Products successfully retrieved',
+    type: [Product],
   })
   @Get()
   async getProducts(
@@ -56,6 +73,11 @@ export class ProductsController {
     summary: 'Get a specific product by its ID',
   })
   @ApiParam({ name: 'productId', description: 'The ID of the product' })
+  @ApiResponse({
+    status: 200,
+    description: 'Product successfully retrieved',
+    type: Product,
+  })
   @Get(':productId')
   async getProduct(
     @Param('businessId') businessId: string,
@@ -70,6 +92,11 @@ export class ProductsController {
   })
   @ApiParam({ name: 'productId', description: 'The ID of the product' })
   @ApiBody({ type: UpdateProductBody })
+  @ApiResponse({
+    status: 200,
+    description: 'Product successfully updated',
+    type: Product,
+  })
   @Put(':productId')
   async updateProduct(
     @User('sub') userId: string,
@@ -90,6 +117,11 @@ export class ProductsController {
     summary: 'Delete a specific product',
   })
   @ApiParam({ name: 'productId', description: 'The ID of the product' })
+  @ApiResponse({
+    status: 204,
+    type: Product,
+    description: 'Product successfully deleted',
+  })
   @Delete(':productId')
   async deleteProduct(
     @User('sub') userId: string,

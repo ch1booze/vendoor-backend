@@ -24,6 +24,7 @@ import {
 import { AuthGuard } from 'src/auth/auth.guard';
 import { User } from 'src/auth/user.decorator';
 import { Invoice } from 'src/entities/invoice.entity';
+import { InvoiceItem } from 'src/entities/invoice-item.entity';
 
 @ApiTags('Invoices')
 @ApiParam({ name: 'businessId', description: 'The ID of the business' })
@@ -60,7 +61,12 @@ export class InvoicesController {
   })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
   @ApiBody({ type: UpdateInvoiceBody })
-  @Post(':invoiceId')
+  @ApiResponse({
+    status: 200,
+    description: 'Invoice successfully updated',
+    type: Invoice,
+  })
+  @Put(':invoiceId')
   async updateInvoice(
     @User('sub') userId: string,
     @Param('invoiceId') invoiceId: string,
@@ -73,6 +79,11 @@ export class InvoicesController {
     operationId: 'getInvoices',
     summary: 'Get all invoices for a business',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Invoices successfully retrieved',
+    type: [Invoice],
+  })
   @Get()
   async getInvoices(@Param('businessId') businessId: string) {
     return await this.invoicesService.getInvoices(businessId);
@@ -83,6 +94,11 @@ export class InvoicesController {
     summary: 'Get a specific invoice by its ID',
   })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
+  @ApiResponse({
+    status: 200,
+    description: 'Invoice successfully retrieved',
+    type: Invoice,
+  })
   @Get(':invoiceId')
   async getInvoice(@Param('invoiceId') invoiceId: string) {
     return await this.invoicesService.getInvoice(invoiceId);
@@ -93,6 +109,11 @@ export class InvoicesController {
     summary: 'Delete a specific invoice',
   })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
+  @ApiResponse({
+    status: 204,
+    description: 'Invoice successfully deleted',
+    type: Invoice,
+  })
   @Delete(':invoiceId')
   async deleteInvoice(
     @User('sub') userId: string,
@@ -107,6 +128,12 @@ export class InvoicesController {
   })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
   @ApiBody({ type: AddInvoiceItemsBody })
+  @ApiResponse({
+    status: 201,
+    description: 'Invoice items successfully added',
+    type: [InvoiceItem],
+  })
+  @UseGuards(AuthGuard)
   @Post(':invoiceId/items')
   async addInvoiceItems(
     @User('sub') userId: string,
@@ -121,6 +148,11 @@ export class InvoicesController {
     summary: 'Get all items for a specific invoice',
   })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
+  @ApiResponse({
+    status: 200,
+    description: 'Invoice items successfully retrieved',
+    type: [InvoiceItem],
+  })
   @Get(':invoiceId/items')
   async getInvoiceItems(
     @User('sub') userId: string,
@@ -136,6 +168,11 @@ export class InvoicesController {
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
   @ApiParam({ name: 'itemId', description: 'The ID of the invoice item' })
   @ApiBody({ type: UpdateInvoiceItemBody })
+  @ApiResponse({
+    status: 200,
+    description: 'Invoice item successfully updated',
+    type: InvoiceItem,
+  })
   @Put(':invoiceId/items/:itemId')
   async updateInvoiceItem(
     @User('sub') userId: string,
@@ -157,6 +194,11 @@ export class InvoicesController {
   })
   @ApiParam({ name: 'invoiceId', description: 'The ID of the invoice' })
   @ApiParam({ name: 'itemId', description: 'The ID of the invoice item' })
+  @ApiResponse({
+    status: 204,
+    description: 'Invoice item successfully removed',
+    type: InvoiceItem,
+  })
   @Delete(':invoiceId/items/:itemId')
   async removeInvoiceItem(
     @User('sub') userId: string,
