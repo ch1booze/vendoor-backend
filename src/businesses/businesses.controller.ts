@@ -25,6 +25,7 @@ export class BusinessesController {
   @ApiBody({ type: CreateBusinessBody })
   @ApiResponse({
     status: 201,
+    
     description: 'Business successfully created',
     type: Business,
   })
