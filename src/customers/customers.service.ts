@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Customer } from '../entities/customer.entity';
 import { CustomerChat } from '../entities/customer-chat.entity';
 import { Repository } from 'typeorm';
-import { McpClient } from './customers.agent';
 
 @Injectable()
 export class CustomersService {
@@ -15,7 +14,6 @@ export class CustomersService {
     @InjectRepository(CustomerChat)
     private readonly customerChatRepository: Repository<CustomerChat>,
     private readonly httpService: HttpService,
-    private readonly customerAgent: McpClient,
   ) {}
 
   async createCustomer(body: CreateCustomerBody) {
@@ -26,7 +24,6 @@ export class CustomersService {
   async createCustomerChat(customerId: string, body: CreateCustomerChatBody) {
     const { businessId, query } = body;
     const reply = 'REPLY HERE';
-    await this.customerAgent.listTools();
 
     if (reply) {
       const newChat = this.customerChatRepository.create({
