@@ -5,16 +5,21 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Customer } from '../entities/customer.entity';
 import { CustomerChat } from '../entities/customer-chat.entity';
 import { Repository } from 'typeorm';
+import { McpClient } from './customers.agent';
 
 @Injectable()
 export class CustomersService {
+  private readonly mcpClient: McpClient;
+
   constructor(
     @InjectRepository(Customer)
     private readonly customerRepository: Repository<Customer>,
     @InjectRepository(CustomerChat)
     private readonly customerChatRepository: Repository<CustomerChat>,
     private readonly httpService: HttpService,
-  ) {}
+  ) {
+    this.mcpClient = new McpClient();
+  }
 
   async createCustomer(body: CreateCustomerBody) {
     const newCustomer = this.customerRepository.create(body);
