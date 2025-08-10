@@ -1,14 +1,15 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-import { Tool } from '@modelcontextprotocol/sdk/types';
+import { Tool, Prompt } from '@modelcontextprotocol/sdk/types';
 import Groq from 'groq-sdk';
 import { env } from 'src/environment';
 
 export class McpClient {
   private mcp: Client;
   private groq: Groq;
-  private transport: StreamableHTTPClientTransport | null = null;
+  private transport: StreamableHTTPClientTransport;
   private tools: Tool[] = [];
+  private prompts: Prompt[] = [];
 
   constructor() {
     this.mcp = new Client({ name: 'Customer-Agent', version: '1.0.0' });
@@ -17,11 +18,13 @@ export class McpClient {
     this.transport = new StreamableHTTPClientTransport(mcpServerUrl);
   }
 
-  async connectToServer() {}
+  async connectToServer() {
+    this.mcp.connect(this.transport);
+    const tools = await this.mcp.listTools();
+    const prompts = await this.mcp.listPrompts();
 
-  async listTools() {}
-
-  async listPrompts() {}
+    return { tools, prompts };
+  }
 
   async processQuery() {}
 }

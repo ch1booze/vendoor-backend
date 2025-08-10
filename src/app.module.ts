@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { BusinessesModule } from './businesses/businesses.module';
 import { ProductsModule } from './products/products.module';
-import { InvoicesModule } from './invoices/invoices.module';
+import { OrdersModule } from './orders/orders.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ConfigModule } from '@nestjs/config';
 import { CustomersModule } from './customers/customers.module';
@@ -15,7 +15,7 @@ import { env } from './environment';
     ConfigModule.forRoot({ isGlobal: true }),
     BusinessesModule,
     ProductsModule,
-    InvoicesModule,
+    OrdersModule,
     PaymentsModule,
     CustomersModule,
     TypeOrmModule.forRoot({

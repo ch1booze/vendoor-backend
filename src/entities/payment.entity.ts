@@ -8,7 +8,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Invoice } from './invoice.entity';
+import { Order } from './order.entity';
 
 @Entity('payments')
 export class Payment {
@@ -52,15 +52,15 @@ export class Payment {
   @Column({ type: 'jsonb' })
   sender: any;
 
-  @OneToOne(() => Invoice, (invoice) => invoice.payment, {
+  @OneToOne(() => Order, (order) => order.payment, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'invoiceId' })
-  invoice: Invoice;
+  @JoinColumn({ name: 'orderId' })
+  order: Order;
 
   @ApiProperty({
-    description: 'The unique ID of the invoice this payment is for',
+    description: 'The unique ID of the order this payment is for',
   })
   @Column({ type: 'uuid', unique: true })
-  invoiceId: string;
+  orderId: string;
 }

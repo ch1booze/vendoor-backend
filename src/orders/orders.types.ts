@@ -10,13 +10,13 @@ import {
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export enum InvoiceStatus {
+export enum OrderStatus {
   DRAFTED = 'drafted',
   ISSUED = 'issued',
   RECONCILED = 'reconciled',
 }
 
-export class InvoiceItemBody {
+export class OrderItemBody {
   @ApiProperty()
   @IsString()
   @IsUUID('4', { message: 'Invalid product ID' })
@@ -28,21 +28,21 @@ export class InvoiceItemBody {
   quantity: number;
 }
 
-export class UpdateInvoiceBody {
+export class UpdateOrderBody {
   @ApiProperty()
-  @IsEnum(InvoiceStatus, { message: 'Invalid invoice status' })
-  status: InvoiceStatus;
+  @IsEnum(OrderStatus, { message: 'Invalid order status' })
+  status: OrderStatus;
 }
 
-export class AddInvoiceItemsBody {
+export class AddOrderItemsBody {
   @ApiProperty()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => InvoiceItemBody)
-  items: InvoiceItemBody[];
+  @Type(() => OrderItemBody)
+  items: OrderItemBody[];
 }
 
-export class UpdateInvoiceItemBody {
+export class UpdateOrderItemBody {
   @ApiProperty()
   @IsNumber()
   @Min(1, { message: 'Quantity must be at least 1' })

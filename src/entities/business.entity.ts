@@ -11,7 +11,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from './user.entity';
 import { Product } from './product.entity';
-import { Invoice } from './invoice.entity';
+import { Order } from './order.entity';
 import { CustomerChat } from './customer-chat.entity';
 import { BusinessChat } from './business-chat.entity';
 
@@ -71,9 +71,9 @@ export class Business {
   @OneToMany(() => Product, (product) => product.business)
   products: Product[];
 
-  @ApiProperty({ type: () => [Invoice] })
-  @OneToMany(() => Invoice, (invoice) => invoice.business)
-  invoices: Invoice[];
+  @ApiProperty({ type: () => [Order] })
+  @OneToMany(() => Order, (order) => order.business)
+  orders: Order[];
 
   @OneToMany(() => BusinessChat, (chat) => chat.business)
   businessChats: BusinessChat[];

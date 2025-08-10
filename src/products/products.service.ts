@@ -111,15 +111,15 @@ export class ProductsService {
         businessId,
         isActive: true,
       },
-      relations: ['invoiceItems'],
+      relations: ['orderItems'],
     });
 
     if (!existingProduct) {
       throw new NotFoundException('Product not found');
     }
 
-    const hasInvoiceItems = existingProduct.invoiceItems.length > 0;
-    if (!hasInvoiceItems) {
+    const hasOrderItems = existingProduct.orderItems.length > 0;
+    if (!hasOrderItems) {
       const updatedProduct = this.productRepository.merge(
         existingProduct,
         body,
@@ -151,7 +151,7 @@ export class ProductsService {
           product: newProduct,
           wasCloned: true,
           message:
-            'Product has been used in invoices. A new version has been created.',
+            'Product has been used in orders. A new version has been created.',
         };
       });
     }
@@ -165,7 +165,7 @@ export class ProductsService {
         Product,
         {
           where: { id: productId, businessId },
-          relations: ['invoiceItems'],
+          relations: ['orderItems'],
         },
       );
 
@@ -173,12 +173,12 @@ export class ProductsService {
         throw new NotFoundException('Product not found');
       }
 
-      if (existingProduct.invoiceItems.length > 0) {
+      if (existingProduct.orderItems.length > 0) {
         await transactionalEntityManager.update(Product, productId, {
           isActive: false,
         });
         return {
-          message: 'Product has been deactivated due to usage in invoices.',
+          message: 'Product has been deactivated due to usage in orders.',
         };
       } else {
         await transactionalEntityManager.delete(Product, { id: productId });

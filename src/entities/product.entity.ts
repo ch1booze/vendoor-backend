@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Business } from './business.entity';
-import { InvoiceItem } from './invoice-item.entity';
+import { OrderItem } from './order-item.entity';
 
 @Entity('products')
 export class Product {
@@ -66,6 +66,6 @@ export class Product {
   @Column({ type: 'uuid' })
   businessId: string;
 
-  @OneToMany(() => InvoiceItem, (item) => item.product)
-  invoiceItems: InvoiceItem[];
+  @OneToMany(() => OrderItem, (item) => item.product)
+  orderItems: OrderItem[];
 }

@@ -9,10 +9,10 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Product } from './product.entity';
-import { Invoice } from './invoice.entity';
+import { Order } from './order.entity';
 
-@Entity('invoice_items')
-export class InvoiceItem {
+@Entity('order_items')
+export class OrderItem {
   @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -29,16 +29,16 @@ export class InvoiceItem {
   @Column({ type: 'int' })
   quantity: number;
 
-  @ManyToOne(() => Invoice, (invoice) => invoice.items, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'invoiceId' })
-  invoice: Invoice;
+  @ManyToOne(() => Order, (order) => order.items, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'orderId' })
+  order: Order;
 
   @ApiProperty()
   @Column({ type: 'uuid' })
-  invoiceId: string;
+  orderId: string;
 
   @ApiProperty({ type: () => Product })
-  @ManyToOne(() => Product, (product) => product.invoiceItems, {
+  @ManyToOne(() => Product, (product) => product.orderItems, {
     eager: true,
     onDelete: 'SET NULL',
   })

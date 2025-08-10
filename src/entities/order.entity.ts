@@ -11,12 +11,12 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Business } from './business.entity';
-import { InvoiceItem } from './invoice-item.entity';
+import { OrderItem } from './order-item.entity';
 import { Payment } from './payment.entity';
 
-@Entity('invoices')
-export class Invoice {
-  @ApiProperty({ description: 'The unique identifier for the invoice' })
+@Entity('orders')
+export class Order {
+  @ApiProperty({ description: 'The unique identifier for the order' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -29,13 +29,13 @@ export class Invoice {
   updatedAt: Date;
 
   @ApiProperty({
-    description: 'Status of the invoice (e.g., "draft", "sent", "paid")',
+    description: 'Status of the order (e.g., "draft", "sent", "paid")',
     example: 'paid',
   })
   @Column()
   status: string;
 
-  @ManyToOne(() => Business, (business) => business.invoices, {
+  @ManyToOne(() => Business, (business) => business.orders, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'businessId' })
@@ -46,10 +46,10 @@ export class Invoice {
   businessId: string;
 
   @ApiProperty({ type: () => Payment, required: false })
-  @OneToOne(() => Payment, (payment) => payment.invoice, { nullable: true })
+  @OneToOne(() => Payment, (payment) => payment.order, { nullable: true })
   payment?: Payment;
 
-  @ApiProperty({ type: () => [InvoiceItem] })
-  @OneToMany(() => InvoiceItem, (item) => item.invoice, { cascade: true })
-  items: InvoiceItem[];
+  @ApiProperty({ type: () => [OrderItem] })
+  @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
+  items: OrderItem[];
 }
