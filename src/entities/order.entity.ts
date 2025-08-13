@@ -13,6 +13,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Business } from './business.entity';
 import { OrderItem } from './order-item.entity';
 import { Payment } from './payment.entity';
+import { Customer } from './customer.entity';
 
 @Entity('orders')
 export class Order {
@@ -44,6 +45,16 @@ export class Order {
   @ApiProperty()
   @Column({ type: 'uuid' })
   businessId: string;
+
+  @ManyToOne(() => Customer, (customer) => customer.orders, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'customerId' })
+  customer: Customer;
+
+  @ApiProperty()
+  @Column({ type: 'uuid' })
+  customerId: string;
 
   @ApiProperty({ type: () => Payment, required: false })
   @OneToOne(() => Payment, (payment) => payment.order, { nullable: true })

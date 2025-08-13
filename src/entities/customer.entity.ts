@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { CustomerChat } from './customer-chat.entity';
+import { Order } from './order.entity';
 
 @Entity('customers')
 export class Customer {
@@ -21,6 +22,9 @@ export class Customer {
   })
   @Column()
   platform: string;
+
+  @OneToMany(() => Order, (order) => order.customer)
+  orders: Order[];
 
   @OneToMany(() => CustomerChat, (chat) => chat.customer)
   customerChats: CustomerChat[];

@@ -48,3 +48,14 @@ export class UpdateOrderItemBody {
   @Min(1, { message: 'Quantity must be at least 1' })
   quantity: number;
 }
+
+export enum OrderStatus {
+  DRAFT = 'draft',
+  PENDING = 'pending',
+  CONFIRMED = 'confirmed',
+  PROCESSING = 'processing',
+  SHIPPED = 'shipped',
+  DELIVERED = 'delivered',
+  CANCELED = 'canceled',
+  RETURNED = 'returned',
+}

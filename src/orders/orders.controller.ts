@@ -27,34 +27,13 @@ import { Order } from 'src/entities/order.entity';
 import { OrderItem } from 'src/entities/order-item.entity';
 
 @ApiTags('Orders')
+@ApiTags('Customer-Agent')
 @ApiParam({ name: 'businessId', description: 'The ID of the business' })
 @UseGuards(AuthGuard)
 @Controller('businesses/:businessId/orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @ApiTags('Customer-Agent')
-  @ApiOperation({
-    operationId: 'createOrder',
-    summary: 'Create a new blank order',
-  })
-  @ApiParam({
-    name: 'businessId',
-    description: 'The ID of the business to create the order for',
-    type: String,
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'Order successfully created',
-    type: Order,
-  })
-  @Post()
-  @ApiOperation({ summary: 'Create a new blank order' })
-  async createOrder(@Param('businessId') businessId: string) {
-    return await this.ordersService.createOrder(businessId);
-  }
-
-  @ApiTags('Customer-Agent')
   @ApiOperation({
     operationId: 'updateOrder',
     summary: "Update an order's details",
@@ -205,10 +184,6 @@ export class OrdersController {
     @Param('orderId') orderId: string,
     @Param('itemId') itemId: string,
   ) {
-    return await this.ordersService.removeOrderItem(
-      orderId,
-      itemId,
-      userId,
-    );
+    return await this.ordersService.removeOrderItem(orderId, itemId, userId);
   }
 }

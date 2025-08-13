@@ -19,7 +19,7 @@ export class McpClient {
   }
 
   async connectToServer() {
-    this.mcp.connect(this.transport);
+    await this.mcp.connect(this.transport);
     const tools = await this.mcp.listTools();
     const prompts = await this.mcp.listPrompts();
 
