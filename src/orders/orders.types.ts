@@ -28,13 +28,7 @@ export class OrderItemBody {
   quantity: number;
 }
 
-export class UpdateOrderBody {
-  @ApiProperty()
-  @IsEnum(OrderStatus, { message: 'Invalid order status' })
-  status: OrderStatus;
-}
-
-export class AddOrderItemsBody {
+export class ItemsToOrderBody {
   @ApiProperty()
   @IsArray()
   @ValidateNested({ each: true })
@@ -42,20 +36,12 @@ export class AddOrderItemsBody {
   items: OrderItemBody[];
 }
 
-export class UpdateOrderItemBody {
+export class UpdateOrderBody {
   @ApiProperty()
-  @IsNumber()
-  @Min(1, { message: 'Quantity must be at least 1' })
-  quantity: number;
-}
+  @IsString()
+  orderId: string;
 
-export enum OrderStatus {
-  DRAFT = 'draft',
-  PENDING = 'pending',
-  CONFIRMED = 'confirmed',
-  PROCESSING = 'processing',
-  SHIPPED = 'shipped',
-  DELIVERED = 'delivered',
-  CANCELED = 'canceled',
-  RETURNED = 'returned',
+  @ApiProperty()
+  @IsEnum(OrderStatus, { message: 'Invalid order status' })
+  status: OrderStatus;
 }

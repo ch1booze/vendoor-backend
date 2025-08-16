@@ -9,7 +9,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from './user.entity';
+import { BusinessOwner } from './business-owner.entity';
 import { Product } from './product.entity';
 import { Order } from './order.entity';
 import { CustomerChat } from './customer-chat.entity';
@@ -57,15 +57,17 @@ export class Business {
   data?: any;
 
   @ApiProperty({
-    type: () => User,
-    description: 'The user who owns this business',
+    type: () => BusinessOwner,
+    description: 'The owner who owns this business',
   })
-  @ManyToOne(() => User, (user) => user.business, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
-  user: User;
+  @ManyToOne(() => BusinessOwner, (owner) => owner.business, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'ownerId' })
+  owner: BusinessOwner;
 
   @Column({ type: 'uuid' })
-  userId: string;
+  ownerId: string;
 
   @ApiProperty({ type: () => [Product] })
   @OneToMany(() => Product, (product) => product.business)
