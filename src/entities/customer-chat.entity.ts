@@ -20,11 +20,11 @@ export class CustomerChat {
   @CreateDateColumn()
   createdAt: Date;
 
-  @ApiProperty({ example: 'What is the price of the Super Widget?' })
+  @ApiProperty()
   @Column({ type: 'text' })
   query: string;
 
-  @ApiProperty({ example: 'The Super Widget costs $19.99.' })
+  @ApiProperty()
   @Column({ type: 'text' })
   reply: string;
 
@@ -35,7 +35,7 @@ export class CustomerChat {
   customer: Customer;
 
   @ApiProperty()
-  @Column({ type: 'uuid' })
+  @Column({ type: 'text' })
   customerId: string;
 
   @ManyToOne(() => Business, (business) => business.customerChats, {

@@ -7,6 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  ManyToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { BusinessOwner } from './business-owner.entity';
@@ -14,59 +15,46 @@ import { Product } from './product.entity';
 import { Order } from './order.entity';
 import { CustomerChat } from './customer-chat.entity';
 import { BusinessChat } from './business-chat.entity';
+import { Customer } from './customer.entity';
 
-@Entity('businesses')
+@Entity('business')
 export class Business {
-  @ApiProperty({ description: 'The unique identifier for the business' })
+  @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ApiProperty({ description: 'The timestamp when the business was created' })
+  @ApiProperty()
   @CreateDateColumn()
   createdAt: Date;
 
-  @ApiProperty({
-    description: 'The timestamp when the business was last updated',
-  })
+  @ApiProperty()
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ApiProperty({ description: 'Name of the business', example: 'ACME Corp' })
+  @ApiProperty()
   @Column()
   name: string;
 
-  @ApiProperty({
-    description: 'Tags associated with the business',
-    example: ['tech', 'saas'],
-  })
+  @ApiProperty()
   @Column({ type: 'text', array: true, default: '{}' })
   tags: string[];
 
-  @ApiProperty({
-    description: 'A detailed description of the business',
-    required: false,
-  })
+  @ApiProperty()
   @Column({ nullable: true })
   description?: string;
 
-  @ApiProperty({
-    description: 'Arbitrary JSON data associated with the business',
-    required: false,
-  })
+  @ApiProperty()
   @Column({ type: 'jsonb', nullable: true })
   data?: any;
 
-  @ApiProperty({
-    type: () => BusinessOwner,
-    description: 'The owner who owns this business',
-  })
+  @ApiProperty()
   @ManyToOne(() => BusinessOwner, (owner) => owner.business, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'ownerId' })
   owner: BusinessOwner;
 
-  @Column({ type: 'uuid' })
+  @Column({ type: 'text' })
   ownerId: string;
 
   @ApiProperty({ type: () => [Product] })
@@ -82,4 +70,7 @@ export class Business {
 
   @OneToMany(() => CustomerChat, (chat) => chat.business)
   customerChats: CustomerChat[];
+
+  @ManyToMany(() => Customer, (customer) => customer.businesses)
+  customers: Customer[];
 }

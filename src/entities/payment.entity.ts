@@ -32,23 +32,22 @@ export class Payment {
   @Column({ type: 'timestamp with time zone' })
   date: Date;
 
-  @ApiProperty({ example: 'Credit Card' })
+  @ApiProperty()
   @Column()
   method: string;
 
-  @ApiProperty({ example: 'Payment for INV-001' })
+  @ApiProperty()
   @Column()
   narration: string;
 
   @ApiProperty({
-    description: 'Binary data for the receipt file (e.g., PDF)',
     type: 'string',
     format: 'binary',
   })
   @Column({ type: 'bytea' })
   receipt: Buffer;
 
-  @ApiProperty({ description: 'JSON object containing sender details' })
+  @ApiProperty()
   @Column({ type: 'jsonb' })
   sender: any;
 
@@ -58,9 +57,7 @@ export class Payment {
   @JoinColumn({ name: 'orderId' })
   order: Order;
 
-  @ApiProperty({
-    description: 'The unique ID of the order this payment is for',
-  })
+  @ApiProperty()
   @Column({ type: 'uuid', unique: true })
   orderId: string;
 }

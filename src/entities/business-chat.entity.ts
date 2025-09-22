@@ -19,11 +19,11 @@ export class BusinessChat {
   @CreateDateColumn()
   createdAt: Date;
 
-  @ApiProperty({ example: 'What are my total sales for this month?' })
+  @ApiProperty()
   @Column({ type: 'text' })
   query: string;
 
-  @ApiProperty({ example: 'Your total sales are $1,234.56.' })
+  @ApiProperty()
   @Column({ type: 'text' })
   reply: string;
 

@@ -14,7 +14,7 @@ import { OrderItem } from './order-item.entity';
 
 @Entity('products')
 export class Product {
-  @ApiProperty({ description: 'The unique identifier for the product' })
+  @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -26,27 +26,23 @@ export class Product {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ApiProperty({ example: 'Super Widget' })
+  @ApiProperty()
   @Column()
   name: string;
 
-  @ApiProperty({ required: false, example: 'The best widget you can buy.' })
+  @ApiProperty({ required: false })
   @Column({ nullable: true })
   description?: string;
 
-  @ApiProperty({
-    description:
-      'Price of the product as a string to handle various currency formats.',
-    example: '19.99',
-  })
+  @ApiProperty()
   @Column()
   price: string;
 
-  @ApiProperty({ example: 'piece' })
+  @ApiProperty()
   @Column()
   unit: string;
 
-  @ApiProperty({ example: 'Electronics' })
+  @ApiProperty()
   @Column()
   category: string;
 
@@ -60,9 +56,7 @@ export class Product {
   @JoinColumn({ name: 'businessId' })
   business: Business;
 
-  @ApiProperty({
-    description: 'The ID of the business this product belongs to',
-  })
+  @ApiProperty()
   @Column({ type: 'uuid' })
   businessId: string;
 

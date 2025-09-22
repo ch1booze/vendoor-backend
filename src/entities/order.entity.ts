@@ -17,7 +17,7 @@ import { Customer } from './customer.entity';
 
 @Entity('orders')
 export class Order {
-  @ApiProperty({ description: 'The unique identifier for the order' })
+  @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -29,10 +29,7 @@ export class Order {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ApiProperty({
-    description: 'Status of the order (e.g., "draft", "sent", "paid")',
-    example: 'paid',
-  })
+  @ApiProperty()
   @Column()
   status: string;
 

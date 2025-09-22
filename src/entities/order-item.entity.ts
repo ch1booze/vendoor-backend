@@ -25,7 +25,7 @@ export class OrderItem {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ApiProperty({ example: 2 })
+  @ApiProperty()
   @Column({ type: 'int' })
   quantity: number;
 
