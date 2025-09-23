@@ -1,17 +1,9 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { env } from './environment';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { auth } from './auth';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [
-    AuthModule.forRoot(auth),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: env.DATABASE_URL,
-      synchronize: true,
-    }),
-  ],
+  imports: [AuthModule.forRoot(auth), PrismaModule],
 })
 export class AppModule {}
