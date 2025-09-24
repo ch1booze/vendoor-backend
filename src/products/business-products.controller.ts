@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BusinessProductsService } from './business-products.service';
-import { Session, UserSession } from '@thallesp/nestjs-better-auth';
+import { AuthGuard, Session, UserSession } from '@thallesp/nestjs-better-auth';
 import {
   CreateProductBody,
   GetProductsQuery,
@@ -21,7 +21,7 @@ import { RoleGuard } from 'src/auth/role.guard';
 
 @Controller('business/products')
 @Role('businessOwner')
-@UseGuards(RoleGuard)
+@UseGuards(AuthGuard, RoleGuard)
 export class BusinessProductsController {
   constructor(private readonly productsService: BusinessProductsService) {}
 
