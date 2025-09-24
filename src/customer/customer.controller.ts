@@ -2,12 +2,12 @@ import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { Role } from 'src/auth/role.decorator';
 import { RoleGuard } from 'src/auth/role.guard';
-import { Session, UserSession } from '@thallesp/nestjs-better-auth';
+import { AuthGuard, Session, UserSession } from '@thallesp/nestjs-better-auth';
 import { CreateCustomerChatBody } from './customer.types';
 
 @Controller('customer')
 @Role('customer')
-@UseGuards(RoleGuard)
+@UseGuards(AuthGuard, RoleGuard)
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 

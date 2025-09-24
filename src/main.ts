@@ -13,7 +13,7 @@ async function bootstrap() {
   const swaggerConfig = new DocumentBuilder().setTitle('Vendoor API').build();
   const documentFactory = () =>
     SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('docs', app, documentFactory, {
+  SwaggerModule.setup('api/docs', app, documentFactory, {
     jsonDocumentUrl: '/openapi.json',
   });
 

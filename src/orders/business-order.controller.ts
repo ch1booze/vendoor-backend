@@ -35,7 +35,7 @@ export class BusinessOrdersController {
     return await this.ordersService.getOrder(session.user.id, orderId);
   }
 
-  @Put(':/orderId/status')
+  @Put(':orderId/status')
   async updateOrderStatus(
     @Session() session: UserSession,
     @Param('orderId') orderId: string,
