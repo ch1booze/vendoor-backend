@@ -143,7 +143,7 @@ model Product {
   updatedAt   DateTime @updatedAt
   name        String
   description String?
-  price       String
+  price       BigInt
   unit        String
   category    String
   isActive    Boolean  @default(true)
