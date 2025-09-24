@@ -59,3 +59,5 @@ export class BusinessProductsService {
     });
   }
 }
+
+// TODO: Implement checking for active products

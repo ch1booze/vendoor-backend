@@ -18,6 +18,7 @@ export class CustomerProductsController {
   ) {
     return await this.productsService.getProducts(businessId, query);
   }
+
   @Get(':productId')
   async getProduct(
     @Param('businessId') businessId: string,
