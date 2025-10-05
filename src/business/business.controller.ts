@@ -1,9 +1,22 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { BusinessService } from './business.service';
 import { AuthGuard, Session, UserSession } from '@thallesp/nestjs-better-auth';
 import { RoleGuard } from 'src/auth/role.guard';
 import { Role } from 'src/auth/role.decorator';
-import { CreateBusinessBody, CreateBusinessChatBody } from './business.types';
+import {
+  CreateBusinessBody,
+  CreateBusinessChatBody,
+  UpdateBusinessBody,
+} from './business.types';
 
 @Controller('business')
 @Role('businessOwner')
@@ -17,6 +30,19 @@ export class BusinessController {
     @Body() body: CreateBusinessBody,
   ) {
     return await this.businessService.createBusiness(session.user.id, body);
+  }
+
+  @Put()
+  async updateBusiness(
+    @Session() session: UserSession,
+    @Body() body: UpdateBusinessBody,
+  ) {
+    return await this.businessService.updateBusiness(session.user.id, body);
+  }
+
+  @Delete()
+  async deleteBusiness(@Session() session: UserSession) {
+    return await this.businessService.deleteBusiness(session.user.id);
   }
 
   @Get()

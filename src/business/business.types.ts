@@ -4,15 +4,33 @@ import { IsArray, IsObject, IsOptional, IsString } from 'class-validator';
 export class CreateBusinessBody {
   @ApiProperty()
   @IsString()
-  userId: string;
-
-  @ApiProperty()
-  @IsString()
   name: string;
 
   @ApiProperty()
   @IsArray()
   tags: BusinessTag[];
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @ApiProperty()
+  @IsObject()
+  @IsOptional()
+  data?: object;
+}
+
+export class UpdateBusinessBody {
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @ApiProperty()
+  @IsArray()
+  @IsOptional()
+  tags?: BusinessTag[];
 
   @ApiProperty()
   @IsString()

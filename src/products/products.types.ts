@@ -78,7 +78,4 @@ export class GetProductsQuery {
   priceMax?: bigint;
 }
 
-export enum InventoryEvent {
-  RESTOCK = 'restock',
-  SOLD = 'sold',
-}
+export type InventoryEvent = 'restock' | 'sold';

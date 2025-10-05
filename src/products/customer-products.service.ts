@@ -8,13 +8,13 @@ export class CustomerProductsService {
 
   async getProducts(
     businessId: string,
-    { name, category, priceMin, priceMax }: GetProductsQuery,
+    { name, priceMin, priceMax }: GetProductsQuery,
   ) {
     return await this.prisma.product.findMany({
       where: {
         businessId,
         name: { contains: name, mode: 'insensitive' },
-        category: { contains: category, mode: 'insensitive' },
+
         price: { gte: priceMin, lte: priceMax },
       },
     });

@@ -51,11 +51,12 @@ export class BusinessProductsService {
   }
 
   async updateProductStock(userId: string, productId: string, stock: number) {
+    const event: InventoryEvent = 'restock';
     return await this.prisma.product.update({
       where: { id: productId, business: { userId } },
       data: {
         stock,
-        inventory: { create: { delta: stock, event: InventoryEvent.RESTOCK } },
+        inventory: { create: { delta: stock, event } },
       },
     });
   }
