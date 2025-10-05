@@ -2,8 +2,8 @@ import {
   IsString,
   IsOptional,
   IsNumber,
-  IsObject,
   IsNotEmpty,
+  IsArray,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -28,14 +28,8 @@ export class CreateProductBody {
   unit: string;
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  category: string;
-
-  @ApiProperty()
-  @IsObject()
-  @IsOptional()
-  data?: object;
+  @IsArray()
+  tags: string[];
 }
 
 export class UpdateProductBody {
@@ -62,10 +56,9 @@ export class UpdateProductBody {
   unit?: string;
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
+  @IsArray()
   @IsOptional()
-  category?: string;
+  tags?: string[];
 }
 
 export class GetProductsQuery {
@@ -83,9 +76,9 @@ export class GetProductsQuery {
   @IsNumber()
   @IsOptional()
   priceMax?: bigint;
+}
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  category?: string;
+export enum InventoryEvent {
+  RESTOCK = 'restock',
+  SOLD = 'sold',
 }

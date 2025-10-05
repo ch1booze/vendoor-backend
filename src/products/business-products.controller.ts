@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -59,6 +60,19 @@ export class BusinessProductsController {
       session.user.id,
       productId,
       body,
+    );
+  }
+
+  @Put(':productId')
+  async updateProductStock(
+    @Session() session: UserSession,
+    @Param('productId') productId: string,
+    @Query('stock', ParseIntPipe) stock: number,
+  ) {
+    return await this.productsService.updateProductStock(
+      session.user.id,
+      productId,
+      stock,
     );
   }
 

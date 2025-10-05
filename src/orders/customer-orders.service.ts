@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   UpsertOrderBody,
   GetOrdersQuery,
@@ -12,12 +12,32 @@ export class CustomerOrdersService {
 
   async createOrder(userId: string, businessId: string, body: UpsertOrderBody) {
     const status: CustomerOrderStatus = 'drafted';
+
+    const itemsData = await Promise.all(
+      body.items.map(async ({ productId, quantity }) => {
+        const foundProduct = await this.prisma.product.findUnique({
+          where: { id: productId },
+        });
+
+        if (!foundProduct) {
+          throw new NotFoundException('Product not found');
+        }
+
+        const { name, description, price, unit, tags } = foundProduct;
+        return { name, description, price, unit, tags, quantity };
+      }),
+    );
+
     return await this.prisma.order.create({
       data: {
         customerId: userId,
         businessId,
         status,
-        items: { createMany: { data: body.items } },
+        items: {
+          createMany: {
+            data: itemsData,
+          },
+        },
       },
     });
   }
@@ -48,10 +68,25 @@ export class CustomerOrdersService {
       if (existingOrder) {
         const status: CustomerOrderStatus = 'drafted';
         await tx.orderItem.deleteMany({ where: { orderId } });
-        await tx.orderItem.createMany({
-          data: body.items.map((item) => {
-            return { ...item, status, orderId };
+
+        const itemsData = await Promise.all(
+          body.items.map(async ({ productId, quantity }) => {
+            const foundProduct = await tx.product.findUnique({
+              where: { id: productId },
+            });
+
+            if (!foundProduct) {
+              throw new NotFoundException('Product not found');
+            }
+
+            const { name, description, price, unit, tags } = foundProduct;
+            return { name, description, price, unit, tags, quantity };
           }),
+        );
+
+        await tx.order.update({
+          data: { status, items: { createMany: { data: itemsData } } },
+          where: { id: orderId },
         });
       }
     });
@@ -86,3 +121,5 @@ export class CustomerOrdersService {
     }
   }
 }
+
+// TODO: Check for stock when adding to and updating an order

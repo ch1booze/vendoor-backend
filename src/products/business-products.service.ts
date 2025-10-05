@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   CreateProductBody,
   GetProductsQuery,
+  InventoryEvent,
   UpdateProductBody,
 } from './products.types';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -18,13 +19,12 @@ export class BusinessProductsService {
 
   async getProducts(
     userId: string,
-    { name, category, priceMin, priceMax }: GetProductsQuery,
+    { name, priceMin, priceMax }: GetProductsQuery,
   ) {
     return await this.prisma.product.findMany({
       where: {
         business: { userId },
         name: { contains: name, mode: 'insensitive' },
-        category: { contains: category, mode: 'insensitive' },
         price: { gte: priceMin, lte: priceMax },
       },
     });
@@ -50,6 +50,16 @@ export class BusinessProductsService {
     });
   }
 
+  async updateProductStock(userId: string, productId: string, stock: number) {
+    return await this.prisma.product.update({
+      where: { id: productId, business: { userId } },
+      data: {
+        stock,
+        inventory: { create: { delta: stock, event: InventoryEvent.RESTOCK } },
+      },
+    });
+  }
+
   async deleteProduct(userId: string, productId: string) {
     return await this.prisma.product.delete({
       where: {
@@ -59,5 +69,3 @@ export class BusinessProductsService {
     });
   }
 }
-
-// TODO: Implement checking for active products
