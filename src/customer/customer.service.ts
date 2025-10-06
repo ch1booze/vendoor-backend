@@ -11,7 +11,7 @@ export class CustomerService {
   }
 
   async getCustomer(userId: string) {
-    return await this.prisma.customer.findUnique({ where: { userId } });
+    return await this.prisma.customer.findUniqueOrThrow({ where: { userId } });
   }
 
   async createCustomerChat(

@@ -21,7 +21,7 @@ export class CustomerProductsService {
   }
 
   async getProduct(businessId: string, productId: string) {
-    return await this.prisma.product.findUnique({
+    return await this.prisma.product.findUniqueOrThrow({
       where: {
         id: productId,
         businessId,

@@ -15,7 +15,7 @@ export class BusinessOrdersService {
   }
 
   async getOrder(userId: string, orderId: string) {
-    return await this.prisma.order.findUnique({
+    return await this.prisma.order.findUniqueOrThrow({
       where: { business: { userId }, id: orderId },
     });
   }
@@ -25,7 +25,7 @@ export class BusinessOrdersService {
     orderId: string,
     { status }: UpdateOrderStatusBody,
   ) {
-    const existingOrder = await this.prisma.order.findUnique({
+    const existingOrder = await this.prisma.order.findUniqueOrThrow({
       where: { business: { userId }, id: orderId },
     });
     const confirmedStatus: CustomerOrderStatus = 'confirmed';

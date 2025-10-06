@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   UpsertOrderBody,
   GetOrdersQuery,
@@ -15,16 +15,14 @@ export class CustomerOrdersService {
 
     const itemsData = await Promise.all(
       body.items.map(async ({ productId, quantity }) => {
-        const foundProduct = await this.prisma.product.findUnique({
+        const foundProduct = await this.prisma.product.findUniqueOrThrow({
           where: { id: productId },
         });
 
-        if (!foundProduct) {
-          throw new NotFoundException('Product not found');
-        }
+        if (foundProduct.stock < quantity)
+          throw new BadRequestException('Insufficient stock');
 
-        const { name, description, price, unit, tags } = foundProduct;
-        return { name, description, price, unit, tags, quantity };
+        return { ...foundProduct, quantity };
       }),
     );
 
@@ -61,7 +59,7 @@ export class CustomerOrdersService {
     body: UpsertOrderBody,
   ) {
     return await this.prisma.$transaction(async (tx) => {
-      const existingOrder = await tx.order.findUnique({
+      const existingOrder = await tx.order.findUniqueOrThrow({
         where: { customerId: userId, id: orderId, businessId },
       });
 
@@ -71,16 +69,14 @@ export class CustomerOrdersService {
 
         const itemsData = await Promise.all(
           body.items.map(async ({ productId, quantity }) => {
-            const foundProduct = await tx.product.findUnique({
+            const foundProduct = await tx.product.findUniqueOrThrow({
               where: { id: productId },
             });
 
-            if (!foundProduct) {
-              throw new NotFoundException('Product not found');
-            }
+            if (foundProduct.stock < quantity)
+              throw new BadRequestException('Insufficient stock');
 
-            const { name, description, price, unit, tags } = foundProduct;
-            return { name, description, price, unit, tags, quantity };
+            return { ...foundProduct, quantity };
           }),
         );
 
@@ -93,7 +89,7 @@ export class CustomerOrdersService {
   }
 
   async confirmOrder(userId: string, businessId: string, orderId: string) {
-    const existingOrder = await this.prisma.order.findUnique({
+    const existingOrder = await this.prisma.order.findUniqueOrThrow({
       where: { customerId: userId, id: orderId, businessId },
     });
 
@@ -107,7 +103,7 @@ export class CustomerOrdersService {
   }
 
   async cancelOrder(userId: string, businessId: string, orderId: string) {
-    const existingOrder = await this.prisma.order.findUnique({
+    const existingOrder = await this.prisma.order.findUniqueOrThrow({
       where: { customerId: userId, id: orderId, businessId },
     });
 
@@ -121,5 +117,3 @@ export class CustomerOrdersService {
     }
   }
 }
-
-// TODO: Check for stock when adding to and updating an order
