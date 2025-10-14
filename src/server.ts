@@ -1,20 +1,32 @@
-import { Elysia } from "elysia";
-import { yoga } from "@elysiajs/graphql-yoga";
-import { typeDefs } from "./graphql/schemas";
-import { resolvers } from "./graphql/resolvers";
-import { GraphQLContext } from "./lib/context";
-import prisma from "@/lib/prisma";
-
-const createContext = async (): Promise<GraphQLContext> => {
-  return { prisma };
-};
+import { Elysia, Context } from "elysia";
+import { auth } from "./lib/auth";
+import cors from "@elysiajs/cors";
+import apollo from "@elysiajs/apollo";
+import { schema, resolvers } from "./graphql";
 
 const app = new Elysia()
+  .use(cors())
+  .mount(auth.handler)
   .use(
-    yoga({
-      typeDefs,
+    apollo({
+      typeDefs: schema,
       resolvers,
-      context: createContext,
+      context: async ({ status, request: { headers } }: Context) => {
+        const session = await auth.api.getSession({
+          headers,
+        });
+        console.log("I am here");
+        if (!session) return status(401);
+
+        return {
+          user: session.user,
+          session: session.session,
+        };
+      },
     })
   )
   .listen(3000);
+
+console.log(
+  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
+);

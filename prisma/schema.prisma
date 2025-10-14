@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,229 +8,225 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// // BetterAuth
-// model User {
-//   id                  String    @id
-//   fullName            String    @map("name")
-//   email               String
-//   emailVerified       Boolean   @default(false)
-//   image               String?
-//   createdAt           DateTime  @default(now())
-//   updatedAt           DateTime  @default(now()) @updatedAt
-//   phoneNumber         String?
-//   phoneNumberVerified Boolean?
-//   role                String
-//   sessions            Session[]
-//   accounts            Account[]
-//   customer            Customer?
-//   business            Business?
-
-//   @@unique([email])
-//   @@unique([phoneNumber])
-//   @@map("user")
-// }
-
-// model Session {
-//   id        String   @id
-//   expiresAt DateTime
-//   token     String
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   ipAddress String?
-//   userAgent String?
-//   userId    String
-//   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-//   @@unique([token])
-//   @@map("session")
-// }
-
-// model Account {
-//   id                    String    @id
-//   accountId             String
-//   providerId            String
-//   userId                String
-//   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-//   accessToken           String?
-//   refreshToken          String?
-//   idToken               String?
-//   accessTokenExpiresAt  DateTime?
-//   refreshTokenExpiresAt DateTime?
-//   scope                 String?
-//   password              String?
-//   createdAt             DateTime  @default(now())
-//   updatedAt             DateTime  @updatedAt
-
-//   @@map("account")
-// }
-
-// model Verification {
-//   id         String   @id
-//   identifier String
-//   value      String
-//   expiresAt  DateTime
-//   createdAt  DateTime @default(now())
-//   updatedAt  DateTime @default(now()) @updatedAt
-
-//   @@map("verification")
-// }
-
-// // Tables
-// model Business {
-//   id        String   @id @default(uuid())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   userId String @unique
-//   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-//   name        String
-//   tags        String[]
-//   description String?
-//   data        Json?
-
-//   products      Product[]
-//   orders        Order[]
-//   businessChats BusinessChat[]
-//   customerChats CustomerChat[]
-//   customers     Customer[]
-
-//   @@map("business")
-// }
-
-// model Customer {
-//   userId    String   @id
-//   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   orders        Order[]
-//   customerChats CustomerChat[]
-//   businesses    Business[]
-
-//   @@map("customers")
-// }
-
-// model BusinessChat {
-//   id        String   @id @default(uuid())
-//   createdAt DateTime @default(now())
-//   query     String
-//   reply     String
-
-//   businessId String
-//   business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-
-//   @@map("business_chats")
-// }
-
-// model CustomerChat {
-//   id        String   @id @default(uuid())
-//   createdAt DateTime @default(now())
-//   query     String
-//   reply     String
-
-//   customerId String
-//   customer   Customer @relation(fields: [customerId], references: [userId], onDelete: Cascade)
-
-//   businessId String
-//   business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-
-//   @@map("customer_chats")
-// }
-
-// model Product {
-//   id          String   @id @default(uuid())
-//   createdAt   DateTime @default(now())
-//   updatedAt   DateTime @updatedAt
-//   name        String
-//   description String?
-//   price       BigInt
-//   unit        String
-//   tags        String[]
-
-//   stock Int @default(0)
-
-//   businessId String
-//   business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-
-//   orderItems OrderItem[]
-//   inventory  Inventory[]
-
-//   @@map("products")
-// }
-
-// model Inventory {
-//   id        Int      @id @default(autoincrement())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   delta Int
-//   event String
-
-//   productId String
-//   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-//   @@map("inventory")
-// }
-
-// model Order {
-//   id        String   @id @default(uuid())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   status    String
-
-//   businessId String
-//   business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-
-//   customerId String
-//   customer   Customer @relation(fields: [customerId], references: [userId], onDelete: Cascade)
-
-//   payment Payment?
-//   items   OrderItem[]
-
-//   @@map("orders")
-// }
-
-// model OrderItem {
-//   id        String   @id @default(uuid())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   name        String
-//   description String?
-//   price       BigInt
-//   unit        String
-//   tags        String[]
-//   quantity    Int
-
-//   orderId String
-//   order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-//   productId String?
-//   product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
-
-//   @@map("order_items")
-// }
-
-// model Payment {
-//   id        String   @id @default(uuid())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   amount    BigInt
-//   date      DateTime
-//   method    String
-//   narration String
-//   receipt   Bytes
-//   sender    Json
-
-//   orderId String @unique
-//   order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-//   @@map("payments")
-// }
+// BetterAuth
 
 model User {
-  id    String @id @default(uuid())
-  email String @unique
-  name  String
+  id                  String    @id
+  fullName            String    @map("name")
+  email               String
+  emailVerified       Boolean   @default(false)
+  image               String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @default(now()) @updatedAt
+  phoneNumber         String?
+  phoneNumberVerified Boolean?
+  role                String
+  sessions            Session[]
+  accounts            Account[]
+  customer            Customer?
+  business            Business?
+
+  @@unique([email])
+  @@unique([phoneNumber])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@map("verification")
+}
+
+// Tables
+
+model Business {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name        String
+  tags        String[]
+  description String?
+  data        Json?
+
+  products      Product[]
+  orders        Order[]
+  businessChats BusinessChat[]
+  customerChats CustomerChat[]
+  customers     Customer[]
+
+  @@map("business")
+}
+
+model Customer {
+  userId    String   @id
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders        Order[]
+  customerChats CustomerChat[]
+  businesses    Business[]
+
+  @@map("customers")
+}
+
+model BusinessChat {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  query     String
+  reply     String
+
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("business_chats")
+}
+
+model CustomerChat {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  query     String
+  reply     String
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [userId], onDelete: Cascade)
+
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("customer_chats")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  description String?
+  price       BigInt
+  unit        String
+  tags        String[]
+
+  stock Int @default(0)
+
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  orderItems OrderItem[]
+  inventory  Inventory[]
+
+  @@map("products")
+}
+
+model Inventory {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  delta Int
+  event String
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("inventory")
+}
+
+model Order {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    String
+
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [userId], onDelete: Cascade)
+
+  payment Payment?
+  items   OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String
+  description String?
+  price       BigInt
+  unit        String
+  tags        String[]
+  quantity    Int
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@map("order_items")
+}
+
+model Payment {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  amount    BigInt
+  date      DateTime
+  method    String
+  narration String
+  receipt   Bytes
+  sender    Json
+
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
 }
