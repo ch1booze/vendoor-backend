@@ -1,8 +1,9 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
+import { Elysia } from "elysia";
 import { env } from "./environment";
-import { openAPI } from "better-auth/plugins";
+import { bearer, openAPI } from "better-auth/plugins";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
@@ -18,5 +19,5 @@ export const auth = betterAuth({
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     },
   },
-  plugins: [openAPI()],
+  plugins: [bearer(), openAPI()],
 });
