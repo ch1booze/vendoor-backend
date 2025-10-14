@@ -1,9 +1,8 @@
-import { Elysia, Context } from "elysia";
-import { auth } from "./lib/auth";
+import { Elysia } from "elysia";
+import { auth, createContext } from "./lib/auth";
 import cors from "@elysiajs/cors";
 import apollo from "@elysiajs/apollo";
 import { schema, resolvers } from "./graphql";
-import { GraphQLError } from "graphql";
 
 const app = new Elysia()
   .use(cors())
@@ -12,18 +11,7 @@ const app = new Elysia()
     apollo({
       typeDefs: schema,
       resolvers,
-      context: async ({ request: { headers } }: Context) => {
-        const session = await auth.api.getSession({ headers });
-        if (!session)
-          throw new GraphQLError("Unauthorized", {
-            extensions: { code: "UNAUTHENTICATED" },
-          });
-
-        return {
-          user: session.user,
-          session: session.session,
-        };
-      },
+      context: createContext,
     })
   )
   .listen(3000);

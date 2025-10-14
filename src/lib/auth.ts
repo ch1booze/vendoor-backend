@@ -1,9 +1,10 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
-import { Elysia } from "elysia";
+import { Context, Elysia } from "elysia";
 import { env } from "./environment";
 import { bearer, openAPI } from "better-auth/plugins";
+import { GraphQLError } from "graphql";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
@@ -21,3 +22,15 @@ export const auth = betterAuth({
   },
   plugins: [bearer(), openAPI()],
 });
+
+export const createContext = async ({ request: { headers } }: Context) => {
+  const session = await auth.api.getSession({ headers });
+  if (!session)
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+
+  return session.user;
+};
+
+export type SessionUser = (typeof auth.$Infer.Session)["user"];

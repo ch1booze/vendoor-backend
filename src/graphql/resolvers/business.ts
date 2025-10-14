@@ -1,13 +1,12 @@
+import { SessionUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { PrismaClient } from "@prisma/client";
+import { Role, roleGuard } from "@/lib/roles";
 
 export const businessResolvers = {
   Query: {
-    getBusiness: async (
-      _parent: unknown,
-      _args: {},
-      { user }: { user: { id: string } }
-    ) => {
+    getBusiness: async (_parent: unknown, _args: {}, user: SessionUser) => {
+      roleGuard(user.role, Role.BUSINESS);
+
       return prisma.business.findUnique({
         where: { userId: user.id },
       });
@@ -17,8 +16,10 @@ export const businessResolvers = {
     createBusiness: async (
       _parent: unknown,
       args: { input: any },
-      { user }: { user: { id: string } }
+      user: SessionUser
     ) => {
+      roleGuard(user.role, Role.BUSINESS);
+
       return prisma.business.create({
         data: {
           userId: user.id,
@@ -29,18 +30,18 @@ export const businessResolvers = {
     updateBusiness: async (
       _parent: unknown,
       args: { input: any },
-      { user }: { user: { id: string } }
+      user: SessionUser
     ) => {
+      roleGuard(user.role, Role.BUSINESS);
+
       return prisma.business.update({
         where: { userId: user.id },
         data: args.input,
       });
     },
-    deleteBusiness: async (
-      _parent: unknown,
-      _args: {},
-      { user }: { user: { id: string } }
-    ) => {
+    deleteBusiness: async (_parent: unknown, _args: {}, user: SessionUser) => {
+      roleGuard(user.role, Role.BUSINESS);
+
       await prisma.business.delete({
         where: { userId: user.id },
       });
