@@ -3,7 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
 import { Context, Elysia } from "elysia";
 import { env } from "./environment";
-import { bearer, openAPI } from "better-auth/plugins";
+import { apiKey, bearer, openAPI } from "better-auth/plugins";
 import { GraphQLError } from "graphql";
 
 export const auth = betterAuth({
@@ -20,7 +20,7 @@ export const auth = betterAuth({
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     },
   },
-  plugins: [bearer(), openAPI()],
+  plugins: [bearer(), openAPI(), apiKey()],
 });
 
 export const createContext = async ({ request: { headers } }: Context) => {
