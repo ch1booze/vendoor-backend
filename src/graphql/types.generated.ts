@@ -28,11 +28,21 @@ export type CreateBusinessInput = {
   name: Scalars['String']['input'];
 };
 
+export type CreateProductInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  price: Scalars['Int']['input'];
+  unit: Scalars['String']['input'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createBusiness?: Maybe<Business>;
+  createProduct?: Maybe<Product>;
   deleteBusiness?: Maybe<Scalars['Boolean']['output']>;
+  deleteProduct?: Maybe<Scalars['Boolean']['output']>;
   updateBusiness?: Maybe<Business>;
+  updateProduct?: Maybe<Product>;
 };
 
 
@@ -41,8 +51,35 @@ export type MutationcreateBusinessArgs = {
 };
 
 
+export type MutationcreateProductArgs = {
+  input: CreateProductInput;
+};
+
+
+export type MutationdeleteProductArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationupdateBusinessArgs = {
   input: UpdateBusinessInput;
+};
+
+
+export type MutationupdateProductArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdateProductInput;
+};
+
+export type Product = {
+  __typename?: 'Product';
+  business: Business;
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  price: Scalars['Int']['output'];
+  stock: Scalars['Int']['output'];
+  unit: Scalars['String']['output'];
 };
 
 export type Query = {
@@ -53,6 +90,13 @@ export type Query = {
 export type UpdateBusinessInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateProductInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  price?: InputMaybe<Scalars['Int']['input']>;
+  unit?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -132,10 +176,14 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   CreateBusinessInput: CreateBusinessInput;
+  CreateProductInput: CreateProductInput;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  Product: ResolverTypeWrapper<Product>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   UpdateBusinessInput: UpdateBusinessInput;
+  UpdateProductInput: UpdateProductInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -144,10 +192,14 @@ export type ResolversParentTypes = {
   String: Scalars['String']['output'];
   ID: Scalars['ID']['output'];
   CreateBusinessInput: CreateBusinessInput;
+  CreateProductInput: CreateProductInput;
+  Int: Scalars['Int']['output'];
   Mutation: Record<PropertyKey, never>;
   Boolean: Scalars['Boolean']['output'];
+  Product: Product;
   Query: Record<PropertyKey, never>;
   UpdateBusinessInput: UpdateBusinessInput;
+  UpdateProductInput: UpdateProductInput;
 };
 
 export type BusinessResolvers<ContextType = any, ParentType extends ResolversParentTypes['Business'] = ResolversParentTypes['Business']> = {
@@ -158,8 +210,21 @@ export type BusinessResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createBusiness?: Resolver<Maybe<ResolversTypes['Business']>, ParentType, ContextType, RequireFields<MutationcreateBusinessArgs, 'input'>>;
+  createProduct?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<MutationcreateProductArgs, 'input'>>;
   deleteBusiness?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  deleteProduct?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationdeleteProductArgs, 'id'>>;
   updateBusiness?: Resolver<Maybe<ResolversTypes['Business']>, ParentType, ContextType, RequireFields<MutationupdateBusinessArgs, 'input'>>;
+  updateProduct?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<MutationupdateProductArgs, 'id' | 'input'>>;
+};
+
+export type ProductResolvers<ContextType = any, ParentType extends ResolversParentTypes['Product'] = ResolversParentTypes['Product']> = {
+  business?: Resolver<ResolversTypes['Business'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  price?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  stock?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  unit?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -169,6 +234,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 export type Resolvers<ContextType = any> = {
   Business?: BusinessResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Product?: ProductResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 };
 

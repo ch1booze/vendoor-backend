@@ -9,10 +9,30 @@ input CreateBusinessInput {
   name: String!
 }
 
+input CreateProductInput {
+  description: String
+  name: String!
+  price: Int!
+  unit: String!
+}
+
 type Mutation {
   createBusiness(input: CreateBusinessInput!): Business
+  createProduct(input: CreateProductInput!): Product
   deleteBusiness: Boolean
+  deleteProduct(id: ID!): Boolean
   updateBusiness(input: UpdateBusinessInput!): Business
+  updateProduct(id: ID!, input: UpdateProductInput!): Product
+}
+
+type Product {
+  business: Business!
+  description: String
+  id: ID!
+  name: String!
+  price: Int!
+  stock: Int!
+  unit: String!
 }
 
 type Query {
@@ -22,4 +42,11 @@ type Query {
 input UpdateBusinessInput {
   description: String
   name: String
+}
+
+input UpdateProductInput {
+  description: String
+  name: String
+  price: Int
+  unit: String
 }
