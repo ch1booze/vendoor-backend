@@ -1,0 +1,19 @@
+extend type Inventory {
+  id: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  delta: Int!
+  event: String!
+
+  productId: ID!
+  product: Product!
+}
+
+extend type Query {
+  inventory(id: Int!): Inventory
+  inventories: [Inventory!]!
+}
+
+extend type Mutation {
+  createInventory(productId: ID!, delta: Int!, event: String!): Inventory!
+}

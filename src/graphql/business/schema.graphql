@@ -1,25 +1,38 @@
-extend type Query {
-  getBusiness: Business
-}
-
-type Mutation {
-  createBusiness(input: CreateBusinessInput!): Business
-  updateBusiness(input: UpdateBusinessInput!): Business
-  deleteBusiness: Boolean
-}
-
-type Business {
+extend type Business {
   id: ID!
-  name: String
-  description: String
-}
-
-input CreateBusinessInput {
   name: String!
+  tags: [String!]!
   description: String
+  data: JSON
+
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  userId: ID!
+
+  products: [Product!]!
+  orders: [Order!]!
+  businessChats: [BusinessChat!]!
+  customerChats: [CustomerChat!]!
+  customers: [Customer!]!
 }
 
-input UpdateBusinessInput {
-  name: String
-  description: String
+extend type Query {
+  business(id: ID!): Business
+  businesses: [Business!]!
+}
+
+extend type Mutation {
+  createBusiness(
+    name: String!
+    tags: [String!]!
+    description: String
+  ): Business!
+  updateBusiness(
+    id: ID!
+    name: String
+    tags: [String!]
+    description: String
+  ): Business!
+  deleteBusiness(id: ID!): Boolean!
 }

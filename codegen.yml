@@ -1,0 +1,9 @@
+schema: "**/schema.graphql"
+generates:
+  src/graphql:
+    preset: "@eddeee888/gcg-typescript-resolver-files"
+    config:
+      scalars:
+        JSON: string
+        DateTime: string
+        BigInt: string

@@ -1,2 +1,15 @@
 type Query
 type Mutation
+
+type Business
+type BusinessChat
+type Customer
+type CustomerChat
+type Inventory
+type Order
+type OrderItem
+type Product
+
+scalar BigInt
+scalar DateTime
+scalar JSON

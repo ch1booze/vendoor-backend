@@ -1,12 +1,28 @@
+scalar BigInt
+
 type Business {
+  businessChats: [BusinessChat!]!
+  createdAt: DateTime!
+  customerChats: [CustomerChat!]!
+  customers: [Customer!]!
+  data: JSON
   description: String
   id: ID!
-  name: String
+  name: String!
+  orders: [Order!]!
+  products: [Product!]!
+  tags: [String!]!
+  updatedAt: DateTime!
+  userId: ID!
 }
 
-input CreateBusinessInput {
-  description: String
-  name: String!
+type BusinessChat {
+  business: Business!
+  businessId: ID!
+  createdAt: DateTime!
+  id: ID!
+  query: String!
+  reply: String!
 }
 
 input CreateProductInput {
@@ -16,13 +32,81 @@ input CreateProductInput {
   unit: String!
 }
 
+type Customer {
+  businesses: [Business!]!
+  createdAt: DateTime!
+  customerChats: [CustomerChat!]!
+  orders: [Order!]!
+  updatedAt: DateTime!
+  userId: ID!
+}
+
+type CustomerChat {
+  business: Business!
+  businessId: ID!
+  createdAt: DateTime!
+  customer: Customer!
+  customerId: ID!
+  id: ID!
+  query: String!
+  reply: String!
+}
+
+scalar DateTime
+
+type Inventory {
+  createdAt: DateTime!
+  delta: Int!
+  event: String!
+  id: Int!
+  product: Product!
+  productId: ID!
+  updatedAt: DateTime!
+}
+
+scalar JSON
+
 type Mutation {
-  createBusiness(input: CreateBusinessInput!): Business
+  createBusiness(description: String, name: String!, tags: [String!]!): Business!
+  createBusinessChat(businessId: ID!, query: String!, reply: String!): BusinessChat!
+  createCustomer(userId: ID!): Customer!
+  createCustomerChat(businessId: ID!, customerId: ID!, query: String!, reply: String!): CustomerChat!
+  createInventory(delta: Int!, event: String!, productId: ID!): Inventory!
+  createOrder(businessId: ID!, customerId: ID!, status: String!): Order!
   createProduct(input: CreateProductInput!): Product
-  deleteBusiness: Boolean
+  deleteBusiness(id: ID!): Boolean!
+  deleteCustomer(userId: ID!): Boolean!
+  deleteOrder(id: ID!): Boolean!
   deleteProduct(id: ID!): Boolean
-  updateBusiness(input: UpdateBusinessInput!): Business
+  updateBusiness(description: String, id: ID!, name: String, tags: [String!]): Business!
+  updateOrderStatus(id: ID!, status: String!): Order!
   updateProduct(id: ID!, input: UpdateProductInput!): Product
+}
+
+type Order {
+  business: Business!
+  businessId: ID!
+  createdAt: DateTime!
+  customer: Customer!
+  customerId: ID!
+  id: ID!
+  items: [OrderItem!]!
+  status: String!
+  updatedAt: DateTime!
+}
+
+type OrderItem {
+  createdAt: DateTime!
+  description: String
+  id: ID!
+  name: String!
+  order: Order!
+  price: BigInt!
+  product: Product
+  quantity: Int!
+  tags: [String!]!
+  unit: String!
+  updatedAt: DateTime!
 }
 
 type Product {
@@ -36,12 +120,18 @@ type Product {
 }
 
 type Query {
-  getBusiness: Business
-}
-
-input UpdateBusinessInput {
-  description: String
-  name: String
+  business(id: ID!): Business
+  businessChat(id: ID!): BusinessChat
+  businessChats(businessId: ID!): [BusinessChat!]!
+  businesses: [Business!]!
+  customer(userId: ID!): Customer
+  customerChat(id: ID!): CustomerChat
+  customerChats(customerId: ID!): [CustomerChat!]!
+  customers: [Customer!]!
+  inventories: [Inventory!]!
+  inventory(id: Int!): Inventory
+  order(id: ID!): Order
+  orders: [Order!]!
 }
 
 input UpdateProductInput {

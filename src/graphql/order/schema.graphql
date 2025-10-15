@@ -1,0 +1,39 @@
+extend type Order {
+  id: ID!
+  status: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  businessId: ID!
+  business: Business!
+
+  customerId: ID!
+  customer: Customer!
+
+  items: [OrderItem!]!
+}
+
+extend type OrderItem {
+  id: ID!
+  name: String!
+  description: String
+  price: BigInt!
+  unit: String!
+  tags: [String!]!
+  quantity: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  order: Order!
+  product: Product
+}
+
+extend type Query {
+  order(id: ID!): Order
+  orders: [Order!]!
+}
+
+extend type Mutation {
+  createOrder(businessId: ID!, customerId: ID!, status: String!): Order!
+  updateOrderStatus(id: ID!, status: String!): Order!
+  deleteOrder(id: ID!): Boolean!
+}

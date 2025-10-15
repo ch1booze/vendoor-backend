@@ -1,0 +1,19 @@
+extend type Customer {
+  userId: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  orders: [Order!]!
+  customerChats: [CustomerChat!]!
+  businesses: [Business!]!
+}
+
+extend type Query {
+  customer(userId: ID!): Customer
+  customers: [Customer!]!
+}
+
+extend type Mutation {
+  createCustomer(userId: ID!): Customer!
+  deleteCustomer(userId: ID!): Boolean!
+}
