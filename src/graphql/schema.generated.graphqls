@@ -1,0 +1,25 @@
+type Business {
+  description: String
+  id: ID!
+  name: String
+}
+
+input CreateBusinessInput {
+  description: String
+  name: String!
+}
+
+type Mutation {
+  createBusiness(input: CreateBusinessInput!): Business
+  deleteBusiness: Boolean
+  updateBusiness(input: UpdateBusinessInput!): Business
+}
+
+type Query {
+  getBusiness: Business
+}
+
+input UpdateBusinessInput {
+  description: String
+  name: String
+}
