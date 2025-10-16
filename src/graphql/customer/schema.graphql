@@ -1,4 +1,4 @@
-extend type Customer {
+extend type Customer @auth(role: CUSTOMER) {
   userId: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -8,12 +8,29 @@ extend type Customer {
   businesses: [Business!]!
 }
 
+extend type CustomerChat {
+  id: ID!
+  createdAt: DateTime!
+  query: String!
+  reply: String!
+
+  customerId: ID!
+  customer: Customer!
+
+  businessId: ID!
+  business: Business!
+}
+
 extend type Query {
-  customer(userId: ID!): Customer
-  customers: [Customer!]!
+  customer: Customer! @auth(role: CUSTOMER)
+  customerChatsForBusiness(businessId: ID!): [CustomerChat!]!
+    @auth(role: BUSINESS)
 }
 
 extend type Mutation {
-  createCustomer(userId: ID!): Customer!
-  deleteCustomer(userId: ID!): Boolean!
+  registerCustomer: Customer!
+  deleteCustomerAccount: Boolean! @auth(role: CUSTOMER)
+
+  createCustomerChat(businessId: ID!, query: String!): CustomerChat!
+    @auth(role: CUSTOMER)
 }

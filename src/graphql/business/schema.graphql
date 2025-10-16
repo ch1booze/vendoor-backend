@@ -1,12 +1,9 @@
-extend type Business {
+extend type Business @auth(role: BUSINESS) {
   id: ID!
   name: String!
   tags: [String!]!
   description: String
   data: JSON
-
-  createdAt: DateTime!
-  updatedAt: DateTime!
 
   userId: ID!
 
@@ -17,9 +14,25 @@ extend type Business {
   customers: [Customer!]!
 }
 
+extend type BusinessChat @auth(role: BUSINESS) {
+  id: ID!
+  createdAt: DateTime!
+  query: String!
+  reply: String!
+
+  businessId: ID!
+  business: Business!
+}
+
 extend type Query {
-  business(id: ID!): Business
-  businesses: [Business!]!
+  business: Business! @auth(role: BUSINESS)
+  businessesForCustomer: [Business!]! @auth(role: CUSTOMER)
+  businessById(businessId: ID!): Business! @auth(role: CUSTOMER)
+
+  businessChats: [BusinessChat!]! @auth(role: BUSINESS)
+
+  businessCustomers: [Customer!]! @auth(role: BUSINESS)
+  businessCustomerById(customerId: ID!): Customer! @auth(role: BUSINESS)
 }
 
 extend type Mutation {
@@ -27,12 +40,13 @@ extend type Mutation {
     name: String!
     tags: [String!]!
     description: String
-  ): Business!
-  updateBusiness(
-    id: ID!
+  ): Business! @auth(role: BUSINESS)
+  updateBusinessProfile(
     name: String
     tags: [String!]
     description: String
-  ): Business!
-  deleteBusiness(id: ID!): Boolean!
+  ): Business! @auth(role: BUSINESS)
+  deleteBusiness: Boolean! @auth(role: BUSINESS)
+
+  createBusinessChat(query: String!): BusinessChat! @auth(role: BUSINESS)
 }

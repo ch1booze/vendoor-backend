@@ -1,9 +1,17 @@
 schema: "**/schema.graphql"
+
 generates:
   src/graphql:
     preset: "@eddeee888/gcg-typescript-resolver-files"
+    watchPattern: "**/*.mappers.ts"
     config:
       scalars:
         JSON: string
         DateTime: string
         BigInt: string
+
+  ./src/graphql/schema.generated.graphqls:
+    plugins:
+      - schema-ast
+    config:
+      includeDirectives: true

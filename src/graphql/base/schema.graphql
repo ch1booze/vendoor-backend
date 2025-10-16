@@ -13,3 +13,10 @@ type Product
 scalar BigInt
 scalar DateTime
 scalar JSON
+
+enum Role {
+  BUSINESS
+  CUSTOMER
+}
+
+directive @auth(role: Role) on OBJECT | FIELD_DEFINITION

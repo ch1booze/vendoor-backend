@@ -30,7 +30,7 @@ export const createContext = async ({ request: { headers } }: Context) => {
       extensions: { code: "UNAUTHENTICATED" },
     });
 
-  return session.user;
+  return { user: session.user };
 };
 
 export type SessionUser = (typeof auth.$Infer.Session)["user"];

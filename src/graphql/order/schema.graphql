@@ -1,4 +1,14 @@
-extend type Order {
+input OrderItemInput {
+  name: String!
+  description: String
+  price: BigInt!
+  unit: String!
+  tags: [String!]!
+  quantity: Int!
+  productId: ID
+}
+
+extend type Order @auth(role: BUSINESS) {
   id: ID!
   status: String!
   createdAt: DateTime!
@@ -28,12 +38,19 @@ extend type OrderItem {
 }
 
 extend type Query {
-  order(id: ID!): Order
-  orders: [Order!]!
+  businessOrders: [Order!]! @auth(role: BUSINESS)
+  businessOrderById(orderId: ID!): Order @auth(role: BUSINESS)
+
+  customerOrders(businessId: ID): [Order!]! @auth(role: CUSTOMER)
+  customerOrderById(orderId: ID!): Order @auth(role: CUSTOMER)
 }
 
 extend type Mutation {
-  createOrder(businessId: ID!, customerId: ID!, status: String!): Order!
-  updateOrderStatus(id: ID!, status: String!): Order!
-  deleteOrder(id: ID!): Boolean!
+  createCustomerOrder(businessId: ID!, items: [OrderItemInput!]!): Order!
+    @auth(role: CUSTOMER)
+
+  updateCustomerOrder(orderId: ID!, items: [OrderItemInput!]!): Order!
+    @auth(role: CUSTOMER)
+
+  cancelCustomerOrder(orderId: ID!): Boolean! @auth(role: CUSTOMER)
 }

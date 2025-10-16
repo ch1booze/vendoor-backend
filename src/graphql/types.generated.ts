@@ -7,6 +7,7 @@ export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Mayb
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
+export type EnumResolverSignature<T, AllowedValues = any> = { [key in keyof T]?: AllowedValues };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string | number; }
@@ -22,7 +23,6 @@ export type Scalars = {
 export type Business = {
   __typename?: 'Business';
   businessChats: Array<BusinessChat>;
-  createdAt: Scalars['DateTime']['output'];
   customerChats: Array<CustomerChat>;
   customers: Array<Customer>;
   data?: Maybe<Scalars['JSON']['output']>;
@@ -32,7 +32,6 @@ export type Business = {
   orders: Array<Order>;
   products: Array<Product>;
   tags: Array<Scalars['String']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
   userId: Scalars['ID']['output'];
 };
 
@@ -83,25 +82,29 @@ export type Inventory = {
   id: Scalars['Int']['output'];
   product: Product;
   productId: Scalars['ID']['output'];
-  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
+  cancelCustomerOrder: Scalars['Boolean']['output'];
   createBusiness: Business;
   createBusinessChat: BusinessChat;
-  createCustomer: Customer;
   createCustomerChat: CustomerChat;
+  createCustomerOrder: Order;
   createInventory: Inventory;
-  createOrder: Order;
-  createProduct?: Maybe<Product>;
+  createProduct: Product;
   deleteBusiness: Scalars['Boolean']['output'];
-  deleteCustomer: Scalars['Boolean']['output'];
-  deleteOrder: Scalars['Boolean']['output'];
-  deleteProduct?: Maybe<Scalars['Boolean']['output']>;
-  updateBusiness: Business;
-  updateOrderStatus: Order;
-  updateProduct?: Maybe<Product>;
+  deleteCustomerAccount: Scalars['Boolean']['output'];
+  deleteProduct: Scalars['Boolean']['output'];
+  registerCustomer: Customer;
+  updateBusinessProfile: Business;
+  updateCustomerOrder: Order;
+  updateProduct: Product;
+};
+
+
+export type MutationcancelCustomerOrderArgs = {
+  orderId: Scalars['ID']['input'];
 };
 
 
@@ -113,22 +116,19 @@ export type MutationcreateBusinessArgs = {
 
 
 export type MutationcreateBusinessChatArgs = {
-  businessId: Scalars['ID']['input'];
   query: Scalars['String']['input'];
-  reply: Scalars['String']['input'];
-};
-
-
-export type MutationcreateCustomerArgs = {
-  userId: Scalars['ID']['input'];
 };
 
 
 export type MutationcreateCustomerChatArgs = {
   businessId: Scalars['ID']['input'];
-  customerId: Scalars['ID']['input'];
   query: Scalars['String']['input'];
-  reply: Scalars['String']['input'];
+};
+
+
+export type MutationcreateCustomerOrderArgs = {
+  businessId: Scalars['ID']['input'];
+  items: Array<OrderItemInput>;
 };
 
 
@@ -139,30 +139,8 @@ export type MutationcreateInventoryArgs = {
 };
 
 
-export type MutationcreateOrderArgs = {
-  businessId: Scalars['ID']['input'];
-  customerId: Scalars['ID']['input'];
-  status: Scalars['String']['input'];
-};
-
-
 export type MutationcreateProductArgs = {
   input: CreateProductInput;
-};
-
-
-export type MutationdeleteBusinessArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationdeleteCustomerArgs = {
-  userId: Scalars['ID']['input'];
-};
-
-
-export type MutationdeleteOrderArgs = {
-  id: Scalars['ID']['input'];
 };
 
 
@@ -171,17 +149,16 @@ export type MutationdeleteProductArgs = {
 };
 
 
-export type MutationupdateBusinessArgs = {
+export type MutationupdateBusinessProfileArgs = {
   description?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   tags?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 
-export type MutationupdateOrderStatusArgs = {
-  id: Scalars['ID']['input'];
-  status: Scalars['String']['input'];
+export type MutationupdateCustomerOrderArgs = {
+  items: Array<OrderItemInput>;
+  orderId: Scalars['ID']['input'];
 };
 
 
@@ -218,6 +195,16 @@ export type OrderItem = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type OrderItemInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  price: Scalars['BigInt']['input'];
+  productId?: InputMaybe<Scalars['ID']['input']>;
+  quantity: Scalars['Int']['input'];
+  tags: Array<Scalars['String']['input']>;
+  unit: Scalars['String']['input'];
+};
+
 export type Product = {
   __typename?: 'Product';
   business: Business;
@@ -231,59 +218,74 @@ export type Product = {
 
 export type Query = {
   __typename?: 'Query';
-  business?: Maybe<Business>;
-  businessChat?: Maybe<BusinessChat>;
+  business: Business;
+  businessById: Business;
   businessChats: Array<BusinessChat>;
-  businesses: Array<Business>;
-  customer?: Maybe<Customer>;
-  customerChat?: Maybe<CustomerChat>;
-  customerChats: Array<CustomerChat>;
-  customers: Array<Customer>;
+  businessCustomerById: Customer;
+  businessCustomers: Array<Customer>;
+  businessOrderById?: Maybe<Order>;
+  businessOrders: Array<Order>;
+  businessProductById?: Maybe<Product>;
+  businessProducts: Array<Product>;
+  businessesForCustomer: Array<Business>;
+  customer: Customer;
+  customerChatsForBusiness: Array<CustomerChat>;
+  customerOrderById?: Maybe<Order>;
+  customerOrders: Array<Order>;
+  customerProductById?: Maybe<Product>;
+  customerProducts: Array<Product>;
   inventories: Array<Inventory>;
-  inventory?: Maybe<Inventory>;
-  order?: Maybe<Order>;
-  orders: Array<Order>;
 };
 
 
-export type QuerybusinessArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QuerybusinessChatArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QuerybusinessChatsArgs = {
+export type QuerybusinessByIdArgs = {
   businessId: Scalars['ID']['input'];
 };
 
 
-export type QuerycustomerArgs = {
-  userId: Scalars['ID']['input'];
-};
-
-
-export type QuerycustomerChatArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QuerycustomerChatsArgs = {
+export type QuerybusinessCustomerByIdArgs = {
   customerId: Scalars['ID']['input'];
 };
 
 
-export type QueryinventoryArgs = {
-  id: Scalars['Int']['input'];
+export type QuerybusinessOrderByIdArgs = {
+  orderId: Scalars['ID']['input'];
 };
 
 
-export type QueryorderArgs = {
+export type QuerybusinessProductByIdArgs = {
   id: Scalars['ID']['input'];
 };
+
+
+export type QuerycustomerChatsForBusinessArgs = {
+  businessId: Scalars['ID']['input'];
+};
+
+
+export type QuerycustomerOrderByIdArgs = {
+  orderId: Scalars['ID']['input'];
+};
+
+
+export type QuerycustomerOrdersArgs = {
+  businessId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type QuerycustomerProductByIdArgs = {
+  businessId: Scalars['ID']['input'];
+  productId: Scalars['ID']['input'];
+};
+
+
+export type QuerycustomerProductsArgs = {
+  businessId: Scalars['ID']['input'];
+};
+
+export type Role =
+  | 'BUSINESS'
+  | 'CUSTOMER';
 
 export type UpdateProductInput = {
   description?: InputMaybe<Scalars['String']['input']>;
@@ -381,8 +383,10 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Order: ResolverTypeWrapper<Order>;
   OrderItem: ResolverTypeWrapper<OrderItem>;
+  OrderItemInput: OrderItemInput;
   Product: ResolverTypeWrapper<Product>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
+  Role: ResolverTypeWrapper<'BUSINESS' | 'CUSTOMER'>;
   UpdateProductInput: UpdateProductInput;
 };
 
@@ -404,10 +408,17 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
   Order: Order;
   OrderItem: OrderItem;
+  OrderItemInput: OrderItemInput;
   Product: Product;
   Query: Record<PropertyKey, never>;
   UpdateProductInput: UpdateProductInput;
 };
+
+export type authDirectiveArgs = {
+  role?: Maybe<Role>;
+};
+
+export type authDirectiveResolver<Result, Parent, ContextType = any, Args = authDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export interface BigIntScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['BigInt'], any> {
   name: 'BigInt';
@@ -415,7 +426,6 @@ export interface BigIntScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 
 export type BusinessResolvers<ContextType = any, ParentType extends ResolversParentTypes['Business'] = ResolversParentTypes['Business']> = {
   businessChats?: Resolver<Array<ResolversTypes['BusinessChat']>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   customerChats?: Resolver<Array<ResolversTypes['CustomerChat']>, ParentType, ContextType>;
   customers?: Resolver<Array<ResolversTypes['Customer']>, ParentType, ContextType>;
   data?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
@@ -425,7 +435,6 @@ export type BusinessResolvers<ContextType = any, ParentType extends ResolversPar
   orders?: Resolver<Array<ResolversTypes['Order']>, ParentType, ContextType>;
   products?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType>;
   tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 };
 
@@ -469,7 +478,6 @@ export type InventoryResolvers<ContextType = any, ParentType extends ResolversPa
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   product?: Resolver<ResolversTypes['Product'], ParentType, ContextType>;
   productId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 };
 
 export interface JSONScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
@@ -477,20 +485,20 @@ export interface JSONScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  cancelCustomerOrder?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationcancelCustomerOrderArgs, 'orderId'>>;
   createBusiness?: Resolver<ResolversTypes['Business'], ParentType, ContextType, RequireFields<MutationcreateBusinessArgs, 'name' | 'tags'>>;
-  createBusinessChat?: Resolver<ResolversTypes['BusinessChat'], ParentType, ContextType, RequireFields<MutationcreateBusinessChatArgs, 'businessId' | 'query' | 'reply'>>;
-  createCustomer?: Resolver<ResolversTypes['Customer'], ParentType, ContextType, RequireFields<MutationcreateCustomerArgs, 'userId'>>;
-  createCustomerChat?: Resolver<ResolversTypes['CustomerChat'], ParentType, ContextType, RequireFields<MutationcreateCustomerChatArgs, 'businessId' | 'customerId' | 'query' | 'reply'>>;
+  createBusinessChat?: Resolver<ResolversTypes['BusinessChat'], ParentType, ContextType, RequireFields<MutationcreateBusinessChatArgs, 'query'>>;
+  createCustomerChat?: Resolver<ResolversTypes['CustomerChat'], ParentType, ContextType, RequireFields<MutationcreateCustomerChatArgs, 'businessId' | 'query'>>;
+  createCustomerOrder?: Resolver<ResolversTypes['Order'], ParentType, ContextType, RequireFields<MutationcreateCustomerOrderArgs, 'businessId' | 'items'>>;
   createInventory?: Resolver<ResolversTypes['Inventory'], ParentType, ContextType, RequireFields<MutationcreateInventoryArgs, 'delta' | 'event' | 'productId'>>;
-  createOrder?: Resolver<ResolversTypes['Order'], ParentType, ContextType, RequireFields<MutationcreateOrderArgs, 'businessId' | 'customerId' | 'status'>>;
-  createProduct?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<MutationcreateProductArgs, 'input'>>;
-  deleteBusiness?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteBusinessArgs, 'id'>>;
-  deleteCustomer?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteCustomerArgs, 'userId'>>;
-  deleteOrder?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteOrderArgs, 'id'>>;
-  deleteProduct?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationdeleteProductArgs, 'id'>>;
-  updateBusiness?: Resolver<ResolversTypes['Business'], ParentType, ContextType, RequireFields<MutationupdateBusinessArgs, 'id'>>;
-  updateOrderStatus?: Resolver<ResolversTypes['Order'], ParentType, ContextType, RequireFields<MutationupdateOrderStatusArgs, 'id' | 'status'>>;
-  updateProduct?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<MutationupdateProductArgs, 'id' | 'input'>>;
+  createProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationcreateProductArgs, 'input'>>;
+  deleteBusiness?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  deleteCustomerAccount?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  deleteProduct?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteProductArgs, 'id'>>;
+  registerCustomer?: Resolver<ResolversTypes['Customer'], ParentType, ContextType>;
+  updateBusinessProfile?: Resolver<ResolversTypes['Business'], ParentType, ContextType, Partial<MutationupdateBusinessProfileArgs>>;
+  updateCustomerOrder?: Resolver<ResolversTypes['Order'], ParentType, ContextType, RequireFields<MutationupdateCustomerOrderArgs, 'items' | 'orderId'>>;
+  updateProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationupdateProductArgs, 'id' | 'input'>>;
 };
 
 export type OrderResolvers<ContextType = any, ParentType extends ResolversParentTypes['Order'] = ResolversParentTypes['Order']> = {
@@ -530,19 +538,26 @@ export type ProductResolvers<ContextType = any, ParentType extends ResolversPare
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  business?: Resolver<Maybe<ResolversTypes['Business']>, ParentType, ContextType, RequireFields<QuerybusinessArgs, 'id'>>;
-  businessChat?: Resolver<Maybe<ResolversTypes['BusinessChat']>, ParentType, ContextType, RequireFields<QuerybusinessChatArgs, 'id'>>;
-  businessChats?: Resolver<Array<ResolversTypes['BusinessChat']>, ParentType, ContextType, RequireFields<QuerybusinessChatsArgs, 'businessId'>>;
-  businesses?: Resolver<Array<ResolversTypes['Business']>, ParentType, ContextType>;
-  customer?: Resolver<Maybe<ResolversTypes['Customer']>, ParentType, ContextType, RequireFields<QuerycustomerArgs, 'userId'>>;
-  customerChat?: Resolver<Maybe<ResolversTypes['CustomerChat']>, ParentType, ContextType, RequireFields<QuerycustomerChatArgs, 'id'>>;
-  customerChats?: Resolver<Array<ResolversTypes['CustomerChat']>, ParentType, ContextType, RequireFields<QuerycustomerChatsArgs, 'customerId'>>;
-  customers?: Resolver<Array<ResolversTypes['Customer']>, ParentType, ContextType>;
+  business?: Resolver<ResolversTypes['Business'], ParentType, ContextType>;
+  businessById?: Resolver<ResolversTypes['Business'], ParentType, ContextType, RequireFields<QuerybusinessByIdArgs, 'businessId'>>;
+  businessChats?: Resolver<Array<ResolversTypes['BusinessChat']>, ParentType, ContextType>;
+  businessCustomerById?: Resolver<ResolversTypes['Customer'], ParentType, ContextType, RequireFields<QuerybusinessCustomerByIdArgs, 'customerId'>>;
+  businessCustomers?: Resolver<Array<ResolversTypes['Customer']>, ParentType, ContextType>;
+  businessOrderById?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<QuerybusinessOrderByIdArgs, 'orderId'>>;
+  businessOrders?: Resolver<Array<ResolversTypes['Order']>, ParentType, ContextType>;
+  businessProductById?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QuerybusinessProductByIdArgs, 'id'>>;
+  businessProducts?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType>;
+  businessesForCustomer?: Resolver<Array<ResolversTypes['Business']>, ParentType, ContextType>;
+  customer?: Resolver<ResolversTypes['Customer'], ParentType, ContextType>;
+  customerChatsForBusiness?: Resolver<Array<ResolversTypes['CustomerChat']>, ParentType, ContextType, RequireFields<QuerycustomerChatsForBusinessArgs, 'businessId'>>;
+  customerOrderById?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<QuerycustomerOrderByIdArgs, 'orderId'>>;
+  customerOrders?: Resolver<Array<ResolversTypes['Order']>, ParentType, ContextType, Partial<QuerycustomerOrdersArgs>>;
+  customerProductById?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QuerycustomerProductByIdArgs, 'businessId' | 'productId'>>;
+  customerProducts?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QuerycustomerProductsArgs, 'businessId'>>;
   inventories?: Resolver<Array<ResolversTypes['Inventory']>, ParentType, ContextType>;
-  inventory?: Resolver<Maybe<ResolversTypes['Inventory']>, ParentType, ContextType, RequireFields<QueryinventoryArgs, 'id'>>;
-  order?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<QueryorderArgs, 'id'>>;
-  orders?: Resolver<Array<ResolversTypes['Order']>, ParentType, ContextType>;
 };
+
+export type RoleResolvers = EnumResolverSignature<{ BUSINESS?: any, CUSTOMER?: any }, ResolversTypes['Role']>;
 
 export type Resolvers<ContextType = any> = {
   BigInt?: GraphQLScalarType;
@@ -558,5 +573,9 @@ export type Resolvers<ContextType = any> = {
   OrderItem?: OrderItemResolvers<ContextType>;
   Product?: ProductResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Role?: RoleResolvers;
 };
 
+export type DirectiveResolvers<ContextType = any> = {
+  auth?: authDirectiveResolver<any, any, ContextType>;
+};

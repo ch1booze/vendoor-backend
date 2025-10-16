@@ -15,15 +15,24 @@ input CreateProductInput {
   unit: String!
 }
 
-type Mutation {
-  createProduct(input: CreateProductInput!): Product
-  deleteProduct(id: ID!): Boolean
-  updateProduct(id: ID!, input: UpdateProductInput!): Product
-}
-
 input UpdateProductInput {
   name: String
   description: String
   price: Int
   unit: String
+}
+
+extend type Query {
+  businessProducts: [Product!]! @auth(role: BUSINESS)
+  businessProductById(id: ID!): Product @auth(role: BUSINESS)
+  customerProducts(businessId: ID!): [Product!]! @auth(role: CUSTOMER)
+  customerProductById(businessId: ID!, productId: ID!): Product
+    @auth(role: CUSTOMER)
+}
+
+extend type Mutation {
+  createProduct(input: CreateProductInput!): Product! @auth(role: BUSINESS)
+  updateProduct(id: ID!, input: UpdateProductInput!): Product!
+    @auth(role: BUSINESS)
+  deleteProduct(id: ID!): Boolean! @auth(role: BUSINESS)
 }
