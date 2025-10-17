@@ -3,9 +3,8 @@ extend type Customer @auth(role: CUSTOMER) {
   createdAt: DateTime!
   updatedAt: DateTime!
 
-  orders: [Order!]!
-  customerChats: [CustomerChat!]!
-  businesses: [Business!]!
+  orders: [Order]
+  customerChats: [CustomerChat]
 }
 
 extend type CustomerChat {
@@ -28,13 +27,12 @@ input CreateCustomerChatInput {
 
 extend type Query {
   customer: Customer! @auth(role: CUSTOMER)
-  customerChatsForBusiness(businessId: ID!): [CustomerChat!]!
+  customerChatsForBusiness(businessId: ID!): [CustomerChat]
     @auth(role: BUSINESS)
 }
 
 extend type Mutation {
   registerCustomer: Customer!
-  deleteCustomerAccount: Boolean! @auth(role: CUSTOMER)
 
   createCustomerChat(input: CreateCustomerChatInput!): CustomerChat!
     @auth(role: CUSTOMER)

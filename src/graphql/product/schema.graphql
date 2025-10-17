@@ -23,9 +23,9 @@ input UpdateProductInput {
 }
 
 extend type Query {
-  businessProducts: [Product!]! @auth(role: BUSINESS)
+  businessProducts: [Product]! @auth(role: BUSINESS)
   businessProductById(id: ID!): Product @auth(role: BUSINESS)
-  customerProducts(businessId: ID!): [Product!]! @auth(role: CUSTOMER)
+  customerProducts(businessId: ID!): [Product]! @auth(role: CUSTOMER)
   customerProductById(businessId: ID!, productId: ID!): Product
     @auth(role: CUSTOMER)
 }

@@ -1,14 +1,17 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "./prisma";
-import { Context } from "elysia";
 import { env } from "./environment";
 import { apiKey, bearer, openAPI } from "better-auth/plugins";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   secret: env.BETTER_AUTH_SECRET,
-  emailAndPassword: { enabled: true, requireEmailVerification: true },
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: false,
+    autoSignIn: true,
+  },
   user: {
     fields: { name: "fullName" },
     additionalFields: { role: { type: "string", required: true } },
@@ -21,14 +24,3 @@ export const auth = betterAuth({
   },
   plugins: [bearer(), openAPI(), apiKey()],
 });
-
-export const createContext = async ({
-  request: { headers },
-}: Context): Promise<GraphQLContext> => {
-  const session = await auth.api.getSession({ headers });
-  return { user: session?.user };
-};
-
-export type SessionUser = (typeof auth.$Infer.Session)["user"];
-
-export type GraphQLContext = { user: SessionUser | null };

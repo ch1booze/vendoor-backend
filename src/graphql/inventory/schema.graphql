@@ -9,7 +9,7 @@ extend type Inventory @auth(role: BUSINESS) {
 }
 
 extend type Query {
-  inventories: [Inventory!]! @auth(role: BUSINESS)
+  inventories: [Inventory] @auth(role: BUSINESS)
 }
 
 input CreateInventoryInput {

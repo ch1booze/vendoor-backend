@@ -1,17 +1,17 @@
 extend type Business @auth(role: BUSINESS) {
   id: ID!
   name: String!
-  tags: [String!]!
+  tags: [String]
   description: String
   data: JSON
 
   userId: ID!
 
-  products: [Product!]!
-  orders: [Order!]!
-  businessChats: [BusinessChat!]!
-  customerChats: [CustomerChat!]!
-  customers: [Customer!]!
+  products: [Product]
+  orders: [Order]
+  businessChats: [BusinessChat]
+  customerChats: [CustomerChat]
+  customers: [Customer]
 }
 
 extend type BusinessChat @auth(role: BUSINESS) {
@@ -26,7 +26,7 @@ extend type BusinessChat @auth(role: BUSINESS) {
 
 input CreateBusinessInput {
   name: String!
-  tags: [String!]!
+  tags: [String]
   description: String
 }
 
@@ -38,19 +38,18 @@ input UpdateBusinessInput {
 
 extend type Query {
   business: Business! @auth(role: BUSINESS)
-  businessesForCustomer: [Business!]! @auth(role: CUSTOMER)
+  businessesForCustomer: [Business]! @auth(role: CUSTOMER)
   businessById(businessId: ID!): Business! @auth(role: CUSTOMER)
 
-  businessChats: [BusinessChat!]! @auth(role: BUSINESS)
+  businessChats: [BusinessChat]! @auth(role: BUSINESS)
 
-  businessCustomers: [Customer!]! @auth(role: BUSINESS)
+  businessCustomers: [Customer]! @auth(role: BUSINESS)
   businessCustomerById(customerId: ID!): Customer! @auth(role: BUSINESS)
 }
 
 extend type Mutation {
   createBusiness(input: CreateBusinessInput!): Business! @auth(role: BUSINESS)
   updateBusiness(input: UpdateBusinessInput!): Business! @auth(role: BUSINESS)
-  deleteBusiness: Boolean! @auth(role: BUSINESS)
 
   createBusinessChat(query: String!): BusinessChat! @auth(role: BUSINESS)
 }

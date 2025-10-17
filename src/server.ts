@@ -1,8 +1,9 @@
 import { Elysia } from "elysia";
-import { auth, createContext } from "./lib/auth";
+import { auth } from "./lib/auth";
 import cors from "@elysiajs/cors";
 import apollo from "@elysiajs/apollo";
 import schema from "./graphql/schema.merged";
+import { createContext } from "./lib/context";
 
 const app = new Elysia()
   .use(cors())
