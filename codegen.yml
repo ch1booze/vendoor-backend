@@ -9,9 +9,3 @@ generates:
         JSON: string
         DateTime: string
         BigInt: string
-
-  ./src/graphql/schema.generated.graphqls:
-    plugins:
-      - schema-ast
-    config:
-      includeDirectives: true

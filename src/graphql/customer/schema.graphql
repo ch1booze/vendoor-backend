@@ -21,6 +21,11 @@ extend type CustomerChat {
   business: Business!
 }
 
+input CreateCustomerChatInput {
+  businessId: ID!
+  query: String!
+}
+
 extend type Query {
   customer: Customer! @auth(role: CUSTOMER)
   customerChatsForBusiness(businessId: ID!): [CustomerChat!]!
@@ -31,6 +36,6 @@ extend type Mutation {
   registerCustomer: Customer!
   deleteCustomerAccount: Boolean! @auth(role: CUSTOMER)
 
-  createCustomerChat(businessId: ID!, query: String!): CustomerChat!
+  createCustomerChat(input: CreateCustomerChatInput!): CustomerChat!
     @auth(role: CUSTOMER)
 }

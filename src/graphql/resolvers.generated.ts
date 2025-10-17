@@ -28,7 +28,7 @@ import    { deleteBusiness as Mutation_deleteBusiness } from './business/resolve
 import    { deleteCustomerAccount as Mutation_deleteCustomerAccount } from './customer/resolvers/Mutation/deleteCustomerAccount';
 import    { deleteProduct as Mutation_deleteProduct } from './product/resolvers/Mutation/deleteProduct';
 import    { registerCustomer as Mutation_registerCustomer } from './customer/resolvers/Mutation/registerCustomer';
-import    { updateBusinessProfile as Mutation_updateBusinessProfile } from './business/resolvers/Mutation/updateBusinessProfile';
+import    { updateBusiness as Mutation_updateBusiness } from './business/resolvers/Mutation/updateBusiness';
 import    { updateCustomerOrder as Mutation_updateCustomerOrder } from './order/resolvers/Mutation/updateCustomerOrder';
 import    { updateProduct as Mutation_updateProduct } from './product/resolvers/Mutation/updateProduct';
 import    { Business } from './business/resolvers/Business';
@@ -42,7 +42,7 @@ import    { Product } from './product/resolvers/Product';
 import    { BigIntResolver,DateTimeResolver,JSONResolver } from 'graphql-scalars';
     export const resolvers: Resolvers = {
       Query: { business: Query_business,businessById: Query_businessById,businessChats: Query_businessChats,businessCustomerById: Query_businessCustomerById,businessCustomers: Query_businessCustomers,businessOrderById: Query_businessOrderById,businessOrders: Query_businessOrders,businessProductById: Query_businessProductById,businessProducts: Query_businessProducts,businessesForCustomer: Query_businessesForCustomer,customer: Query_customer,customerChatsForBusiness: Query_customerChatsForBusiness,customerOrderById: Query_customerOrderById,customerOrders: Query_customerOrders,customerProductById: Query_customerProductById,customerProducts: Query_customerProducts,inventories: Query_inventories },
-      Mutation: { cancelCustomerOrder: Mutation_cancelCustomerOrder,createBusiness: Mutation_createBusiness,createBusinessChat: Mutation_createBusinessChat,createCustomerChat: Mutation_createCustomerChat,createCustomerOrder: Mutation_createCustomerOrder,createInventory: Mutation_createInventory,createProduct: Mutation_createProduct,deleteBusiness: Mutation_deleteBusiness,deleteCustomerAccount: Mutation_deleteCustomerAccount,deleteProduct: Mutation_deleteProduct,registerCustomer: Mutation_registerCustomer,updateBusinessProfile: Mutation_updateBusinessProfile,updateCustomerOrder: Mutation_updateCustomerOrder,updateProduct: Mutation_updateProduct },
+      Mutation: { cancelCustomerOrder: Mutation_cancelCustomerOrder,createBusiness: Mutation_createBusiness,createBusinessChat: Mutation_createBusinessChat,createCustomerChat: Mutation_createCustomerChat,createCustomerOrder: Mutation_createCustomerOrder,createInventory: Mutation_createInventory,createProduct: Mutation_createProduct,deleteBusiness: Mutation_deleteBusiness,deleteCustomerAccount: Mutation_deleteCustomerAccount,deleteProduct: Mutation_deleteProduct,registerCustomer: Mutation_registerCustomer,updateBusiness: Mutation_updateBusiness,updateCustomerOrder: Mutation_updateCustomerOrder,updateProduct: Mutation_updateProduct },
       
       Business: Business,
 BusinessChat: BusinessChat,

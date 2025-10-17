@@ -45,6 +45,28 @@ export type BusinessChat = {
   reply: Scalars['String']['output'];
 };
 
+export type CreateBusinessInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  tags: Array<Scalars['String']['input']>;
+};
+
+export type CreateCustomerChatInput = {
+  businessId: Scalars['ID']['input'];
+  query: Scalars['String']['input'];
+};
+
+export type CreateCustomerOrderInput = {
+  businessId: Scalars['ID']['input'];
+  items: Array<OrderItemInput>;
+};
+
+export type CreateInventoryInput = {
+  delta: Scalars['Int']['input'];
+  event: Scalars['String']['input'];
+  productId: Scalars['ID']['input'];
+};
+
 export type CreateProductInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
@@ -97,7 +119,7 @@ export type Mutation = {
   deleteCustomerAccount: Scalars['Boolean']['output'];
   deleteProduct: Scalars['Boolean']['output'];
   registerCustomer: Customer;
-  updateBusinessProfile: Business;
+  updateBusiness: Business;
   updateCustomerOrder: Order;
   updateProduct: Product;
 };
@@ -109,9 +131,7 @@ export type MutationcancelCustomerOrderArgs = {
 
 
 export type MutationcreateBusinessArgs = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  name: Scalars['String']['input'];
-  tags: Array<Scalars['String']['input']>;
+  input: CreateBusinessInput;
 };
 
 
@@ -121,21 +141,17 @@ export type MutationcreateBusinessChatArgs = {
 
 
 export type MutationcreateCustomerChatArgs = {
-  businessId: Scalars['ID']['input'];
-  query: Scalars['String']['input'];
+  input: CreateCustomerChatInput;
 };
 
 
 export type MutationcreateCustomerOrderArgs = {
-  businessId: Scalars['ID']['input'];
-  items: Array<OrderItemInput>;
+  input: CreateCustomerOrderInput;
 };
 
 
 export type MutationcreateInventoryArgs = {
-  delta: Scalars['Int']['input'];
-  event: Scalars['String']['input'];
-  productId: Scalars['ID']['input'];
+  input: CreateInventoryInput;
 };
 
 
@@ -149,16 +165,13 @@ export type MutationdeleteProductArgs = {
 };
 
 
-export type MutationupdateBusinessProfileArgs = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  tags?: InputMaybe<Array<Scalars['String']['input']>>;
+export type MutationupdateBusinessArgs = {
+  input: UpdateBusinessInput;
 };
 
 
 export type MutationupdateCustomerOrderArgs = {
-  items: Array<OrderItemInput>;
-  orderId: Scalars['ID']['input'];
+  input: UpdateCustomerOrderInput;
 };
 
 
@@ -287,6 +300,17 @@ export type Role =
   | 'BUSINESS'
   | 'CUSTOMER';
 
+export type UpdateBusinessInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+export type UpdateCustomerOrderInput = {
+  items: Array<OrderItemInput>;
+  orderId: Scalars['ID']['input'];
+};
+
 export type UpdateProductInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
@@ -372,8 +396,12 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   BusinessChat: ResolverTypeWrapper<BusinessChat>;
-  CreateProductInput: CreateProductInput;
+  CreateBusinessInput: CreateBusinessInput;
+  CreateCustomerChatInput: CreateCustomerChatInput;
+  CreateCustomerOrderInput: CreateCustomerOrderInput;
+  CreateInventoryInput: CreateInventoryInput;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  CreateProductInput: CreateProductInput;
   Customer: ResolverTypeWrapper<Customer>;
   CustomerChat: ResolverTypeWrapper<CustomerChat>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
@@ -387,6 +415,8 @@ export type ResolversTypes = {
   Product: ResolverTypeWrapper<Product>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Role: ResolverTypeWrapper<'BUSINESS' | 'CUSTOMER'>;
+  UpdateBusinessInput: UpdateBusinessInput;
+  UpdateCustomerOrderInput: UpdateCustomerOrderInput;
   UpdateProductInput: UpdateProductInput;
 };
 
@@ -397,8 +427,12 @@ export type ResolversParentTypes = {
   String: Scalars['String']['output'];
   ID: Scalars['ID']['output'];
   BusinessChat: BusinessChat;
-  CreateProductInput: CreateProductInput;
+  CreateBusinessInput: CreateBusinessInput;
+  CreateCustomerChatInput: CreateCustomerChatInput;
+  CreateCustomerOrderInput: CreateCustomerOrderInput;
+  CreateInventoryInput: CreateInventoryInput;
   Int: Scalars['Int']['output'];
+  CreateProductInput: CreateProductInput;
   Customer: Customer;
   CustomerChat: CustomerChat;
   DateTime: Scalars['DateTime']['output'];
@@ -411,6 +445,8 @@ export type ResolversParentTypes = {
   OrderItemInput: OrderItemInput;
   Product: Product;
   Query: Record<PropertyKey, never>;
+  UpdateBusinessInput: UpdateBusinessInput;
+  UpdateCustomerOrderInput: UpdateCustomerOrderInput;
   UpdateProductInput: UpdateProductInput;
 };
 
@@ -486,18 +522,18 @@ export interface JSONScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   cancelCustomerOrder?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationcancelCustomerOrderArgs, 'orderId'>>;
-  createBusiness?: Resolver<ResolversTypes['Business'], ParentType, ContextType, RequireFields<MutationcreateBusinessArgs, 'name' | 'tags'>>;
+  createBusiness?: Resolver<ResolversTypes['Business'], ParentType, ContextType, RequireFields<MutationcreateBusinessArgs, 'input'>>;
   createBusinessChat?: Resolver<ResolversTypes['BusinessChat'], ParentType, ContextType, RequireFields<MutationcreateBusinessChatArgs, 'query'>>;
-  createCustomerChat?: Resolver<ResolversTypes['CustomerChat'], ParentType, ContextType, RequireFields<MutationcreateCustomerChatArgs, 'businessId' | 'query'>>;
-  createCustomerOrder?: Resolver<ResolversTypes['Order'], ParentType, ContextType, RequireFields<MutationcreateCustomerOrderArgs, 'businessId' | 'items'>>;
-  createInventory?: Resolver<ResolversTypes['Inventory'], ParentType, ContextType, RequireFields<MutationcreateInventoryArgs, 'delta' | 'event' | 'productId'>>;
+  createCustomerChat?: Resolver<ResolversTypes['CustomerChat'], ParentType, ContextType, RequireFields<MutationcreateCustomerChatArgs, 'input'>>;
+  createCustomerOrder?: Resolver<ResolversTypes['Order'], ParentType, ContextType, RequireFields<MutationcreateCustomerOrderArgs, 'input'>>;
+  createInventory?: Resolver<ResolversTypes['Inventory'], ParentType, ContextType, RequireFields<MutationcreateInventoryArgs, 'input'>>;
   createProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationcreateProductArgs, 'input'>>;
   deleteBusiness?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   deleteCustomerAccount?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   deleteProduct?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteProductArgs, 'id'>>;
   registerCustomer?: Resolver<ResolversTypes['Customer'], ParentType, ContextType>;
-  updateBusinessProfile?: Resolver<ResolversTypes['Business'], ParentType, ContextType, Partial<MutationupdateBusinessProfileArgs>>;
-  updateCustomerOrder?: Resolver<ResolversTypes['Order'], ParentType, ContextType, RequireFields<MutationupdateCustomerOrderArgs, 'items' | 'orderId'>>;
+  updateBusiness?: Resolver<ResolversTypes['Business'], ParentType, ContextType, RequireFields<MutationupdateBusinessArgs, 'input'>>;
+  updateCustomerOrder?: Resolver<ResolversTypes['Order'], ParentType, ContextType, RequireFields<MutationupdateCustomerOrderArgs, 'input'>>;
   updateProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationupdateProductArgs, 'id' | 'input'>>;
 };
 

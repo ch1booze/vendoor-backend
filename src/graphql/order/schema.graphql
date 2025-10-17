@@ -37,6 +37,16 @@ extend type OrderItem {
   product: Product
 }
 
+input CreateCustomerOrderInput {
+  businessId: ID!
+  items: [OrderItemInput!]!
+}
+
+input UpdateCustomerOrderInput {
+  orderId: ID!
+  items: [OrderItemInput!]!
+}
+
 extend type Query {
   businessOrders: [Order!]! @auth(role: BUSINESS)
   businessOrderById(orderId: ID!): Order @auth(role: BUSINESS)
@@ -46,10 +56,10 @@ extend type Query {
 }
 
 extend type Mutation {
-  createCustomerOrder(businessId: ID!, items: [OrderItemInput!]!): Order!
+  createCustomerOrder(input: CreateCustomerOrderInput!): Order!
     @auth(role: CUSTOMER)
 
-  updateCustomerOrder(orderId: ID!, items: [OrderItemInput!]!): Order!
+  updateCustomerOrder(input: UpdateCustomerOrderInput!): Order!
     @auth(role: CUSTOMER)
 
   cancelCustomerOrder(orderId: ID!): Boolean! @auth(role: CUSTOMER)

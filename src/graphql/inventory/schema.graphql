@@ -12,10 +12,13 @@ extend type Query {
   inventories: [Inventory!]! @auth(role: BUSINESS)
 }
 
+input CreateInventoryInput {
+  productId: ID!
+  delta: Int!
+  event: String!
+}
+
 extend type Mutation {
-  createInventory(
-    productId: ID!
-    delta: Int!
-    event: String!
-  ): Inventory! @auth(role: BUSINESS)
+  createInventory(input: CreateInventoryInput!): Inventory!
+    @auth(role: BUSINESS)
 }

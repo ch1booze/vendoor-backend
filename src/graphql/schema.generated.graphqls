@@ -25,6 +25,28 @@ type BusinessChat {
   reply: String!
 }
 
+input CreateBusinessInput {
+  description: String
+  name: String!
+  tags: [String!]!
+}
+
+input CreateCustomerChatInput {
+  businessId: ID!
+  query: String!
+}
+
+input CreateCustomerOrderInput {
+  businessId: ID!
+  items: [OrderItemInput!]!
+}
+
+input CreateInventoryInput {
+  delta: Int!
+  event: String!
+  productId: ID!
+}
+
 input CreateProductInput {
   description: String
   name: String!
@@ -67,18 +89,18 @@ scalar JSON
 
 type Mutation {
   cancelCustomerOrder(orderId: ID!): Boolean!
-  createBusiness(description: String, name: String!, tags: [String!]!): Business!
+  createBusiness(input: CreateBusinessInput!): Business!
   createBusinessChat(query: String!): BusinessChat!
-  createCustomerChat(businessId: ID!, query: String!): CustomerChat!
-  createCustomerOrder(businessId: ID!, items: [OrderItemInput!]!): Order!
-  createInventory(delta: Int!, event: String!, productId: ID!): Inventory!
+  createCustomerChat(input: CreateCustomerChatInput!): CustomerChat!
+  createCustomerOrder(input: CreateCustomerOrderInput!): Order!
+  createInventory(input: CreateInventoryInput!): Inventory!
   createProduct(input: CreateProductInput!): Product!
   deleteBusiness: Boolean!
   deleteCustomerAccount: Boolean!
   deleteProduct(id: ID!): Boolean!
   registerCustomer: Customer!
-  updateBusinessProfile(description: String, name: String, tags: [String!]): Business!
-  updateCustomerOrder(items: [OrderItemInput!]!, orderId: ID!): Order!
+  updateBusiness(input: UpdateBusinessInput!): Business!
+  updateCustomerOrder(input: UpdateCustomerOrderInput!): Order!
   updateProduct(id: ID!, input: UpdateProductInput!): Product!
 }
 
@@ -153,27 +175,15 @@ enum Role {
   CUSTOMER
 }
 
-input UpdateProductInput {
+input UpdateBusinessInput {
   description: String
   name: String
-  price: Int
-  unit: String
-}nessOrders: [Order!]! @auth(role: BUSINESS)
-  businessProductById(id: ID!): Product @auth(role: BUSINESS)
-  businessProducts: [Product!]! @auth(role: BUSINESS)
-  businessesForCustomer: [Business!]! @auth(role: CUSTOMER)
-  customer: Customer! @auth(role: CUSTOMER)
-  customerChatsForBusiness(businessId: ID!): [CustomerChat!]! @auth(role: BUSINESS)
-  customerOrderById(orderId: ID!): Order @auth(role: CUSTOMER)
-  customerOrders(businessId: ID): [Order!]! @auth(role: CUSTOMER)
-  customerProductById(businessId: ID!, productId: ID!): Product @auth(role: CUSTOMER)
-  customerProducts(businessId: ID!): [Product!]! @auth(role: CUSTOMER)
-  inventories: [Inventory!]! @auth(role: BUSINESS)
+  tags: [String]
 }
 
-enum Role {
-  BUSINESS
-  CUSTOMER
+input UpdateCustomerOrderInput {
+  items: [OrderItemInput!]!
+  orderId: ID!
 }
 
 input UpdateProductInput {

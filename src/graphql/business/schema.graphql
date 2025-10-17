@@ -24,6 +24,18 @@ extend type BusinessChat @auth(role: BUSINESS) {
   business: Business!
 }
 
+input CreateBusinessInput {
+  name: String!
+  tags: [String!]!
+  description: String
+}
+
+input UpdateBusinessInput {
+  name: String
+  tags: [String]
+  description: String
+}
+
 extend type Query {
   business: Business! @auth(role: BUSINESS)
   businessesForCustomer: [Business!]! @auth(role: CUSTOMER)
@@ -36,16 +48,8 @@ extend type Query {
 }
 
 extend type Mutation {
-  createBusiness(
-    name: String!
-    tags: [String!]!
-    description: String
-  ): Business! @auth(role: BUSINESS)
-  updateBusinessProfile(
-    name: String
-    tags: [String!]
-    description: String
-  ): Business! @auth(role: BUSINESS)
+  createBusiness(input: CreateBusinessInput!): Business! @auth(role: BUSINESS)
+  updateBusiness(input: UpdateBusinessInput!): Business! @auth(role: BUSINESS)
   deleteBusiness: Boolean! @auth(role: BUSINESS)
 
   createBusinessChat(query: String!): BusinessChat! @auth(role: BUSINESS)

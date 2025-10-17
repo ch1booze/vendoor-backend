@@ -2,17 +2,14 @@ import { Elysia } from "elysia";
 import { auth, createContext } from "./lib/auth";
 import cors from "@elysiajs/cors";
 import apollo from "@elysiajs/apollo";
-import { typeDefs } from './graphql/typeDefs.generated'
-import { resolvers } from './graphql/resolvers.generated'
-
+import schema from "./graphql/schema.merged";
 
 const app = new Elysia()
   .use(cors())
   .mount(auth.handler)
   .use(
     apollo({
-      typeDefs,
-      resolvers,
+      schema,
       context: createContext,
     })
   )
