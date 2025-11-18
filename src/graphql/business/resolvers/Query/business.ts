@@ -7,9 +7,9 @@ export const business: NonNullable<QueryResolvers['business']> = async (
 	_ctx: GraphQLContext,
 ) => {
 	const { user, prisma } = _ctx;
-	const foundBusiness = await prisma.business.findUnique({
+	const foundBusiness = await prisma.business.findUniqueOrThrow({
 		where: { userId: user.id },
 	});
 
-	return foundBusiness as Business;
+    return foundBusiness;
 };

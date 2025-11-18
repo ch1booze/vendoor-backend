@@ -17,12 +17,12 @@ export const updateBusiness: NonNullable<
 
 	const updatedBusiness = await prisma.business.update({
 		data: {
-			name: input.name,
+			name: input.name ?? undefined,
 			description: input.description,
-			tags: input.tags,
+			tags: input.tags ?? undefined,
 		},
 		where: { userId: user.id },
 	});
 
-	return updatedBusiness as Business;
+	return updatedBusiness;
 };

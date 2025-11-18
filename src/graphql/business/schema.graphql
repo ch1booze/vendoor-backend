@@ -1,17 +1,13 @@
 extend type Business @auth(role: BUSINESS) {
 	id: ID!
+	createdAt: DateTime!
+	updatedAt: DateTime!
 	name: String!
 	tags: [String!]!
 	description: String
 	data: JSON
 
 	userId: ID!
-
-	products: [Product!]!
-	orders: [Order!]!
-	businessChats: [BusinessChat!]!
-	customerChats: [CustomerChat!]!
-	customers: [Customer!]!
 }
 
 extend type BusinessChat @auth(role: BUSINESS) {

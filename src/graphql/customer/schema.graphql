@@ -2,9 +2,6 @@ extend type Customer @auth(role: CUSTOMER) {
 	userId: ID!
 	createdAt: DateTime!
 	updatedAt: DateTime!
-
-	orders: [Order!]!
-	customerChats: [CustomerChat!]!
 }
 
 extend type CustomerChat {

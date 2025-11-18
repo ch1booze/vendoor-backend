@@ -3,189 +3,184 @@ directive @auth(role: Role) on FIELD_DEFINITION | OBJECT
 scalar BigInt
 
 type Business {
-	businessChats: [BusinessChat!]!
-	customerChats: [CustomerChat!]!
-	customers: [Customer!]!
-	data: JSON
-	description: String
-	id: ID!
-	name: String!
-	orders: [Order!]!
-	products: [Product!]!
-	tags: [String!]!
-	userId: ID!
+  createdAt: DateTime!
+  data: JSON
+  description: String
+  id: ID!
+  name: String!
+  tags: [String!]!
+  updatedAt: DateTime!
+  userId: ID!
 }
 
 type BusinessChat {
-	business: Business!
-	businessId: ID!
-	createdAt: DateTime!
-	id: ID!
-	query: String!
-	reply: String!
+  business: Business!
+  businessId: ID!
+  createdAt: DateTime!
+  id: ID!
+  query: String!
+  reply: String!
 }
 
 input CreateBusinessInput {
-	description: String
-	name: String!
-	tags: [String!]!
+  description: String
+  name: String!
+  tags: [String!]!
 }
 
 input CreateCustomerChatInput {
-	businessId: ID!
-	query: String!
+  businessId: ID!
+  query: String!
 }
 
 input CreateCustomerOrderInput {
-	businessId: ID!
-	items: [OrderItemInput!]!
+  businessId: ID!
+  items: [OrderItemInput!]!
 }
 
 input CreateInventoryInput {
-	delta: Int!
-	event: String!
-	productId: ID!
+  delta: Int!
+  event: String!
+  productId: ID!
 }
 
 input CreateProductInput {
-	description: String
-	name: String!
-	price: Int!
-	unit: String!
+  description: String
+  name: String!
+  price: Int!
+  unit: String!
 }
 
 type Customer {
-	createdAt: DateTime!
-	customerChats: [CustomerChat!]!
-	orders: [Order!]!
-	updatedAt: DateTime!
-	userId: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  userId: ID!
 }
 
 type CustomerChat {
-	business: Business!
-	businessId: ID!
-	createdAt: DateTime!
-	customer: Customer!
-	customerId: ID!
-	id: ID!
-	query: String!
-	reply: String!
+  business: Business!
+  businessId: ID!
+  createdAt: DateTime!
+  customer: Customer!
+  customerId: ID!
+  id: ID!
+  query: String!
+  reply: String!
 }
 
 scalar DateTime
 
 type Inventory {
-	createdAt: DateTime!
-	delta: Int!
-	event: String!
-	id: Int!
-	product: Product!
-	productId: ID!
+  createdAt: DateTime!
+  delta: Int!
+  event: String!
+  id: Int!
+  product: Product!
+  productId: ID!
 }
 
 scalar JSON
 
 type Mutation {
-	cancelCustomerOrder(orderId: ID!): Boolean!
-	createBusiness(input: CreateBusinessInput!): Business!
-	createBusinessChat(query: String!): BusinessChat!
-	createCustomerChat(input: CreateCustomerChatInput!): CustomerChat!
-	createCustomerOrder(input: CreateCustomerOrderInput!): Order!
-	createInventory(input: CreateInventoryInput!): Inventory!
-	createProduct(input: CreateProductInput!): Product!
-	deleteProduct(id: ID!): Boolean!
-	registerCustomer: Customer!
-	updateBusiness(input: UpdateBusinessInput!): Business!
-	updateCustomerOrder(input: UpdateCustomerOrderInput!): Order!
-	updateProduct(id: ID!, input: UpdateProductInput!): Product!
+  cancelCustomerOrder(orderId: ID!): Boolean!
+  createBusiness(input: CreateBusinessInput!): Business!
+  createBusinessChat(query: String!): BusinessChat!
+  createCustomerChat(input: CreateCustomerChatInput!): CustomerChat!
+  createCustomerOrder(input: CreateCustomerOrderInput!): Order!
+  createInventory(input: CreateInventoryInput!): Inventory!
+  createProduct(input: CreateProductInput!): Product!
+  deleteProduct(id: ID!): Boolean!
+  registerCustomer: Customer!
+  updateBusiness(input: UpdateBusinessInput!): Business!
+  updateCustomerOrder(input: UpdateCustomerOrderInput!): Order!
+  updateProduct(id: ID!, input: UpdateProductInput!): Product!
 }
 
 type Order {
-	business: Business!
-	businessId: ID!
-	createdAt: DateTime!
-	customer: Customer!
-	customerId: ID!
-	id: ID!
-	items: [OrderItem!]!
-	status: String!
-	updatedAt: DateTime!
+  business: Business!
+  businessId: ID!
+  createdAt: DateTime!
+  customer: Customer!
+  customerId: ID!
+  id: ID!
+  items: [OrderItem!]!
+  status: String!
+  updatedAt: DateTime!
 }
 
 type OrderItem {
-	createdAt: DateTime!
-	description: String
-	id: ID!
-	name: String!
-	order: Order!
-	price: BigInt!
-	product: Product!
-	quantity: Int!
-	tags: [String!]!
-	unit: String!
-	updatedAt: DateTime!
+  createdAt: DateTime!
+  description: String
+  id: ID!
+  name: String!
+  order: Order!
+  price: BigInt!
+  product: Product!
+  quantity: Int!
+  tags: [String!]!
+  unit: String!
+  updatedAt: DateTime!
 }
 
 input OrderItemInput {
-	description: String
-	name: String!
-	price: BigInt!
-	productId: ID
-	quantity: Int!
-	tags: [String!]!
-	unit: String!
+  description: String
+  name: String!
+  price: BigInt!
+  productId: ID
+  quantity: Int!
+  tags: [String!]!
+  unit: String!
 }
 
 type Product {
-	business: Business!
-	description: String
-	id: ID!
-	name: String!
-	price: Int!
-	stock: Int!
-	unit: String!
+  business: Business!
+  description: String
+  id: ID!
+  name: String!
+  price: Int!
+  stock: Int!
+  unit: String!
 }
 
 type Query {
-	business: Business!
-	businessById(businessId: ID!): Business!
-	businessChats: [BusinessChat]!
-	businessCustomerById(customerId: ID!): Customer!
-	businessCustomers: [Customer]!
-	businessOrderById(orderId: ID!): Order
-	businessOrders: [Order]
-	businessProductById(id: ID!): Product
-	businessProducts: [Product]!
-	businessesForCustomer: [Business]!
-	customer: Customer!
-	customerChatsForBusiness(businessId: ID!): [CustomerChat!]!
-	customerOrderById(orderId: ID!): Order
-	customerOrders(businessId: ID!): [Order!]!
-	customerProductById(businessId: ID!, productId: ID!): Product
-	customerProducts(businessId: ID!): [Product]!
-	inventories: [Inventory]
+  business: Business!
+  businessById(businessId: ID!): Business!
+  businessChats: [BusinessChat]!
+  businessCustomerById(customerId: ID!): Customer!
+  businessCustomers: [Customer]!
+  businessOrderById(orderId: ID!): Order
+  businessOrders: [Order]
+  businessProductById(id: ID!): Product
+  businessProducts: [Product]!
+  businessesForCustomer: [Business]!
+  customer: Customer!
+  customerChatsForBusiness(businessId: ID!): [CustomerChat!]!
+  customerOrderById(orderId: ID!): Order
+  customerOrders(businessId: ID!): [Order!]!
+  customerProductById(businessId: ID!, productId: ID!): Product
+  customerProducts(businessId: ID!): [Product]!
+  inventories: [Inventory]
 }
 
 enum Role {
-	BUSINESS
-	CUSTOMER
+  BUSINESS
+  CUSTOMER
 }
 
 input UpdateBusinessInput {
-	description: String
-	name: String
-	tags: [String!]
+  description: String
+  name: String
+  tags: [String!]
 }
 
 input UpdateCustomerOrderInput {
-	items: [OrderItemInput!]!
-	orderId: ID!
+  items: [OrderItemInput!]!
+  orderId: ID!
 }
 
 input UpdateProductInput {
-	description: String
-	name: String
-	price: Int
-	unit: String
+  description: String
+  name: String
+  price: Int
+  unit: String
 }
