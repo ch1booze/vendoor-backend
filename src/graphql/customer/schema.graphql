@@ -3,8 +3,8 @@ extend type Customer @auth(role: CUSTOMER) {
   createdAt: DateTime!
   updatedAt: DateTime!
 
-  orders: [Order]
-  customerChats: [CustomerChat]
+  orders: [Order!]!
+  customerChats: [CustomerChat!]!
 }
 
 extend type CustomerChat {
@@ -27,7 +27,7 @@ input CreateCustomerChatInput {
 
 extend type Query {
   customer: Customer! @auth(role: CUSTOMER)
-  customerChatsForBusiness(businessId: ID!): [CustomerChat]
+  customerChatsForBusiness(businessId: ID!): [CustomerChat!]!
     @auth(role: BUSINESS)
 }
 

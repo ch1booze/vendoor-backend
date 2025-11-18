@@ -3,16 +3,16 @@ directive @auth(role: Role) on FIELD_DEFINITION | OBJECT
 scalar BigInt
 
 type Business {
-  businessChats: [BusinessChat]
-  customerChats: [CustomerChat]
-  customers: [Customer]
+  businessChats: [BusinessChat!]!
+  customerChats: [CustomerChat!]!
+  customers: [Customer!]!
   data: JSON
   description: String
   id: ID!
   name: String!
-  orders: [Order]
-  products: [Product]
-  tags: [String]
+  orders: [Order!]!
+  products: [Product!]!
+  tags: [String!]!
   userId: ID!
 }
 
@@ -28,7 +28,7 @@ type BusinessChat {
 input CreateBusinessInput {
   description: String
   name: String!
-  tags: [String]
+  tags: [String!]!
 }
 
 input CreateCustomerChatInput {
@@ -38,7 +38,7 @@ input CreateCustomerChatInput {
 
 input CreateCustomerOrderInput {
   businessId: ID!
-  items: [OrderItemInput]!
+  items: [OrderItemInput!]!
 }
 
 input CreateInventoryInput {
@@ -56,8 +56,8 @@ input CreateProductInput {
 
 type Customer {
   createdAt: DateTime!
-  customerChats: [CustomerChat]
-  orders: [Order]
+  customerChats: [CustomerChat!]!
+  orders: [Order!]!
   updatedAt: DateTime!
   userId: ID!
 }
@@ -108,7 +108,7 @@ type Order {
   customer: Customer!
   customerId: ID!
   id: ID!
-  items: [OrderItem]
+  items: [OrderItem!]!
   status: String!
   updatedAt: DateTime!
 }
@@ -120,9 +120,9 @@ type OrderItem {
   name: String!
   order: Order!
   price: BigInt!
-  product: Product
+  product: Product!
   quantity: Int!
-  tags: [String]!
+  tags: [String!]!
   unit: String!
   updatedAt: DateTime!
 }
@@ -133,7 +133,7 @@ input OrderItemInput {
   price: BigInt!
   productId: ID
   quantity: Int!
-  tags: [String]
+  tags: [String!]!
   unit: String!
 }
 
@@ -159,9 +159,9 @@ type Query {
   businessProducts: [Product]!
   businessesForCustomer: [Business]!
   customer: Customer!
-  customerChatsForBusiness(businessId: ID!): [CustomerChat]
+  customerChatsForBusiness(businessId: ID!): [CustomerChat!]!
   customerOrderById(orderId: ID!): Order
-  customerOrders(businessId: ID): [Order]!
+  customerOrders(businessId: ID!): [Order!]!
   customerProductById(businessId: ID!, productId: ID!): Product
   customerProducts(businessId: ID!): [Product]!
   inventories: [Inventory]
@@ -175,11 +175,11 @@ enum Role {
 input UpdateBusinessInput {
   description: String
   name: String
-  tags: [String]
+  tags: [String!]
 }
 
 input UpdateCustomerOrderInput {
-  items: [OrderItemInput]!
+  items: [OrderItemInput!]!
   orderId: ID!
 }
 

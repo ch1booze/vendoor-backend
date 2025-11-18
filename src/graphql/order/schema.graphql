@@ -3,7 +3,7 @@ input OrderItemInput {
   description: String
   price: BigInt!
   unit: String!
-  tags: [String]
+  tags: [String!]!
   quantity: Int!
   productId: ID
 }
@@ -20,7 +20,7 @@ extend type Order {
   customerId: ID!
   customer: Customer!
 
-  items: [OrderItem]
+  items: [OrderItem!]!
 }
 
 extend type OrderItem {
@@ -29,29 +29,29 @@ extend type OrderItem {
   description: String
   price: BigInt!
   unit: String!
-  tags: [String]!
+  tags: [String!]!
   quantity: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
   order: Order!
-  product: Product
+  product: Product!
 }
 
 input CreateCustomerOrderInput {
   businessId: ID!
-  items: [OrderItemInput]!
+  items: [OrderItemInput!]!
 }
 
 input UpdateCustomerOrderInput {
   orderId: ID!
-  items: [OrderItemInput]!
+  items: [OrderItemInput!]!
 }
 
 extend type Query {
   businessOrders: [Order] @auth(role: BUSINESS)
   businessOrderById(orderId: ID!): Order @auth(role: BUSINESS)
 
-  customerOrders(businessId: ID): [Order]! @auth(role: CUSTOMER)
+  customerOrders(businessId: ID!): [Order!]! @auth(role: CUSTOMER)
   customerOrderById(orderId: ID!): Order @auth(role: CUSTOMER)
 }
 

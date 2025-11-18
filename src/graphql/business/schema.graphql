@@ -1,17 +1,17 @@
 extend type Business @auth(role: BUSINESS) {
   id: ID!
   name: String!
-  tags: [String]
+  tags: [String!]!
   description: String
   data: JSON
 
   userId: ID!
 
-  products: [Product]
-  orders: [Order]
-  businessChats: [BusinessChat]
-  customerChats: [CustomerChat]
-  customers: [Customer]
+  products: [Product!]!
+  orders: [Order!]!
+  businessChats: [BusinessChat!]!
+  customerChats: [CustomerChat!]!
+  customers: [Customer!]!
 }
 
 extend type BusinessChat @auth(role: BUSINESS) {
@@ -26,13 +26,13 @@ extend type BusinessChat @auth(role: BUSINESS) {
 
 input CreateBusinessInput {
   name: String!
-  tags: [String]
+  tags: [String!]!
   description: String
 }
 
 input UpdateBusinessInput {
   name: String
-  tags: [String]
+  tags: [String!]
   description: String
 }
 

@@ -16,11 +16,5 @@ export const auth = betterAuth({
     fields: { name: "fullName" },
     additionalFields: { role: { type: "string", required: true } },
   },
-  socialProviders: {
-    google: {
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-    },
-  },
   plugins: [bearer(), openAPI(), apiKey()],
 });
