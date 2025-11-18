@@ -1,14 +1,15 @@
-import type { GraphQLContext } from '@/lib/context';
-import type { BusinessChat, QueryResolvers } from './../../../types.generated';
+import type { GraphQLContext } from "@/lib/context";
+import type { BusinessChat, QueryResolvers } from "./../../../types.generated";
 
 export const businessChats: NonNullable<
-	QueryResolvers['businessChats']
+  QueryResolvers["businessChats"]
 > = async (_parent, _arg, _ctx: GraphQLContext) => {
-	const { user, prisma } = _ctx;
+  const { user, prisma } = _ctx;
 
-	const foundBusinessChats = await prisma.businessChat.findMany({
-		where: { business: { userId: user.id } },
-	});
+  const foundBusinessChats = await prisma.businessChat.findMany({
+    where: { business: { userId: user.id } },
+    include: { business: true },
+  });
 
-	return foundBusinessChats as BusinessChat[];
+  return foundBusinessChats;
 };
