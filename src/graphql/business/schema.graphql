@@ -1,55 +1,55 @@
 extend type Business @auth(role: BUSINESS) {
-  id: ID!
-  name: String!
-  tags: [String!]!
-  description: String
-  data: JSON
+	id: ID!
+	name: String!
+	tags: [String!]!
+	description: String
+	data: JSON
 
-  userId: ID!
+	userId: ID!
 
-  products: [Product!]!
-  orders: [Order!]!
-  businessChats: [BusinessChat!]!
-  customerChats: [CustomerChat!]!
-  customers: [Customer!]!
+	products: [Product!]!
+	orders: [Order!]!
+	businessChats: [BusinessChat!]!
+	customerChats: [CustomerChat!]!
+	customers: [Customer!]!
 }
 
 extend type BusinessChat @auth(role: BUSINESS) {
-  id: ID!
-  createdAt: DateTime!
-  query: String!
-  reply: String!
+	id: ID!
+	createdAt: DateTime!
+	query: String!
+	reply: String!
 
-  businessId: ID!
-  business: Business!
+	businessId: ID!
+	business: Business!
 }
 
 input CreateBusinessInput {
-  name: String!
-  tags: [String!]!
-  description: String
+	name: String!
+	tags: [String!]!
+	description: String
 }
 
 input UpdateBusinessInput {
-  name: String
-  tags: [String!]
-  description: String
+	name: String
+	tags: [String!]
+	description: String
 }
 
 extend type Query {
-  business: Business! @auth(role: BUSINESS)
-  businessesForCustomer: [Business]! @auth(role: CUSTOMER)
-  businessById(businessId: ID!): Business! @auth(role: CUSTOMER)
+	business: Business! @auth(role: BUSINESS)
+	businessesForCustomer: [Business]! @auth(role: CUSTOMER)
+	businessById(businessId: ID!): Business! @auth(role: CUSTOMER)
 
-  businessChats: [BusinessChat]! @auth(role: BUSINESS)
+	businessChats: [BusinessChat]! @auth(role: BUSINESS)
 
-  businessCustomers: [Customer]! @auth(role: BUSINESS)
-  businessCustomerById(customerId: ID!): Customer! @auth(role: BUSINESS)
+	businessCustomers: [Customer]! @auth(role: BUSINESS)
+	businessCustomerById(customerId: ID!): Customer! @auth(role: BUSINESS)
 }
 
 extend type Mutation {
-  createBusiness(input: CreateBusinessInput!): Business! @auth(role: BUSINESS)
-  updateBusiness(input: UpdateBusinessInput!): Business! @auth(role: BUSINESS)
+	createBusiness(input: CreateBusinessInput!): Business! @auth(role: BUSINESS)
+	updateBusiness(input: UpdateBusinessInput!): Business! @auth(role: BUSINESS)
 
-  createBusinessChat(query: String!): BusinessChat! @auth(role: BUSINESS)
+	createBusinessChat(query: String!): BusinessChat! @auth(role: BUSINESS)
 }

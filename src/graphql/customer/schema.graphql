@@ -1,39 +1,39 @@
 extend type Customer @auth(role: CUSTOMER) {
-  userId: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+	userId: ID!
+	createdAt: DateTime!
+	updatedAt: DateTime!
 
-  orders: [Order!]!
-  customerChats: [CustomerChat!]!
+	orders: [Order!]!
+	customerChats: [CustomerChat!]!
 }
 
 extend type CustomerChat {
-  id: ID!
-  createdAt: DateTime!
-  query: String!
-  reply: String!
+	id: ID!
+	createdAt: DateTime!
+	query: String!
+	reply: String!
 
-  customerId: ID!
-  customer: Customer!
+	customerId: ID!
+	customer: Customer!
 
-  businessId: ID!
-  business: Business!
+	businessId: ID!
+	business: Business!
 }
 
 input CreateCustomerChatInput {
-  businessId: ID!
-  query: String!
+	businessId: ID!
+	query: String!
 }
 
 extend type Query {
-  customer: Customer! @auth(role: CUSTOMER)
-  customerChatsForBusiness(businessId: ID!): [CustomerChat!]!
-    @auth(role: BUSINESS)
+	customer: Customer! @auth(role: CUSTOMER)
+	customerChatsForBusiness(businessId: ID!): [CustomerChat!]!
+		@auth(role: BUSINESS)
 }
 
 extend type Mutation {
-  registerCustomer: Customer!
+	registerCustomer: Customer!
 
-  createCustomerChat(input: CreateCustomerChatInput!): CustomerChat!
-    @auth(role: CUSTOMER)
+	createCustomerChat(input: CreateCustomerChatInput!): CustomerChat!
+		@auth(role: CUSTOMER)
 }

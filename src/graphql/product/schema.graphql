@@ -1,38 +1,38 @@
 extend type Product {
-  id: ID!
-  name: String!
-  description: String
-  price: Int!
-  unit: String!
-  business: Business!
-  stock: Int!
+	id: ID!
+	name: String!
+	description: String
+	price: Int!
+	unit: String!
+	business: Business!
+	stock: Int!
 }
 
 input CreateProductInput {
-  name: String!
-  description: String
-  price: Int!
-  unit: String!
+	name: String!
+	description: String
+	price: Int!
+	unit: String!
 }
 
 input UpdateProductInput {
-  name: String
-  description: String
-  price: Int
-  unit: String
+	name: String
+	description: String
+	price: Int
+	unit: String
 }
 
 extend type Query {
-  businessProducts: [Product]! @auth(role: BUSINESS)
-  businessProductById(id: ID!): Product @auth(role: BUSINESS)
-  customerProducts(businessId: ID!): [Product]! @auth(role: CUSTOMER)
-  customerProductById(businessId: ID!, productId: ID!): Product
-    @auth(role: CUSTOMER)
+	businessProducts: [Product]! @auth(role: BUSINESS)
+	businessProductById(id: ID!): Product @auth(role: BUSINESS)
+	customerProducts(businessId: ID!): [Product]! @auth(role: CUSTOMER)
+	customerProductById(businessId: ID!, productId: ID!): Product
+		@auth(role: CUSTOMER)
 }
 
 extend type Mutation {
-  createProduct(input: CreateProductInput!): Product! @auth(role: BUSINESS)
-  updateProduct(id: ID!, input: UpdateProductInput!): Product!
-    @auth(role: BUSINESS)
-  deleteProduct(id: ID!): Boolean! @auth(role: BUSINESS)
+	createProduct(input: CreateProductInput!): Product! @auth(role: BUSINESS)
+	updateProduct(id: ID!, input: UpdateProductInput!): Product!
+		@auth(role: BUSINESS)
+	deleteProduct(id: ID!): Boolean! @auth(role: BUSINESS)
 }

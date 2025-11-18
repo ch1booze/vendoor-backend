@@ -1,4 +1,4 @@
-import type   { InventoryResolvers } from './../../types.generated';
-    export const Inventory: InventoryResolvers = {
-    /* Implement Inventory resolver logic here */
-  };
+import type { InventoryResolvers } from './../../types.generated';
+export const Inventory: InventoryResolvers = {
+	/* Implement Inventory resolver logic here */
+};
