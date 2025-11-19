@@ -11,8 +11,7 @@ export const createBusinessChat: NonNullable<
     data: {
       query,
       reply: "YOUR REPLY GOES HERE",
-      // business: { connect: { userId: user.id } },
-      
+      business: { connect: { userId: user.id } },
     },
     include: { business: true },
   });

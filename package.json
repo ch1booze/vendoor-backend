@@ -5,7 +5,7 @@
 		"auth:gen": "bun run @better-auth/cli generate",
 		"build": "bun build --compile --minify-whitespace --minify-syntax --target bun --outfile server src/server.ts",
 		"codegen": "graphql-codegen",
-		"db:migrate": "bun run prisma db push",
+		"db:migrate": "bun run prisma db push --force-reset --accept-data-loss",
 		"dev": "bun run --watch src/server.ts",
 		"format": "bunx biome format --write",
 		"lint": "bunx biome lint --write",

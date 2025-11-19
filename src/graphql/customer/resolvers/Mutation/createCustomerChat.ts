@@ -19,7 +19,7 @@ export const createCustomerChat: NonNullable<
       query: input.query,
       reply: "REPLY GOES HERE",
       businessId: input.businessId,
-      
+      customer: { connect: { userId: user.id } },
     },
     include: { customer: true, business: true },
   });

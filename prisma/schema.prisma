@@ -164,7 +164,7 @@ model CustomerChat {
     reply String
 
     customerId String
-    customer   Customer @relation(fields: [customerId], references: [userId], onDelete: Cascade)
+    customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
     businessId String
     business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
@@ -216,7 +216,7 @@ model Order {
     businessId String
     business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
     customerId String
-    customer   Customer @relation(fields: [customerId], references: [userId], onDelete: Cascade)
+    customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
     payment    Payment?
 
     items OrderItem[]
