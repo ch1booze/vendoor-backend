@@ -1,11 +1,12 @@
 import type { GraphQLContext } from "@/lib/context";
 import type {
-  Business,
   CreateBusinessInput,
   MutationResolvers,
 } from "../../../types.generated";
 
-export const createBusiness: NonNullable<MutationResolvers['createBusiness']> = async (
+export const createBusiness: NonNullable<
+  MutationResolvers["createBusiness"]
+> = async (
   _parent,
   _arg: { input: CreateBusinessInput },
   _ctx: GraphQLContext,

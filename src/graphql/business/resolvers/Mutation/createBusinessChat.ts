@@ -1,8 +1,5 @@
 import type { GraphQLContext } from "@/lib/context";
-import type {
-  BusinessChat,
-  MutationResolvers,
-} from "./../../../types.generated";
+import type { MutationResolvers } from "./../../../types.generated";
 
 export const createBusinessChat: NonNullable<
   MutationResolvers["createBusinessChat"]
@@ -14,7 +11,8 @@ export const createBusinessChat: NonNullable<
     data: {
       query,
       reply: "YOUR REPLY GOES HERE",
-      business: { connect: { userId: user.id } },
+      // business: { connect: { userId: user.id } },
+      
     },
     include: { business: true },
   });
