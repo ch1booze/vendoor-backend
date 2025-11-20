@@ -1,4 +1,4 @@
-import { GraphQLContext } from '@/lib/context';
+import type { GraphQLContext } from '@/lib/context';
 import type { MutationResolvers } from './../../../types.generated';
 import { OrderStatus } from '@/graphql/order/types';
 

@@ -1,57 +1,57 @@
 input OrderItemInput {
-  quantity: Int!
-  productId: ID!
+	quantity: Int!
+	productId: ID!
 }
 
 extend type Order {
-  id: ID!
-  status: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+	id: ID!
+	status: String!
+	createdAt: DateTime!
+	updatedAt: DateTime!
 
-  business: Business!
-  customer: Customer!
-  items: [OrderItem!]!
+	business: Business!
+	customer: Customer!
+	items: [OrderItem!]!
 }
 
 extend type OrderItem {
-  id: ID!
-  name: String!
-  description: String
-  price: BigInt!
-  unit: String!
-  tags: [String!]!
-  quantity: Int!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  productId: ID!
-  order: Order!
+	id: ID!
+	name: String!
+	description: String
+	price: BigInt!
+	unit: String!
+	tags: [String!]!
+	quantity: Int!
+	createdAt: DateTime!
+	updatedAt: DateTime!
+	productId: ID!
+	order: Order!
 }
 
 input CreateCustomerOrderInput {
-  businessId: ID!
-  items: [OrderItemInput!]!
+	businessId: ID!
+	items: [OrderItemInput!]!
 }
 
 input UpdateCustomerOrderInput {
-  orderId: ID!
-  items: [OrderItemInput!]!
+	orderId: ID!
+	items: [OrderItemInput!]!
 }
 
 extend type Query {
-  businessOrders: [Order] @auth(role: BUSINESS)
-  businessOrderById(orderId: ID!): Order @auth(role: BUSINESS)
+	businessOrders: [Order] @auth(role: BUSINESS)
+	businessOrderById(orderId: ID!): Order @auth(role: BUSINESS)
 
-  customerOrders(businessId: ID!): [Order!]! @auth(role: CUSTOMER)
-  customerOrderById(orderId: ID!): Order @auth(role: CUSTOMER)
+	customerOrders(businessId: ID!): [Order!]! @auth(role: CUSTOMER)
+	customerOrderById(orderId: ID!): Order @auth(role: CUSTOMER)
 }
 
 extend type Mutation {
-  createCustomerOrder(input: CreateCustomerOrderInput!): Order!
-    @auth(role: CUSTOMER)
+	createCustomerOrder(input: CreateCustomerOrderInput!): Order!
+		@auth(role: CUSTOMER)
 
-  updateCustomerOrder(input: UpdateCustomerOrderInput!): Order!
-    @auth(role: CUSTOMER)
+	updateCustomerOrder(input: UpdateCustomerOrderInput!): Order!
+		@auth(role: CUSTOMER)
 
-  cancelCustomerOrder(orderId: ID!): Boolean! @auth(role: CUSTOMER)
+	cancelCustomerOrder(orderId: ID!): Boolean! @auth(role: CUSTOMER)
 }

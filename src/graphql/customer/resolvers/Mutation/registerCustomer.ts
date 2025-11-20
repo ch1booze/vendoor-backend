@@ -1,4 +1,4 @@
-import { GraphQLContext } from '@/lib/context';
+import type { GraphQLContext } from '@/lib/context';
 import type { MutationResolvers } from './../../../types.generated';
 
 export const registerCustomer: NonNullable<

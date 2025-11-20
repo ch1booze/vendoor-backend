@@ -1,4 +1,4 @@
-import { GraphQLContext } from '@/lib/context';
+import type { GraphQLContext } from '@/lib/context';
 import type { QueryResolvers } from './../../../types.generated';
 
 export const customerChatsForBusiness: NonNullable<
