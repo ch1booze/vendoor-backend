@@ -1,6 +1,10 @@
 import { gql } from '@elysiajs/apollo';
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
-import { defaultFieldResolver, GraphQLError, type GraphQLSchema } from 'graphql';
+import {
+	defaultFieldResolver,
+	GraphQLError,
+	type GraphQLSchema,
+} from 'graphql';
 
 export function authDirective(directiveName: string = 'auth') {
 	return {

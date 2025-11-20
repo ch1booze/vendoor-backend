@@ -1,28 +1,28 @@
-import { GraphQLContext } from "@/lib/context";
+import { GraphQLContext } from '@/lib/context';
 import type {
-  CreateCustomerChatInput,
-  MutationResolvers,
-} from "./../../../types.generated";
+	CreateCustomerChatInput,
+	MutationResolvers,
+} from './../../../types.generated';
 
 export const createCustomerChat: NonNullable<
-  MutationResolvers["createCustomerChat"]
+	MutationResolvers['createCustomerChat']
 > = async (
-  _parent,
-  _arg: { input: CreateCustomerChatInput },
-  _ctx: GraphQLContext,
+	_parent,
+	_arg: { input: CreateCustomerChatInput },
+	_ctx: GraphQLContext,
 ) => {
-  const { user, prisma } = _ctx;
-  const { input } = _arg;
+	const { user, prisma } = _ctx;
+	const { input } = _arg;
 
-  const createdCustomerChat = await prisma.customerChat.create({
-    data: {
-      query: input.query,
-      reply: "REPLY GOES HERE",
-      businessId: input.businessId,
-      customer: { connect: { userId: user.id } },
-    },
-    include: { customer: true, business: true },
-  });
+	const createdCustomerChat = await prisma.customerChat.create({
+		data: {
+			query: input.query,
+			reply: 'REPLY GOES HERE',
+			businessId: input.businessId,
+			customer: { connect: { userId: user.id } },
+		},
+		include: { customer: true, business: true },
+	});
 
-  return createdCustomerChat;
+	return createdCustomerChat;
 };

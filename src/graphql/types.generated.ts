@@ -58,17 +58,17 @@ export type CreateCustomerOrderInput = {
   items: Array<OrderItemInput>;
 };
 
-export type CreateInventoryInput = {
-  delta: Scalars['Int']['input'];
-  event: Scalars['String']['input'];
-  productId: Scalars['ID']['input'];
-};
-
 export type CreateProductInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   price: Scalars['Int']['input'];
   unit: Scalars['String']['input'];
+};
+
+export type CreateStockEventInput = {
+  delta: Scalars['Int']['input'];
+  event: Scalars['String']['input'];
+  productId: Scalars['ID']['input'];
 };
 
 export type Customer = {
@@ -92,12 +92,6 @@ export type CustomerChat = {
 
 export type Inventory = {
   __typename?: 'Inventory';
-  createdAt: Scalars['DateTime']['output'];
-  delta: Scalars['Int']['output'];
-  event: Scalars['String']['output'];
-  id: Scalars['Int']['output'];
-  product: Product;
-  productId: Scalars['ID']['output'];
 };
 
 export type Mutation = {
@@ -107,8 +101,8 @@ export type Mutation = {
   createBusinessChat: BusinessChat;
   createCustomerChat: CustomerChat;
   createCustomerOrder: Order;
-  createInventory: Inventory;
   createProduct: Product;
+  createStockEvent: StockEvent;
   deleteProduct: Scalars['Boolean']['output'];
   registerCustomer: Customer;
   updateBusiness: Business;
@@ -142,13 +136,13 @@ export type MutationcreateCustomerOrderArgs = {
 };
 
 
-export type MutationcreateInventoryArgs = {
-  input: CreateInventoryInput;
+export type MutationcreateProductArgs = {
+  input: CreateProductInput;
 };
 
 
-export type MutationcreateProductArgs = {
-  input: CreateProductInput;
+export type MutationcreateStockEventArgs = {
+  input: CreateStockEventInput;
 };
 
 
@@ -193,7 +187,7 @@ export type OrderItem = {
   name: Scalars['String']['output'];
   order: Order;
   price: Scalars['BigInt']['output'];
-  product: Product;
+  productId: Scalars['ID']['output'];
   quantity: Scalars['Int']['output'];
   tags: Array<Scalars['String']['output']>;
   unit: Scalars['String']['output'];
@@ -201,13 +195,8 @@ export type OrderItem = {
 };
 
 export type OrderItemInput = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  name: Scalars['String']['input'];
-  price: Scalars['BigInt']['input'];
-  productId?: InputMaybe<Scalars['ID']['input']>;
+  productId: Scalars['ID']['input'];
   quantity: Scalars['Int']['input'];
-  tags: Array<Scalars['String']['input']>;
-  unit: Scalars['String']['input'];
 };
 
 export type Product = {
@@ -239,7 +228,7 @@ export type Query = {
   customerOrders: Array<Order>;
   customerProductById?: Maybe<Product>;
   customerProducts: Array<Maybe<Product>>;
-  inventories?: Maybe<Array<Maybe<Inventory>>>;
+  stockEvents?: Maybe<Array<Maybe<StockEvent>>>;
 };
 
 
@@ -291,6 +280,16 @@ export type QuerycustomerProductsArgs = {
 export type Role =
   | 'BUSINESS'
   | 'CUSTOMER';
+
+export type StockEvent = {
+  __typename?: 'StockEvent';
+  createdAt: Scalars['DateTime']['output'];
+  delta: Scalars['Int']['output'];
+  event: Scalars['String']['output'];
+  id: Scalars['Int']['output'];
+  product: Product;
+  productId: Scalars['ID']['output'];
+};
 
 export type UpdateBusinessInput = {
   description?: InputMaybe<Scalars['String']['input']>;
@@ -391,9 +390,9 @@ export type ResolversTypes = {
   CreateBusinessInput: CreateBusinessInput;
   CreateCustomerChatInput: CreateCustomerChatInput;
   CreateCustomerOrderInput: CreateCustomerOrderInput;
-  CreateInventoryInput: CreateInventoryInput;
-  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   CreateProductInput: CreateProductInput;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  CreateStockEventInput: CreateStockEventInput;
   Customer: ResolverTypeWrapper<Customer>;
   CustomerChat: ResolverTypeWrapper<CustomerChat>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
@@ -407,6 +406,7 @@ export type ResolversTypes = {
   Product: ResolverTypeWrapper<Product>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Role: ResolverTypeWrapper<'BUSINESS' | 'CUSTOMER'>;
+  StockEvent: ResolverTypeWrapper<StockEvent>;
   UpdateBusinessInput: UpdateBusinessInput;
   UpdateCustomerOrderInput: UpdateCustomerOrderInput;
   UpdateProductInput: UpdateProductInput;
@@ -422,9 +422,9 @@ export type ResolversParentTypes = {
   CreateBusinessInput: CreateBusinessInput;
   CreateCustomerChatInput: CreateCustomerChatInput;
   CreateCustomerOrderInput: CreateCustomerOrderInput;
-  CreateInventoryInput: CreateInventoryInput;
-  Int: Scalars['Int']['output'];
   CreateProductInput: CreateProductInput;
+  Int: Scalars['Int']['output'];
+  CreateStockEventInput: CreateStockEventInput;
   Customer: Customer;
   CustomerChat: CustomerChat;
   DateTime: Scalars['DateTime']['output'];
@@ -437,6 +437,7 @@ export type ResolversParentTypes = {
   OrderItemInput: OrderItemInput;
   Product: Product;
   Query: Record<PropertyKey, never>;
+  StockEvent: StockEvent;
   UpdateBusinessInput: UpdateBusinessInput;
   UpdateCustomerOrderInput: UpdateCustomerOrderInput;
   UpdateProductInput: UpdateProductInput;
@@ -493,15 +494,6 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'DateTime';
 }
 
-export type InventoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Inventory'] = ResolversParentTypes['Inventory']> = {
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  delta?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  event?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  product?: Resolver<ResolversTypes['Product'], ParentType, ContextType>;
-  productId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-};
-
 export interface JSONScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
   name: 'JSON';
 }
@@ -512,8 +504,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createBusinessChat?: Resolver<ResolversTypes['BusinessChat'], ParentType, ContextType, RequireFields<MutationcreateBusinessChatArgs, 'query'>>;
   createCustomerChat?: Resolver<ResolversTypes['CustomerChat'], ParentType, ContextType, RequireFields<MutationcreateCustomerChatArgs, 'input'>>;
   createCustomerOrder?: Resolver<ResolversTypes['Order'], ParentType, ContextType, RequireFields<MutationcreateCustomerOrderArgs, 'input'>>;
-  createInventory?: Resolver<ResolversTypes['Inventory'], ParentType, ContextType, RequireFields<MutationcreateInventoryArgs, 'input'>>;
   createProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationcreateProductArgs, 'input'>>;
+  createStockEvent?: Resolver<ResolversTypes['StockEvent'], ParentType, ContextType, RequireFields<MutationcreateStockEventArgs, 'input'>>;
   deleteProduct?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteProductArgs, 'id'>>;
   registerCustomer?: Resolver<ResolversTypes['Customer'], ParentType, ContextType>;
   updateBusiness?: Resolver<ResolversTypes['Business'], ParentType, ContextType, RequireFields<MutationupdateBusinessArgs, 'input'>>;
@@ -540,7 +532,7 @@ export type OrderItemResolvers<ContextType = any, ParentType extends ResolversPa
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   order?: Resolver<ResolversTypes['Order'], ParentType, ContextType>;
   price?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
-  product?: Resolver<ResolversTypes['Product'], ParentType, ContextType>;
+  productId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   unit?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -574,10 +566,19 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   customerOrders?: Resolver<Array<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<QuerycustomerOrdersArgs, 'businessId'>>;
   customerProductById?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QuerycustomerProductByIdArgs, 'businessId' | 'productId'>>;
   customerProducts?: Resolver<Array<Maybe<ResolversTypes['Product']>>, ParentType, ContextType, RequireFields<QuerycustomerProductsArgs, 'businessId'>>;
-  inventories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Inventory']>>>, ParentType, ContextType>;
+  stockEvents?: Resolver<Maybe<Array<Maybe<ResolversTypes['StockEvent']>>>, ParentType, ContextType>;
 };
 
 export type RoleResolvers = EnumResolverSignature<{ BUSINESS?: any, CUSTOMER?: any }, ResolversTypes['Role']>;
+
+export type StockEventResolvers<ContextType = any, ParentType extends ResolversParentTypes['StockEvent'] = ResolversParentTypes['StockEvent']> = {
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  delta?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  event?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  product?: Resolver<ResolversTypes['Product'], ParentType, ContextType>;
+  productId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+};
 
 export type Resolvers<ContextType = any> = {
   BigInt?: GraphQLScalarType;
@@ -586,7 +587,6 @@ export type Resolvers<ContextType = any> = {
   Customer?: CustomerResolvers<ContextType>;
   CustomerChat?: CustomerChatResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
-  Inventory?: InventoryResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   Order?: OrderResolvers<ContextType>;
@@ -594,6 +594,7 @@ export type Resolvers<ContextType = any> = {
   Product?: ProductResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Role?: RoleResolvers;
+  StockEvent?: StockEventResolvers<ContextType>;
 };
 
 export type DirectiveResolvers<ContextType = any> = {

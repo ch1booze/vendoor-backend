@@ -1,6 +1,7 @@
-extend type Inventory @auth(role: BUSINESS) {
+extend type StockEvent @auth(role: BUSINESS) {
 	id: Int!
 	createdAt: DateTime!
+
 	delta: Int!
 	event: String!
 
@@ -9,16 +10,16 @@ extend type Inventory @auth(role: BUSINESS) {
 }
 
 extend type Query {
-	inventories: [Inventory] @auth(role: BUSINESS)
+	stockEvents: [StockEvent] @auth(role: BUSINESS)
 }
 
-input CreateInventoryInput {
+input CreateStockEventInput {
 	productId: ID!
 	delta: Int!
 	event: String!
 }
 
 extend type Mutation {
-	createInventory(input: CreateInventoryInput!): Inventory!
+	createStockEvent(input: CreateStockEventInput!): StockEvent!
 		@auth(role: BUSINESS)
 }

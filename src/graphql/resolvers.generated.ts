@@ -16,14 +16,14 @@ import    { customerOrderById as Query_customerOrderById } from './order/resolve
 import    { customerOrders as Query_customerOrders } from './order/resolvers/Query/customerOrders';
 import    { customerProductById as Query_customerProductById } from './product/resolvers/Query/customerProductById';
 import    { customerProducts as Query_customerProducts } from './product/resolvers/Query/customerProducts';
-import    { inventories as Query_inventories } from './inventory/resolvers/Query/inventories';
+import    { stockEvents as Query_stockEvents } from './stock_event/resolvers/Query/stockEvents';
 import    { cancelCustomerOrder as Mutation_cancelCustomerOrder } from './order/resolvers/Mutation/cancelCustomerOrder';
 import    { createBusiness as Mutation_createBusiness } from './business/resolvers/Mutation/createBusiness';
 import    { createBusinessChat as Mutation_createBusinessChat } from './business/resolvers/Mutation/createBusinessChat';
 import    { createCustomerChat as Mutation_createCustomerChat } from './customer/resolvers/Mutation/createCustomerChat';
 import    { createCustomerOrder as Mutation_createCustomerOrder } from './order/resolvers/Mutation/createCustomerOrder';
-import    { createInventory as Mutation_createInventory } from './inventory/resolvers/Mutation/createInventory';
 import    { createProduct as Mutation_createProduct } from './product/resolvers/Mutation/createProduct';
+import    { createStockEvent as Mutation_createStockEvent } from './stock_event/resolvers/Mutation/createStockEvent';
 import    { deleteProduct as Mutation_deleteProduct } from './product/resolvers/Mutation/deleteProduct';
 import    { registerCustomer as Mutation_registerCustomer } from './customer/resolvers/Mutation/registerCustomer';
 import    { updateBusiness as Mutation_updateBusiness } from './business/resolvers/Mutation/updateBusiness';
@@ -33,23 +33,23 @@ import    { Business } from './business/resolvers/Business';
 import    { BusinessChat } from './business/resolvers/BusinessChat';
 import    { Customer } from './customer/resolvers/Customer';
 import    { CustomerChat } from './customer/resolvers/CustomerChat';
-import    { Inventory } from './inventory/resolvers/Inventory';
 import    { Order } from './order/resolvers/Order';
 import    { OrderItem } from './order/resolvers/OrderItem';
 import    { Product } from './product/resolvers/Product';
+import    { StockEvent } from './stock_event/resolvers/StockEvent';
 import    { BigIntResolver,DateTimeResolver,JSONResolver } from 'graphql-scalars';
     export const resolvers: Resolvers = {
-      Query: { business: Query_business,businessById: Query_businessById,businessChats: Query_businessChats,businessCustomerById: Query_businessCustomerById,businessCustomers: Query_businessCustomers,businessOrderById: Query_businessOrderById,businessOrders: Query_businessOrders,businessProductById: Query_businessProductById,businessProducts: Query_businessProducts,businessesForCustomer: Query_businessesForCustomer,customer: Query_customer,customerChatsForBusiness: Query_customerChatsForBusiness,customerOrderById: Query_customerOrderById,customerOrders: Query_customerOrders,customerProductById: Query_customerProductById,customerProducts: Query_customerProducts,inventories: Query_inventories },
-      Mutation: { cancelCustomerOrder: Mutation_cancelCustomerOrder,createBusiness: Mutation_createBusiness,createBusinessChat: Mutation_createBusinessChat,createCustomerChat: Mutation_createCustomerChat,createCustomerOrder: Mutation_createCustomerOrder,createInventory: Mutation_createInventory,createProduct: Mutation_createProduct,deleteProduct: Mutation_deleteProduct,registerCustomer: Mutation_registerCustomer,updateBusiness: Mutation_updateBusiness,updateCustomerOrder: Mutation_updateCustomerOrder,updateProduct: Mutation_updateProduct },
+      Query: { business: Query_business,businessById: Query_businessById,businessChats: Query_businessChats,businessCustomerById: Query_businessCustomerById,businessCustomers: Query_businessCustomers,businessOrderById: Query_businessOrderById,businessOrders: Query_businessOrders,businessProductById: Query_businessProductById,businessProducts: Query_businessProducts,businessesForCustomer: Query_businessesForCustomer,customer: Query_customer,customerChatsForBusiness: Query_customerChatsForBusiness,customerOrderById: Query_customerOrderById,customerOrders: Query_customerOrders,customerProductById: Query_customerProductById,customerProducts: Query_customerProducts,stockEvents: Query_stockEvents },
+      Mutation: { cancelCustomerOrder: Mutation_cancelCustomerOrder,createBusiness: Mutation_createBusiness,createBusinessChat: Mutation_createBusinessChat,createCustomerChat: Mutation_createCustomerChat,createCustomerOrder: Mutation_createCustomerOrder,createProduct: Mutation_createProduct,createStockEvent: Mutation_createStockEvent,deleteProduct: Mutation_deleteProduct,registerCustomer: Mutation_registerCustomer,updateBusiness: Mutation_updateBusiness,updateCustomerOrder: Mutation_updateCustomerOrder,updateProduct: Mutation_updateProduct },
       
       Business: Business,
 BusinessChat: BusinessChat,
 Customer: Customer,
 CustomerChat: CustomerChat,
-Inventory: Inventory,
 Order: Order,
 OrderItem: OrderItem,
 Product: Product,
+StockEvent: StockEvent,
 BigInt: BigIntResolver,
 DateTime: DateTimeResolver,
 JSON: JSONResolver

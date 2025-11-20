@@ -38,17 +38,17 @@ input CreateCustomerOrderInput {
   items: [OrderItemInput!]!
 }
 
-input CreateInventoryInput {
-  delta: Int!
-  event: String!
-  productId: ID!
-}
-
 input CreateProductInput {
   description: String
   name: String!
   price: Int!
   unit: String!
+}
+
+input CreateStockEventInput {
+  delta: Int!
+  event: String!
+  productId: ID!
 }
 
 type Customer {
@@ -70,14 +70,7 @@ type CustomerChat {
 
 scalar DateTime
 
-type Inventory {
-  createdAt: DateTime!
-  delta: Int!
-  event: String!
-  id: Int!
-  product: Product!
-  productId: ID!
-}
+type Inventory
 
 scalar JSON
 
@@ -87,8 +80,8 @@ type Mutation {
   createBusinessChat(query: String!): BusinessChat!
   createCustomerChat(input: CreateCustomerChatInput!): CustomerChat!
   createCustomerOrder(input: CreateCustomerOrderInput!): Order!
-  createInventory(input: CreateInventoryInput!): Inventory!
   createProduct(input: CreateProductInput!): Product!
+  createStockEvent(input: CreateStockEventInput!): StockEvent!
   deleteProduct(id: ID!): Boolean!
   registerCustomer: Customer!
   updateBusiness(input: UpdateBusinessInput!): Business!
@@ -115,7 +108,7 @@ type OrderItem {
   name: String!
   order: Order!
   price: BigInt!
-  product: Product!
+  productId: ID!
   quantity: Int!
   tags: [String!]!
   unit: String!
@@ -123,13 +116,8 @@ type OrderItem {
 }
 
 input OrderItemInput {
-  description: String
-  name: String!
-  price: BigInt!
-  productId: ID
+  productId: ID!
   quantity: Int!
-  tags: [String!]!
-  unit: String!
 }
 
 type Product {
@@ -159,12 +147,21 @@ type Query {
   customerOrders(businessId: ID!): [Order!]!
   customerProductById(businessId: ID!, productId: ID!): Product
   customerProducts(businessId: ID!): [Product]!
-  inventories: [Inventory]
+  stockEvents: [StockEvent]
 }
 
 enum Role {
   BUSINESS
   CUSTOMER
+}
+
+type StockEvent {
+  createdAt: DateTime!
+  delta: Int!
+  event: String!
+  id: Int!
+  product: Product!
+  productId: ID!
 }
 
 input UpdateBusinessInput {

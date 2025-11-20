@@ -11,5 +11,5 @@ export const business: NonNullable<QueryResolvers['business']> = async (
 		where: { userId: user.id },
 	});
 
-    return foundBusiness;
+	return foundBusiness;
 };
